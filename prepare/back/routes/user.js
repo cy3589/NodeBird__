@@ -111,7 +111,10 @@ router.patch("/:userId/follow", isLoggedIn, async (req, res, next) => {
       return res.status(403).send("존재하지 않는 사용자입니다.");
     }
     await user.addFollowers(req.user.id);
-    res.status(201).json({ UserId: parseInt(req.params.userId) });
+    res.status(201).json({
+      UserId: parseInt(req.params.userId),
+      Nickname: user.nickname,
+    });
   } catch (error) {
     console.error(error);
     next(error);
@@ -134,6 +137,22 @@ router.delete("/:userId/follow", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.delete("/follower/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: parseInt(req.params.userId, 10) },
+    });
+    if (!user) {
+      return res.status(403).send("존재하지 않는 사용자입니다.");
+    }
+    await user.removeFollowings(req.user.id);
+    res.status(201).json({ UserId: parseInt(req.params.userId, 10) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.get("/followers", isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findOne({
@@ -142,7 +161,10 @@ router.get("/followers", isLoggedIn, async (req, res, next) => {
     if (!user) {
       return res.status(403).send("존재하지 않는 사용자입니다.");
     }
-    const followers = await user.getFollowers();
+
+    const followers = await user.getFollowers({
+      attributes: ["id", "nickname"],
+    });
     res.status(201).json(followers);
   } catch (error) {
     console.error(error);
@@ -153,12 +175,14 @@ router.get("/followers", isLoggedIn, async (req, res, next) => {
 router.get("/followings", isLoggedIn, async (req, res, next) => {
   try {
     const user = await User.findOne({
-      where: { id: parseInt(req.params.userId) },
+      where: { id: req.user.id },
     });
     if (!user) {
       return res.status(403).send("존재하지 않는 사용자입니다.");
     }
-    const followings = await user.getFollowings();
+    const followings = await user.getFollowings({
+      attributes: ["id", "nickname"],
+    });
     res.status(201).json(followings);
   } catch (error) {
     console.error(error);

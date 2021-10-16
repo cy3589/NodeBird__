@@ -2,10 +2,16 @@ import AppLayout from "../components/AppLayout";
 import Head from "next/head";
 import NicknameEditForm from "../components/NicknameEditForm";
 import FollowingList from "../components/FollowingList";
-import FollowerList from "../components/FollwerList";
+import FollowerList from "../components/FollowerList";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import Router from "next/router";
+import {
+  LOAD_FOLLOWERS_REQUEST,
+  LOAD_FOLLOWINGS_REQUEST,
+} from "../reducers/user";
+import { Card } from "antd";
+import { StopOutlined } from "@ant-design/icons";
 const Profile = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
@@ -27,7 +33,7 @@ const Profile = () => {
       <AppLayout>
         <NicknameEditForm />
         <FollowingList header="Followings" data={me.Followings} />
-        <FollowingList header="Follwers" data={me.Followers} />
+        <FollowerList header="Follwers" data={me.Followers} />
       </AppLayout>
     </>
   );

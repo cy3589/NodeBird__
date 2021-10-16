@@ -1,7 +1,18 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const { User, Post, Comment, Image } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log("uploads폴더가 없으므로 생성합니다");
+  fs.mkdirSync("uploads");
+}
+
 // const db = require("../models");
 // const user = require("../models/user");
 
@@ -116,5 +127,32 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, "uploads");
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname); //파일확장자추출(ex: .png)
+      const basename = path.basename(file.originalname, ext); //ext를 제외한 파일 이름만 추출
+      done(null, basename + new Date().getTime() + ext);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, //20메가바이트(20mb)
+});
+router.post(
+  "/images",
+  upload.array("image"),
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      res.json(req.files.map((v) => v.filename));
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
 
 module.exports = router;

@@ -5,13 +5,13 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const passport = require("passport");
 const morgan = require("morgan");
+const path = require("path");
 
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const db = require("./models");
 const passportConfig = require("./passport");
-
 dotenv.config();
 const app = express();
 app.use(
@@ -20,6 +20,7 @@ app.use(
     credentials: true,
   })
 );
+app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

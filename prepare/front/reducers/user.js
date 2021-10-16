@@ -1,5 +1,4 @@
 import produce from "immer";
-import shortid from "shortid";
 
 export const initialState = {
   loadMyInfoLoading: false,
@@ -29,6 +28,18 @@ export const initialState = {
   unFollowLoading: false,
   unFollowDone: false,
   unFollowError: null,
+
+  loadFollowingsLoading: false,
+  loadFollowingsDone: false,
+  loadFollowingsError: null,
+
+  loadFollowersLoading: false,
+  loadFollowersDone: false,
+  loadFollowersError: null,
+
+  blcokUserLoading: false,
+  blcokUserDone: false,
+  blcokUserError: null,
 
   me: null,
   sighUpData: {},
@@ -62,6 +73,20 @@ export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
 export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
 export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 
+export const LOAD_FOLLOWINGS_REQUEST = "LOAD_FOLLOWINGS_REQUEST";
+export const LOAD_FOLLOWINGS_SUCCESS = "LOAD_FOLLOWINGS_SUCCESS";
+export const LOAD_FOLLOWINGS_FAILURE = "LOAD_FOLLOWINGS_FAILURE";
+
+export const LOAD_FOLLOWERS_REQUEST = "LOAD_FOLLOWERS_REQUEST";
+export const LOAD_FOLLOWERS_SUCCESS = "LOAD_FOLLOWERS_SUCCESS";
+export const LOAD_FOLLOWERS_FAILURE = "LOAD_FOLLOWERS_FAILURE";
+
+export const BLOCK_USER_REQUEST = "BLOCK_USER_REQUEST";
+export const BLOCK_USER_SUCCESS = "BLOCK_USER_SUCCESS";
+export const BLOCK_USER_FAILURE = "BLOCK_USER_FAILURE";
+
+export const SIGN_UP_DONE = "SIGN_UP_DONE";
+
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
 
 export const loginRequestAction = (data) => {
@@ -80,6 +105,23 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case BLOCK_USER_REQUEST:
+        draft.blcokUserLoading = true;
+        draft.blcokUserDone = false;
+        draft.blcokUserError = null;
+        break;
+      case BLOCK_USER_SUCCESS:
+        draft.me.Followers = draft.me.Followers.filter((v) => {
+          return v.id !== action.data.UserId;
+        });
+        draft.blcokUserLoading = false;
+        draft.blcokUserDone = true;
+        break;
+      case BLOCK_USER_FAILURE:
+        draft.blcokUserLoading = false;
+        draft.blcokUserError = action.error;
+        break;
+
       case LOAD_MY_INFO_REQUEST:
         draft.loadMyInfoLoading = true;
         draft.loadMyInfoDone = false;
@@ -139,6 +181,11 @@ const reducer = (state = initialState, action) =>
         draft.signUpLoading = false;
         draft.signUpError = action.error;
         break;
+      case SIGN_UP_DONE:
+        draft.signUpDone = false;
+        draft.signUpError = null;
+
+        break;
 
       case CHANGE_NICKNAME_REQUEST:
         draft.changeNicknameLoading = true;
@@ -171,7 +218,11 @@ const reducer = (state = initialState, action) =>
         draft.followError = null;
         break;
       case FOLLOW_SUCCESS:
-        draft.me.Followings.push({ id: action.data });
+        console.log("actiondata", action.data);
+        draft.me.Followings.push({
+          id: action.data.UserId,
+          nickname: action.data.Nickname,
+        });
         draft.followLoading = false;
         draft.followDone = true;
         break;
@@ -191,13 +242,41 @@ const reducer = (state = initialState, action) =>
         });
         draft.unFollowLoading = false;
         draft.unFollowDone = true;
-
         break;
       case UNFOLLOW_FAILURE:
         draft.unFollowLoading = false;
         draft.unFollowError = action.error;
         break;
 
+      case LOAD_FOLLOWINGS_REQUEST:
+        draft.loadFollowingsLoading = true;
+        draft.loadFollowingsDone = false;
+        draft.loadFollowingsError = null;
+        break;
+      case LOAD_FOLLOWINGS_SUCCESS:
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsDone = true;
+        draft.me.Followings = action.data;
+        break;
+      case LOAD_FOLLOWINGS_FAILURE:
+        draft.loadFollowingsLoading = false;
+        draft.loadFollowingsError = action.error;
+        break;
+
+      case LOAD_FOLLOWERS_REQUEST:
+        draft.loadFollowersLoading = true;
+        draft.loadFollowersDone = false;
+        draft.loadFollowersError = null;
+        break;
+      case LOAD_FOLLOWERS_SUCCESS:
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersDone = true;
+        draft.me.Followers = action.data;
+        break;
+      case LOAD_FOLLOWERS_FAILURE:
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersError = action.error;
+        break;
       default:
         break;
     }

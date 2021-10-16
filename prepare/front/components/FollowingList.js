@@ -1,6 +1,9 @@
 import { List, Button, Card } from "antd";
 import PropTypes from "prop-types";
 import { StopOutlined } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { UNFOLLOW_REQUEST } from "../reducers/user";
+
 // import head from "next/head";
 // import { useMemo } from "react";
 // const style_List = useMemo(
@@ -8,6 +11,11 @@ import { StopOutlined } from "@ant-design/icons";
 //   []
 // );
 const FollowingList = ({ header, data }) => {
+  const dispatch = useDispatch();
+  const onCencel = (id) => () => {
+    dispatch({ type: UNFOLLOW_REQUEST, data: id });
+  };
+
   return (
     <List
       style={{ marginBottom: 20 }}
@@ -21,13 +29,19 @@ const FollowingList = ({ header, data }) => {
       }
       bordered
       dataSource={data}
-      renderItem={(item) => {
+      renderItem={(item) => (
         <List.Item style={{ marginTop: 20 }}>
-          <Card actions={[<StopOutlined key="stop" />]}>
+          <Card
+            actions={[
+              <Button block type="danger" onClick={onCencel(item.id)}>
+                Unfollow
+              </Button>,
+            ]}
+          >
             <Card.Meta description={item.nickname} />
           </Card>
-        </List.Item>;
-      }}
+        </List.Item>
+      )}
     />
   );
 };

@@ -31,7 +31,7 @@ const Home = () => {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, [hasMorePosts, loadPostsLoading]);
+  }, [mainPosts, hasMorePosts, loadPostsLoading]);
 
   return (
     <AppLayout>

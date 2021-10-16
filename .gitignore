@@ -2,6 +2,7 @@
 
 /prepare/back/node_modules
 /prepare/back/.next
+/prepare/back/uploads
 
 /prepare/front/node_modules
 /prepare/front/.next
