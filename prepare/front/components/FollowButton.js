@@ -12,16 +12,19 @@ const FollowButton = ({ post }) => {
   //me에는 내 정보가 담김(nickname, id, Posts, Followings, Followers)가 담김, Followings,Followers에는 nickname있음
   const dispatch = useDispatch();
   const isFollowing = me?.Followings.find((v) => v.id === post.User.id);
+  if (post.User.id === me.id) {
+    return null;
+  }
   const onClickButton = useCallback(() => {
     if (isFollowing) {
       dispatch({
         type: UNFOLLOW_REQUEST,
-        data: { id: post.User.id, nickname: post.User.nickname },
+        data: post.User.id,
       });
     } else {
       dispatch({
         type: FOLLOW_REQUEST,
-        data: { id: post.User.id, nickname: post.User.nickname },
+        data: post.User.id,
       });
     }
   }, [isFollowing]);

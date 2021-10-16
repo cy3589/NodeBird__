@@ -16,15 +16,12 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
-router.patch("/:postId/like", async (req, res, next) => {
+router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {
-      return res.status(403).send("게시글이 존재하지 않습니다.");
+      return res.status(403).send("로그인이 필요합니다.");
     }
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(post);
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     await post.addLikers(req.user.id); // DB조작할 때에는 await을 꼭 붙여야 한다.
     res.status(201).json({ PostId: post.id, UserId: req.user.id });
   } catch (error) {
@@ -33,12 +30,11 @@ router.patch("/:postId/like", async (req, res, next) => {
   }
 });
 
-router.delete("/:postId/like", async (req, res, next) => {
-  //PATCH / post/postId/like
+router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {
-      return res.status(403).send("게시글이 존재하지 않습니다.");
+      return res.status(403).send("로그인이 필요합니다.");
     }
     await post.removeLikers(req.user.id); // DB조작할 때에는 await을 꼭 붙여야 한다.
     res.status(201).json({ PostId: post.id, UserId: req.user.id });
@@ -48,12 +44,26 @@ router.delete("/:postId/like", async (req, res, next) => {
   }
 });
 
+router.delete("/:postId", isLoggedIn, async (req, res, next) => {
+  //delete  /postId
+  try {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (!post) {
+      return res.status(403).send("게시글이 존재하지 않습니다.");
+    }
+    await Post.destroy({
+      where: { id: req.params.postId, UserId: req.user.id },
+    });
+    res.status(201).json({ PostId: parseInt(req.params.postId, 10) });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 router.post("/", isLoggedIn, async (req, res, next) => {
   //전달된 data는 req.body에 담겨있다
   try {
-    console.log("post실행중@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(User);
-    console.log("post실행중@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,

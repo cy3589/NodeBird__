@@ -47,22 +47,22 @@ function* addPost(action) {
 }
 
 function removePostAPI(data) {
-  return axios.post("/api/post", data);
+  return axios.delete(`/post/${data}`); // delete는 data 못넣음. 따라서 data에 postId전달
 }
 function* removePost(action) {
   try {
     const result = yield call(removePostAPI, action.data);
     yield put({
-      type: REMOVE_POST_SUCCESS, // post 리듀서 조작부
-      data: action.data, //post의 id값이 들어있음
+      type: REMOVE_POST_SUCCESS,
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_OF_ME, //user 리듀서 조작부
-      data: action.data, //post의 id값이 들어있음
+      data: result.data, //post의 id값이 들어있음
     });
   } catch (err) {
     console.error(err);
-    put({
+    yield put({
       type: REMOVE_POST_FAILURE,
       data: err.response.data,
     });
@@ -82,7 +82,7 @@ function* addComment(action) {
     });
   } catch (err) {
     console.error(err);
-    put({
+    yield put({
       type: ADD_COMMENT_FAILURE,
       data: err.response.data,
     });
@@ -101,7 +101,7 @@ function* loadPosts() {
     });
   } catch (err) {
     console.error(err);
-    put({
+    yield put({
       type: LOAD_POSTS_FAILURE,
       data: err.response.data,
     });
@@ -120,7 +120,7 @@ function* likePost(action) {
     });
   } catch (err) {
     console.error(err);
-    put({
+    yield put({
       type: LIKE_POST_FAILURE,
       data: err.response.data,
     });
@@ -139,7 +139,7 @@ function* unLikePost(action) {
     });
   } catch (err) {
     console.error(err);
-    put({
+    yield put({
       type: UNLIKE_POST_FAILURE,
       data: err.response.data,
     });

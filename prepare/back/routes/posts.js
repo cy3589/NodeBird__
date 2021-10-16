@@ -7,9 +7,6 @@ const { isLoggedIn } = require("./middlewares");
 router.get("/", async (req, res, next) => {
   // GET  /posts
   try {
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(Post);
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     const posts = await Post.findAll({
       limit: 10,
       order: [

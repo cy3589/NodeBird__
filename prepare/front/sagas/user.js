@@ -19,6 +19,9 @@ import {
   LOAD_MY_INFO_REQUEST,
   LOAD_MY_INFO_FAILURE,
   LOAD_MY_INFO_SUCCESS,
+  CHANGE_NICKNAME_FAILURE,
+  CHANGE_NICKNAME_REQUEST,
+  CHANGE_NICKNAME_SUCCESS,
 } from "../reducers/user";
 
 function logInAPI(data) {
@@ -75,12 +78,11 @@ function* signUp(action) {
 }
 
 function FollowAPI(data) {
-  return axios.post("/api/follow");
+  return axios.patch(`/user/${data}/follow`);
 }
 function* Follow(action) {
   try {
-    // const result = yield call(FollowAPI, action.data);
-    yield delay(1000);
+    const result = yield call(FollowAPI, action.data);
     yield put({
       type: FOLLOW_SUCCESS,
       data: action.data,
@@ -94,12 +96,11 @@ function* Follow(action) {
 }
 
 function UnFollowAPI(data) {
-  return axios.post("/api/unfollow");
+  return axios.delete(`/user/${data}/follow`);
 }
 function* UnFollow(action) {
   try {
-    // const result = yield call(UnFollowAPI, action.data);
-    yield delay(1000);
+    const result = yield call(UnFollowAPI, action.data);
     yield put({
       type: UNFOLLOW_SUCCESS,
       data: action.data,
@@ -130,6 +131,28 @@ function* LoadMyInfo(action) {
   }
 }
 
+function changeNicknameAPI(data) {
+  return axios.patch(`/user/nickname`, { nickname: data });
+}
+function* changeNickname(action) {
+  try {
+    const result = yield call(changeNicknameAPI, action.data);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+function* watchChangeNickname() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
+}
 function* watchLogIn() {
   yield takeLatest(LOG_IN_REQUEST, logIn);
 }
@@ -156,5 +179,6 @@ export default function* userSaga() {
     fork(watchFollow),
     fork(watchUnFollow),
     fork(watchLoadMyInfo),
+    fork(watchChangeNickname),
   ]);
 }

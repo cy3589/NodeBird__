@@ -23,7 +23,6 @@ const PostCard = ({ post }) => {
   const { me } = useSelector((state) => state.user);
   const { removePostLoading } = useSelector((state) => state.post);
   const id = me?.id;
-  //   console.log(id, post.id);
   const [commentFormOpend, setCommentFormOpend] = useState(false);
   const dispatch = useDispatch();
 

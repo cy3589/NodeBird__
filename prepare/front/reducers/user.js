@@ -64,23 +64,6 @@ export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: "제로초",
-  id: "1",
-  Posts: [{ id: "1" }],
-  Followings: [
-    { id: shortid.generate(), nickname: "김찬호" },
-    { id: shortid.generate(), nickname: "김해청년" },
-    { id: shortid.generate(), nickname: "2400점" },
-  ],
-  Followers: [
-    { id: shortid.generate(), nickname: "부기초" },
-    { id: shortid.generate(), nickname: "Chanho Kim" },
-    { id: shortid.generate(), nickname: "뉴질" },
-  ],
-});
-
 export const loginRequestAction = (data) => {
   return {
     type: LOG_IN_REQUEST,
@@ -165,6 +148,7 @@ const reducer = (state = initialState, action) =>
       case CHANGE_NICKNAME_SUCCESS:
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
+        draft.me.nickname = action.data.nickname;
         break;
       case CHANGE_NICKNAME_FAILURE:
         draft.changeNicknameLoading = false;
@@ -176,7 +160,10 @@ const reducer = (state = initialState, action) =>
         break;
 
       case REMOVE_POST_OF_ME:
-        draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+        draft.me.Posts = draft.me.Posts.filter((v) => {
+          return v.id !== action.data.PostId;
+        });
+        break;
 
       case FOLLOW_REQUEST:
         draft.followLoading = true;
@@ -184,9 +171,9 @@ const reducer = (state = initialState, action) =>
         draft.followError = null;
         break;
       case FOLLOW_SUCCESS:
+        draft.me.Followings.push({ id: action.data });
         draft.followLoading = false;
         draft.followDone = true;
-        draft.me.Followings.unshift(action.data);
         break;
       case FOLLOW_FAILURE:
         draft.followLoading = false;
@@ -199,11 +186,12 @@ const reducer = (state = initialState, action) =>
         draft.unFollowError = null;
         break;
       case UNFOLLOW_SUCCESS:
+        draft.me.Followings = draft.me.Followings.filter((v) => {
+          return v.id !== action.data;
+        });
         draft.unFollowLoading = false;
         draft.unFollowDone = true;
-        draft.me.Followings = draft.me.Followings.filter(
-          (v) => v.id !== action.data.id
-        );
+
         break;
       case UNFOLLOW_FAILURE:
         draft.unFollowLoading = false;

@@ -1,5 +1,7 @@
-prepare/back/node_modules
-prepare/back/.next
-prepare/front/node_modules
-prepare/front/.next
-*.env
+*env
+
+/prepare/back/node_modules
+/prepare/back/.next
+
+/prepare/front/node_modules
+/prepare/front/.next
