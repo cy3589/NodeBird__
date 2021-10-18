@@ -5,7 +5,8 @@ import styled from "styled-components";
 import ImagesZoom from "./ImagseZoom";
 
 const StyleTwoImages = styled.img`
-  width: 50%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 `;
 const StyleOneImage = styled.img`
@@ -54,36 +55,43 @@ const PostImages = ({ images }) => {
   }, []);
   if (images.length === 1) {
     return (
-      <>
-        <div>
+      <div>
+        <div onClick={onZoom} style={{ zIndex: 0 }}>
           <StyleOneImage
             role="presentation"
             src={images[0].src}
             alt={images[0].src}
-            onClick={onZoom}
           />
-          {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
         </div>
-      </>
+        {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
+      </div>
     );
   }
   if (images.length === 2) {
     return (
-      <>
-        <StyleTwoImages
-          role="presentation"
-          src={images[0].src}
-          alt={images[0].src}
-          onClick={onZoom}
-        />
-        <StyleTwoImages
-          role="presentation"
-          src={images[1].src}
-          alt={images[1].src}
-          onClick={onZoom}
-        />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          placeItems: "center",
+        }}
+      >
+        <div style={{ width: "100%", height: "100%" }} onClick={onZoom}>
+          <StyleTwoImages
+            role="presentation"
+            src={images[0].src}
+            alt={images[0].src}
+          />
+        </div>
+        <div style={{ width: "100%", height: "100%" }} onClick={onZoom}>
+          <StyleTwoImages
+            role="presentation"
+            src={images[1].src}
+            alt={images[1].src}
+          />
+        </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
-      </>
+      </div>
     );
   }
   if (images.length === 0) {

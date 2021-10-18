@@ -32,6 +32,10 @@ export const initialState = {
   uploadImagesLoading: false,
   uploadImagesDone: false,
   uploadImagesError: null,
+
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
 
 export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
@@ -62,6 +66,10 @@ export const REMOVE_POST_REQUEST = "REMOVE_POST_REQUEST";
 export const REMOVE_POST_SUCCESS = "REMOVE_POST_SUCCESS";
 export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 
+export const RETWEET_REQUEST = "REWTEET_REQUEST";
+export const RETWEET_SUCCESS = "REWTEET_SUCCESS";
+export const RETWEET_FAILURE = "REWTEET_FAILURE";
+
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
@@ -78,20 +86,35 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
-      case UPLOAD_IMAGES_REQUEST:
-        draft.uploadImagesLoading = true;
-        draft.uploadImagesDone = false;
-        draft.uploadImagesError = null;
+      case RETWEET_REQUEST:
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
         break;
-      case UPLOAD_IMAGES_SUCCESS:
-        draft.imagePaths = action.data;
-        draft.uploadImagesLoading = false;
-        draft.uploadImagesDone = true;
+      case RETWEET_SUCCESS:
+        draft.mainPosts.unshift(action.data);
+        draft.retweetLoading = false;
+        draft.retweetDone = true;
         break;
-      case UPLOAD_IMAGES_FAILURE:
-        draft.uploadImagesLoading = false;
-        draft.likePostError = action.error;
+      case RETWEET_FAILURE:
+        draft.retweetLoading = false;
+        draft.retweetError = action.error;
         break;
+
+      // case UPLOAD_IMAGES_REQUEST:
+      //   draft.uploadImagesLoading = true;
+      //   draft.uploadImagesDone = false;
+      //   draft.uploadImagesError = null;
+      //   break;
+      // case UPLOAD_IMAGES_SUCCESS:
+      //   draft.imagePaths = action.data;
+      //   draft.uploadImagesLoading = false;
+      //   draft.uploadImagesDone = true;
+      //   break;
+      // case UPLOAD_IMAGES_FAILURE:
+      //   draft.uploadImagesLoading = false;
+      //   draft.likePostError = action.error;
+      //   break;
 
       case LIKE_POST_REQUEST:
         draft.likePostLoading = true;
@@ -136,7 +159,7 @@ const reducer = (state = initialState, action) => {
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.hasMorePosts = action.data.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;

@@ -218,7 +218,6 @@ const reducer = (state = initialState, action) =>
         draft.followError = null;
         break;
       case FOLLOW_SUCCESS:
-        console.log("actiondata", action.data);
         draft.me.Followings.push({
           id: action.data.UserId,
           nickname: action.data.Nickname,

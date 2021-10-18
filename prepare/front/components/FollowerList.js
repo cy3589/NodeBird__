@@ -21,7 +21,6 @@ const FollowerList = ({ header, data }) => {
   };
   return (
     <>
-      {console.log("me.Followings: ", me.Followings)}
       <List
         style={{ marginBottom: 20 }}
         grid={{ gutter: 4, xs: 2, md: 3 }}

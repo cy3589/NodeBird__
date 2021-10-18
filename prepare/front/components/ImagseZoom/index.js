@@ -16,7 +16,7 @@ const ImagesZoom = ({ images, onClose }) => {
   return (
     <Overlay>
       <Global />
-      <Header style={{ zIndex: 6000 }}>
+      <Header style={{ zIndex: 1 }}>
         <h1>상세 이미지</h1>
         <CloseButton onClick={onClose}>X</CloseButton>
       </Header>

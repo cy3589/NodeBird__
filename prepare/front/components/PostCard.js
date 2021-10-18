@@ -16,9 +16,9 @@ import {
   REMOVE_POST_REQUEST,
   LIKE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
+  RETWEET_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
-
 const PostCard = ({ post }) => {
   const { me } = useSelector((state) => state.user);
   const { removePostLoading } = useSelector((state) => state.post);
@@ -28,29 +28,48 @@ const PostCard = ({ post }) => {
 
   const liked = post.Likers.find((v) => v.id === id);
 
+  const onRetweet = useCallback(() => {
+    if (!id) {
+      return alert("로그인이 필요합니다.");
+    }
+    dispatch({
+      type: RETWEET_REQUEST,
+      data: post.id,
+    });
+  }, [id]);
+
   // setState에 콜백함수를 넣으면 전달되는 인자(prev부분)에는 이전의 데이터가 들어있다.
   const onLike = useCallback(() => {
+    if (!id) {
+      return alert("로그인이 필요합니다.");
+    }
     dispatch({ type: LIKE_POST_REQUEST, data: post.id });
-  });
+  }, [id]);
   const onUnLike = useCallback(() => {
+    if (!id) {
+      return alert("로그인이 필요합니다.");
+    }
     dispatch({ type: UNLIKE_POST_REQUEST, data: post.id });
-  });
+  }, [id]);
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpend((prev) => !prev);
   }, []);
   const onRemovePost = useCallback(() => {
+    if (!id) {
+      return alert("로그인이 필요합니다.");
+    }
     dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [id]);
   return (
     <div>
       <Card
         cover={<PostImages images={post.Images} />}
         actions={[
-          <RetweetOutlined key="retweet" />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
             <HeartTwoTone
               twoToneColor="#eb2f96"
@@ -86,12 +105,25 @@ const PostCard = ({ post }) => {
           </Popover>,
         ]}
         extra={id && <FollowButton post={post} />}
+        title={
+          post.RetweetId ? `${post.User.nickname}님이 리트윗 하셨습니다.` : null
+        }
       >
-        <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-          title={post.User.nickname}
-          description={<PostCardContent postData={post.content} />}
-        />
+        {post.RetweetId && post.Retweet ? (
+          <Card cover={<PostImages images={post.Retweet.Images} />}>
+            <Card.Meta
+              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+              title={post.Retweet.User.nickname}
+              description={<PostCardContent postData={post.Retweet.content} />}
+            />
+          </Card>
+        ) : (
+          <Card.Meta
+            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+            title={post.User.nickname}
+            description={<PostCardContent postData={post.content} />}
+          />
+        )}
       </Card>
       {commentFormOpend && (
         <div>
