@@ -1,10 +1,17 @@
 const express = require("express");
-const { User, Post } = require("../models");
+const { User, Post, Comment, Image } = require("../models");
 const router = express.Router();
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const db = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
+  fullPostJSON.commentsCount = fullPostJSON.Comments.length;
+  fullPostJSON.Comments.splice(10);
+  return fullPostJSON; //객체배열의 map을 위해 추가
+};
+
 router.get("/", async (req, res, next) => {
   try {
     if (req.user) {
@@ -189,4 +196,92 @@ router.get("/followings", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/:userId/posts", async (req, res, next) => {
+  // GET  /posts
+  try {
+    const where = { UserId: parseInt(req.params.userId, 10) };
+    if (parseInt(req.query.lastId, 10)) {
+      //req.query.lastId가 있을 때 (초기로딩이 아닐 때)
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
+    }
+
+    const posts = await Post.findAll({
+      where,
+      limit: 10,
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt"],
+      ],
+      include: [
+        { model: User, attributes: ["id", "nickname"] },
+        { model: Image },
+        {
+          model: Comment,
+          include: [{ model: User, attributes: ["id", "nickname"] }],
+        },
+        { model: User, as: "Likers", attributes: [`id`] },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            { model: User, attributes: ["id", "nickname"] },
+            { model: Image },
+          ],
+        }, //좋아요 누른사람
+      ],
+    });
+    const postsJSON = posts.map((v) => {
+      return PostAddCommentsCountAndSlice10Comments(v.toJSON());
+    });
+    res.status(201).json(postsJSON);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.get("/info/:userId", async (req, res, next) => {
+  // GET  /posts
+  try {
+    const UserInfo = await User.findOne({
+      where: { id: parseInt(req.params.userId, 10) },
+      attributes: ["id", "nickname", "createdAt"],
+      include: [
+        { model: Post, attributes: ["id"] },
+        { model: User, as: "Followings", attributes: ["id"] },
+        { model: User, as: "Followers", attributes: ["id"] },
+      ],
+    });
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    const resUserInfo = {
+      postsLength: UserInfo.Posts.length,
+      id: UserInfo.id,
+      nickname: UserInfo.nickname,
+      followingsLength: UserInfo.Followings.length,
+      followersLength: UserInfo.Followers.length,
+      createdAt: UserInfo.createdAt,
+    };
+    console.log("게시물 수 : ", UserInfo.Posts.length);
+    console.log("id: ", UserInfo.id);
+    console.log("nickname: ", UserInfo.nickname);
+    console.log("팔로잉 수 ", UserInfo.Followings.length);
+    console.log("팔로워 수 ", UserInfo.Followers.length);
+    console.log("계정생성일 ", UserInfo.createdAt);
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    res.status(201).json(resUserInfo);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;

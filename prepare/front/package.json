@@ -4,15 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next"
+    "dev": "next",
+    "build": "cross-env ANALYZE=true NODE_ENV=production next build"
   },
   "author": "Chad",
   "license": "ISC",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@next/bundle-analyzer": "^11.1.2",
     "antd": "^4.16.13",
     "axios": "^0.22.0",
-    "babel-plugin-styled-components": "^1.13.2",
+    "babel-plugin-styled-components": "^1.13.3",
+    "cross-env": "^7.0.3",
     "faker": "^5.5.3",
     "immer": "^9.0.6",
     "next": "^11.1.2",
@@ -21,6 +26,7 @@
     "passport-local": "^1.0.0",
     "prop-types": "^15.7.2",
     "react-hook-form": "^7.17.2",
+    "react-intersection-observer": "^8.32.1",
     "react-redux": "^7.2.5",
     "react-slick": "^0.28.1",
     "redux": "^4.1.1",
@@ -31,7 +37,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-import": "^2.25.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",

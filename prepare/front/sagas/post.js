@@ -27,6 +27,21 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_FAILURE,
+  LOAD_MORE_COMMENTS_FAILURE,
+  LOAD_MORE_COMMENTS_REQUEST,
+  LOAD_MORE_COMMENTS_SUCCESS,
+  EDIT_POST_REQUEST,
+  EDIT_POST_FAILURE,
+  EDIT_POST_SUCCESS,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
 } from "../reducers/post";
 
 function addPostAPI(data) {
@@ -44,7 +59,8 @@ function* addPost(action) {
       data: result.data.id,
     });
   } catch (err) {
-    put({
+    console.error(err);
+    yield put({
       type: ADD_POST_FAILURE,
       error: err.response.data,
     });
@@ -83,7 +99,7 @@ function* addComment(action) {
     const result = yield call(addCommentAPI, action.data);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: result.data,
+      data: { ...result.data, isSinglePost: action.data?.isSinglePost },
     });
   } catch (err) {
     console.error(err);
@@ -180,8 +196,110 @@ function* retweet(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: RETWEET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+async function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadMoreCommentsAPI(data) {
+  return axios.get(
+    `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`
+  );
+}
+function* loadMoreComments(action) {
+  try {
+    const result = yield call(loadMoreCommentsAPI, action.data);
+    yield put({
+      type: LOAD_MORE_COMMENTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_MORE_COMMENTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+function editPostAPI(data) {
+  return axios.patch(`/post/edit/${data.postId}`, data);
+}
+
+function* editPost(action) {
+  try {
+    const result = yield call(editPostAPI, action.data);
+    yield put({
+      type: EDIT_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: EDIT_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadUserPostsAPI(data, lastId) {
+  return axios.get(`/user/${data}/posts?lastId=${lastId || 0}`);
+}
+function* loadUserPosts(action) {
+  try {
+    const result = yield call(loadUserPostsAPI, action.data, action.lastId);
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    console.log(result.data.length);
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    console.log("resultresultresultresultresultresultresult");
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function loadHashtagPostsAPI(data, lastId) {
+  return axios.get(`/hashtag/${data}?lastId=${lastId || 0}`);
+}
+function* loadHashtagPosts(action) {
+  try {
+    const result = yield call(loadHashtagPostsAPI, action.data, lastId);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
       error: err.response.data,
     });
   }
@@ -211,6 +329,21 @@ function* watchUploadImages() {
 function* watchRetweet() {
   yield takeLatest(RETWEET_REQUEST, retweet);
 }
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
+function* watchLoadMoreComments() {
+  yield takeLatest(LOAD_MORE_COMMENTS_REQUEST, loadMoreComments);
+}
+function* watchEditPost() {
+  yield takeLatest(EDIT_POST_REQUEST, editPost);
+}
+function* watchLoadUserPosts() {
+  yield takeLatest(LOAD_USER_POSTS_REQUEST, loadUserPosts);
+}
+function* watchLoadHashtagPosts() {
+  yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
+}
 
 export default function* postSaga() {
   yield all([
@@ -222,5 +355,10 @@ export default function* postSaga() {
     fork(watchUnLikePost),
     fork(watchUploadImages),
     fork(watchRetweet),
+    fork(watchLoadPost),
+    fork(watchLoadMoreComments),
+    fork(watchEditPost),
+    fork(watchLoadUserPosts),
+    fork(watchLoadHashtagPosts),
   ]);
 }

@@ -1,19 +1,32 @@
-import { Avatar, Button, Card } from "antd";
+import { Avatar, Button, Card, Space } from "antd";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutRequestAction } from "../reducers/user";
-const UserProfile = () => {
+import styled from "@emotion/styled";
+
+const UserProfileCardStyle = styled(Card)`
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const anotherUserProfileCardStyle = styled(Card)`
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+`;
+const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
   const onLogout = useCallback(() => {
     dispatch(logoutRequestAction());
   }, []);
+  // parseInt(anotherUserInfo.id ,10) == parseInt(me.id) 라면 내 정보 보는중.
   return (
-    <>
-      <Card
+    <div style={{ paddingTop: "8px", marginBottom: "10px" }}>
+      <UserProfileCardStyle
         actions={[
           <div key="twit">
-            짹짹
+            게시물
             <br />
             {me.Posts.length}
           </div>,
@@ -33,11 +46,15 @@ const UserProfile = () => {
           title={me.nickname}
           avatar={<Avatar>{me.nickname[0]}</Avatar>}
         />
-        <Button onClick={onLogout} loading={logOutLoading}>
+        <Button
+          onClick={onLogout}
+          loading={logOutLoading}
+          style={{ borderRadius: "10px" }}
+        >
           로그아웃
         </Button>
-      </Card>
-    </>
+      </UserProfileCardStyle>
+    </div>
   );
 };
 export default UserProfile;

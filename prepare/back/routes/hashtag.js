@@ -1,18 +1,14 @@
 const express = require("express");
-const { Op } = require("sequelize");
+const { User, Post, Hashtag, Image, Comment } = require("../models");
 const router = express.Router();
-const { User, Post, Comment, Image } = require("../models");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
 const db = require("../models");
-const { isLoggedIn } = require("./middlewares");
-const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
-  fullPostJSON.commentsCount = fullPostJSON.Comments.length;
-  fullPostJSON.Comments.splice(10);
-  return fullPostJSON; //객체배열의 map을 위해 추가
-};
-router.get("/", async (req, res, next) => {
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+router.get("/:hashtag", async (req, res, next) => {
   // GET  /posts
   try {
-    const where = {};
+    const where = { UserId: parseInt(req.params.userId, 10) };
     if (parseInt(req.query.lastId, 10)) {
       //req.query.lastId가 있을 때 (초기로딩이 아닐 때)
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
@@ -26,6 +22,10 @@ router.get("/", async (req, res, next) => {
         [Comment, "createdAt"],
       ],
       include: [
+        {
+          model: Hashtag,
+          where: { name: req.params.hashtag },
+        },
         { model: User, attributes: ["id", "nickname"] },
         { model: Image },
         {

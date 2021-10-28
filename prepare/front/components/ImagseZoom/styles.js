@@ -1,11 +1,20 @@
-import styled, { createGlobalStyle } from "styled-components";
+/** @jsxImportSource @emotion/react */
+import { css, Global } from "@emotion/react";
+import styled from "@emotion/styled";
 import { CloseOutlined } from "@ant-design/icons";
 
-export const Global = createGlobalStyle`
-  .slick-slide {
-    display:inline-block;
-  }
-`;
+export const Globaled = () => (
+  <Global
+    styles={css`
+      .slick-slide {
+        display: inline-block;
+      }
+      .ant-card-cover {
+        transform: none !important;
+      }
+    `}
+  />
+);
 export const Indicator = styled.div`
   text-align: center;
 

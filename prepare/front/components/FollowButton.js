@@ -30,12 +30,17 @@ const FollowButton = ({ post }) => {
   }, [isFollowing]);
   return (
     <>
-      <Button
-        loading={followLoading || unFollowLoading}
-        onClick={onClickButton}
-      >
-        {isFollowing ? "UnFollow" : "Follow"}
-      </Button>
+      <div>
+        <Button
+          loading={followLoading || unFollowLoading}
+          onClick={onClickButton}
+          style={{
+            borderRadius: "20px",
+          }}
+        >
+          {isFollowing ? "UnFollow" : "Follow"}
+        </Button>
+      </div>
     </>
   );
 };

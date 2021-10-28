@@ -1,11 +1,12 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Space } from "antd";
 import { useCallback, useEffect } from "react";
 import useInput from "../hooks/useInput";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_COMMENT_REQUEST } from "../reducers/post";
+import { LeftOutlined } from "@ant-design/icons";
 
-const CommentForm = ({ post }) => {
+const CommentForm = ({ post, commentFormOpend }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
   const { addCommentDone, addCommentLoading } = useSelector(
@@ -19,27 +20,88 @@ const CommentForm = ({ post }) => {
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
+    if (!id) {
+      return alert("로그인이 필요합니다.");
+    }
+    if (!commentText) {
+      return alert("댓글을 작성하세요");
+    }
     dispatch({
       type: ADD_COMMENT_REQUEST,
-      data: { content: commentText, postId: post.id, userId: id },
+      data: {
+        content: commentText,
+        postId: post.id,
+        userId: id,
+        isSinglePost: post.isSinglePost,
+      },
     });
+    // document.getElementById("commentInputArea").focus();
   }, [commentText, id]);
   return (
-    <Form onFinish={onSubmitComment}>
-      <Form.Item style={{ position: "relative", margin: 0 }}>
-        <Input.TextArea
-          value={commentText}
-          onChange={onChangeCommentText}
-          rows={4}
-        />
-        <Button
-          loading={addCommentLoading}
-          type="primary"
-          htmlType="submit"
-          style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
-        >
-          삐약
-        </Button>
+    <Form onFinish={onSubmitComment} style={{ margin: "5px -4px 30px -4px" }}>
+      <Form.Item
+        style={{
+          position: "relative",
+          margin: 0,
+        }}
+      >
+        {commentFormOpend ? (
+          <div key={post.id}>
+            <Input.TextArea
+              autoSize={{ minRows: 4, maxRows: 10 }}
+              style={{ borderRadius: "10px" }}
+              className="commentInputArea"
+              value={commentText}
+              onChange={onChangeCommentText}
+              rows={4}
+            />
+            <Button
+              loading={addCommentLoading}
+              type="primary"
+              htmlType="submit"
+              style={{
+                float: "right",
+                marginRight: "1%",
+                marginTop: "1.5%",
+                borderRadius: "10px",
+              }}
+              // style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
+            >
+              삐약
+            </Button>
+          </div>
+        ) : (
+          //  display: grid;
+          //  grid-template-columns: repeat(3, 1fr);
+
+          <div key={post.id}>
+            <Input.TextArea
+              autoSize={{ minRows: 1, maxRows: 10 }}
+              style={{
+                borderRadius: "10px",
+                width: commentText && "88%",
+                transition: "none",
+              }}
+              className="commentInputArea"
+              value={commentText}
+              onChange={onChangeCommentText}
+              rows={4}
+            />
+            <Button
+              loading={addCommentLoading}
+              type="primary"
+              htmlType="submit"
+              style={{
+                display: !commentText && "none",
+                transition: "width 2s",
+                width: "12%",
+                zIndex: 1,
+                borderRadius: "10px",
+              }}
+              icon={<LeftOutlined />}
+            />
+          </div>
+        )}
       </Form.Item>
     </Form>
   );

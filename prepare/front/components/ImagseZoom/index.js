@@ -2,7 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import Slick from "react-slick";
 import {
-  Global,
+  Globaled,
   Indicator,
   CloseButton,
   Overlay,
@@ -15,7 +15,7 @@ const ImagesZoom = ({ images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   return (
     <Overlay>
-      <Global />
+      <Globaled />
       <Header style={{ zIndex: 1 }}>
         <h1>상세 이미지</h1>
         <CloseButton onClick={onClose}>X</CloseButton>
@@ -30,9 +30,9 @@ const ImagesZoom = ({ images, onClose }) => {
             slidesToShow={1}
             slidesToScroll={1}
           >
-            {images.map((v) => (
+            {images.map((v, i) => (
               <ImgWrapper key={v.src}>
-                <img src={v.src} alt={v.src} />
+                <img src={v} alt={v.src} />
               </ImgWrapper>
             ))}
           </Slick>

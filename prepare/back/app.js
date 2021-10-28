@@ -10,6 +10,7 @@ const path = require("path");
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
+const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const passportConfig = require("./passport");
 dotenv.config();
@@ -50,6 +51,7 @@ passportConfig();
 app.use("/user", userRouter);
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
+app.use("/hashtag", hashtagRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello Express");

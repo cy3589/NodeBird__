@@ -11,6 +11,6 @@
     "es6": true
   },
   "extends": ["airbnb"],
-  "plugins": ["react", "react-hooks"],
+  "plugins": ["import", "react", "react-hooks"],
   "rules": {}
 }

@@ -41,9 +41,15 @@ export const initialState = {
   blcokUserDone: false,
   blcokUserError: null,
 
+  getUserInfoLoading: false,
+  getUserInfoDone: false,
+  getUserInfoError: null,
+
+  getUserInfo: null,
   me: null,
   sighUpData: {},
   loginData: {},
+  userInfo: {},
 };
 export const LOG_IN_REQUEST = "LOG_IN_REQUEST";
 export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
@@ -85,6 +91,10 @@ export const BLOCK_USER_REQUEST = "BLOCK_USER_REQUEST";
 export const BLOCK_USER_SUCCESS = "BLOCK_USER_SUCCESS";
 export const BLOCK_USER_FAILURE = "BLOCK_USER_FAILURE";
 
+export const GET_USER_INFO_REQUEST = "GET_USER_INFO_REQUEST";
+export const GET_USER_INFO_SUCCESS = "GET_USER_INFO_SUCCESS";
+export const GET_USER_INFO_FAILURE = "GET_USER_INFO_FAILURE";
+
 export const SIGN_UP_DONE = "SIGN_UP_DONE";
 
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
@@ -105,6 +115,21 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case GET_USER_INFO_REQUEST:
+        draft.getUserInfoLoading = true;
+        draft.getUserInfoDone = false;
+        draft.getUserInfoError = null;
+        break;
+      case GET_USER_INFO_SUCCESS:
+        draft.getUserInfo = action.data;
+        draft.getUserInfoLoading = false;
+        draft.getUserInfoDone = true;
+        break;
+      case GET_USER_INFO_FAILURE:
+        draft.getUserInfoLoading = false;
+        draft.getUserInfoError = action.error;
+        break;
+
       case BLOCK_USER_REQUEST:
         draft.blcokUserLoading = true;
         draft.blcokUserDone = false;

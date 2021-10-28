@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Form, Input, Button } from "antd";
-import styled from "styled-components";
 import {
   addPost,
   ADD_POST_REQUEST,
@@ -9,12 +8,6 @@ import {
 } from "../reducers/post";
 import useInput from "../hooks/useInput";
 import { CloseCircleFilled } from "@ant-design/icons";
-const ImagePreview = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 0.5rem;
-  grid-auto-rows: 3fr;
-`;
 
 // const PostFormStyle = styled(Form)`
 // margin:"10px 0 20px`;
@@ -32,15 +25,15 @@ const PostForm = () => {
 
   const onChangeImages = useCallback(
     (e) => {
-      if (images.length >= 10) {
-        setImages(images.filter((v, index) => index < 10));
-        setImageFiles(imageFiles.filter((v, index) => index < 10));
-        alert("최대 10개 까지만 가능합니다.");
+      if (images.length >= 9) {
+        setImages(images.filter((v, index) => index < 9));
+        setImageFiles(imageFiles.filter((v, index) => index < 9));
+        alert("최대 9개 까지만 가능합니다.");
         return;
       }
 
-      if (images.length + e.target.files.length > 10) {
-        for (let i = 0; i < 10 - images.length; i++) {
+      if (images.length + e.target.files.length > 9) {
+        for (let i = 0; i < 9 - images.length; i++) {
           const fileReader = new FileReader();
           fileReader.readAsDataURL(e.target.files[i]);
           fileReader.onload = (event) => {
@@ -48,7 +41,7 @@ const PostForm = () => {
           };
           setImageFiles((prev) => [...prev, e.target.files[i]]);
         }
-        alert("최대 10개 까지만 가능합니다.");
+        alert("최대 9개 까지만 가능합니다.");
       } else {
         [].forEach.call(e.target.files, async (f) => {
           const fileReader = new FileReader();
@@ -91,33 +84,50 @@ const PostForm = () => {
 
   return (
     <Form
-      style={{ margin: "10px 0 20px" }}
+      style={{ margin: "10px 0 0 0" }}
       encType="multipart/form-data"
       onFinish={onSubmit}
     >
       <Input.TextArea
+        style={{ borderRadius: "10px" }}
+        autoSize={{ minRows: 4, maxRows: 10 }}
         value={text}
         onChange={onChangeText}
-        maxLength={140}
-        placeholder="어떤 신기한 일이 있었나요?"
+        placeholder="무슨 생각을 하고 계신가요?"
         id="textInputArea"
       />
       <div>
-        <input
-          type="file"
-          name="image"
-          multiple
-          hidden
-          ref={imageInput}
-          onChange={onChangeImages}
-          accept="image/*"
-        />
-        <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-        <Button type="primary" style={{ float: "right" }} htmlType="submit">
+        <div style={{ marginBottom: "4px" }}>
+          <input
+            type="file"
+            name="image"
+            multiple
+            hidden
+            ref={imageInput}
+            onChange={onChangeImages}
+            accept="image/*"
+          />
+        </div>
+        <Button style={{ borderRadius: "10px" }} onClick={onClickImageUpload}>
+          이미지 업로드
+        </Button>
+        <Button
+          type="primary"
+          style={{ float: "right", borderRadius: "10px" }}
+          htmlType="submit"
+        >
           짹짹
         </Button>
       </div>
-      <ImagePreview>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gridGap: "0.5rem",
+          gridAutoRows: "3fr",
+          marginTop: "3%",
+        }}
+      >
         {images.map((v, i) => (
           <div key={v + i}>
             <img
@@ -151,19 +161,7 @@ const PostForm = () => {
             />
           </div>
         ))}
-        {/* {imagePaths.map((v) => (
-          <div key={v} style={{ display: "inline-block" }}>
-            <img
-              src={`http://localhost:3065/${v}`}
-              style={{ width: "200px" }}
-              alt={v}
-            />
-            <div>
-              <Button>제거</Button>
-            </div>
-          </div>
-        ))} */}
-      </ImagePreview>
+      </div>
     </Form>
   );
 };

@@ -2,8 +2,7 @@ import produce from "immer";
 export const initialState = {
   mainPosts: [],
   imagePaths: [],
-
-  hasMorePosts: true,
+  singlePost: null,
 
   likePostLoading: false,
   likePostDone: false,
@@ -16,6 +15,7 @@ export const initialState = {
   loadPostsLoading: false,
   loadPostsDone: false,
   loadPostsError: null,
+  hasMorePosts: true,
 
   addPostLoading: false,
   addPostDone: false,
@@ -36,7 +36,28 @@ export const initialState = {
   retweetLoading: false,
   retweetDone: false,
   retweetError: null,
+
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
+
+  loadMoreCommentsLoading: false,
+  loadMoreCommentsDone: false,
+  loadMoreCommentsError: null,
+  hasMoreComments: true,
+
+  editPostLoading: false,
+  editPostDone: false,
+  editPostError: null,
 };
+
+export const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
+export const EDIT_POST_SUCCESS = "EDIT_POST_SUCCESS";
+export const EDIT_POST_FAILURE = "EDIT_POST_FAILURE";
+
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
 
 export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
 export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
@@ -54,6 +75,14 @@ export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
 
+export const LOAD_USER_POSTS_REQUEST = "LOAD_USER_POSTS_REQUEST";
+export const LOAD_USER_POSTS_SUCCESS = "LOAD_USER_POSTS_SUCCESS";
+export const LOAD_USER_POSTS_FAILURE = "LOAD_USER_POSTS_FAILURE";
+
+export const LOAD_HASHTAG_POSTS_REQUEST = "LOAD_HASHTAG_POSTS_REQUEST";
+export const LOAD_HASHTAG_POSTS_SUCCESS = "LOAD_HASHTAG_POSTS_SUCCESS";
+export const LOAD_HASHTAG_POSTS_FAILURE = "LOAD_HASHTAG_POSTS_FAILURE";
+
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
@@ -69,6 +98,10 @@ export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 export const RETWEET_REQUEST = "REWTEET_REQUEST";
 export const RETWEET_SUCCESS = "REWTEET_SUCCESS";
 export const RETWEET_FAILURE = "REWTEET_FAILURE";
+
+export const LOAD_MORE_COMMENTS_REQUEST = "LOAD_MORE_COMMENTS_REQUEST";
+export const LOAD_MORE_COMMENTS_SUCCESS = "LOAD_MORE_COMMENTS_SUCCESS";
+export const LOAD_MORE_COMMENTS_FAILURE = "LOAD_MORE_COMMENTS_FAILURE";
 
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
@@ -86,6 +119,55 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case EDIT_POST_REQUEST:
+        draft.editPostLoading = true;
+        draft.editPostDone = false;
+        draft.editPostError = null;
+        break;
+      case EDIT_POST_SUCCESS:
+        const index = draft.mainPosts.findIndex((v) => {
+          return v.id === action.data.id;
+        });
+        draft.mainPosts[index] = action.data;
+        draft.editPostLoading = false;
+        draft.editPostDone = true;
+        break;
+      case EDIT_POST_FAILURE:
+        draft.editPostLoading = false;
+        draft.editPostError = action.error;
+        break;
+
+      case LOAD_MORE_COMMENTS_REQUEST:
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+
+      case LOAD_MORE_COMMENTS_SUCCESS:
+        //    `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`
+        draft.loadPostLoading = false;
+        draft.loadPostDone = true;
+        break;
+      case LOAD_MORE_COMMENTS_FAILURE:
+        draft.loadPostLoading = false;
+        draft.loadPostError = action.error;
+        break;
+
+      case LOAD_POST_REQUEST:
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+      case LOAD_POST_SUCCESS:
+        draft.loadPostLoading = false;
+        draft.loadPostDone = true;
+        draft.singlePost = action.data;
+        break;
+      case LOAD_POST_FAILURE:
+        draft.loadPostLoading = false;
+        draft.loadPostError = action.error;
+        break;
+
       case RETWEET_REQUEST:
         draft.retweetLoading = true;
         draft.retweetDone = false;
@@ -150,17 +232,23 @@ const reducer = (state = initialState, action) => {
         draft.unLikePostError = action.error;
         break;
 
+      case LOAD_USER_POSTS_REQUEST:
+      case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_POSTS_REQUEST:
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
         break;
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_POSTS_SUCCESS:
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.hasMorePosts = action.data.length === 10;
         break;
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_POSTS_FAILURE:
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;
         draft.loadPostsError = action.error;
@@ -186,14 +274,19 @@ const reducer = (state = initialState, action) => {
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS:
-        const post = draft.mainPosts.find(
-          (v) => parseInt(v.id) === parseInt(action.data.PostId)
-        );
+        if (action.data.isSinglePost) {
+          draft.singlePost.Comments.push(action.data);
+        }
         // find함수는 배열 내 요소를 순회한다.
         // 콜백함수의 인자 v에는 배열의 요소가 담겨있고
         // 콜백이 true인 첫 번째 요소를 반환하고 종료됨
         //post에는 v.id가 action.data.postId인 요소(post객체)가 담겨있음.
-        post.Comments.unshift(action.data);
+        else {
+          const post = draft.mainPosts.find(
+            (v) => parseInt(v.id) === parseInt(action.data.PostId)
+          );
+          post.Comments.push(action.data);
+        }
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;

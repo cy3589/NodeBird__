@@ -1,3 +1,4 @@
+const { Sequelize } = require("sequelize");
 const sequelize = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
@@ -9,6 +10,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      // createdAt: {
+      //   type: Sequelize.DATE(6),
+      //   allowNull: false,
+      //   defaultValue: Sequelize.literal("CURRENT_TIMESTAMP(6)"),
+      // },
+      // updatedAt: {
+      //   type: Sequelize.DATE(6),
+      //   allowNull: false,
+      //   defaultValue: Sequelize.literal("CURRENT_TIMESTAMP(6)"),
+      // },
     },
     { charset: "utf8mb4", collate: "utf8mb4_general_ci" }
   );

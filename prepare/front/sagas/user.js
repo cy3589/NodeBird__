@@ -31,6 +31,9 @@ import {
   BLOCK_USER_REQUEST,
   BLOCK_USER_SUCCESS,
   BLOCK_USER_FAILURE,
+  GET_USER_INFO_REQUEST,
+  GET_USER_INFO_SUCCESS,
+  GET_USER_INFO_FAILURE,
 } from "../reducers/user";
 
 function logInAPI(data) {
@@ -44,6 +47,7 @@ function* logIn(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOG_IN_FAILURE,
       error: err.response.data,
@@ -61,6 +65,7 @@ function* logOut() {
       type: LOG_OUT_SUCCESS,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOG_OUT_FAILURE,
       error: err.response.data,
@@ -79,6 +84,7 @@ function* signUp(action) {
       type: SIGN_UP_SUCCESS,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: SIGN_UP_FAILURE,
       error: err.response.data,
@@ -97,6 +103,7 @@ function* Follow(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: FOLLOW_FAILURE,
       error: err.response.data,
@@ -115,6 +122,7 @@ function* UnFollow(action) {
       data: action.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: UNFOLLOW_FAILURE,
       error: err.response.data,
@@ -133,6 +141,7 @@ function* LoadMyInfo(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_MY_INFO_FAILURE,
       error: err.response.data,
@@ -216,6 +225,26 @@ function* blockUser(action) {
   }
 }
 
+function getUserInfoAPI(data) {
+  return axios.get(`/user/info/${data}`);
+}
+function* getUserInfo(action) {
+  // action.data는 userId가 담겨있음
+  try {
+    const result = yield call(getUserInfoAPI, action.data);
+    yield put({
+      type: GET_USER_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_USER_INFO_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
@@ -246,6 +275,9 @@ function* watchLoadFollowers() {
 function* watchBlockUser() {
   yield takeLatest(BLOCK_USER_REQUEST, blockUser);
 }
+function* watchGetUserInfo() {
+  yield takeLatest(GET_USER_INFO_REQUEST, getUserInfo);
+}
 export default function* userSaga() {
   yield all([
     fork(watchLogIn),
@@ -258,5 +290,6 @@ export default function* userSaga() {
     fork(watchLoadFollowings),
     fork(watchLoadFollowers),
     fork(watchBlockUser),
+    fork(watchGetUserInfo),
   ]);
 }

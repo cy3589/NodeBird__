@@ -1,7 +1,7 @@
 import { BlockOutlined, PlusOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 import { useCallback, useState } from "react";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import ImagesZoom from "./ImagseZoom";
 
 const StyleTwoImages = styled.img`
