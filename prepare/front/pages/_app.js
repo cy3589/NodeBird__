@@ -8,7 +8,7 @@ const Nodebird = ({ Component }) => {
     <>
       <Head>
         <meta charSet="utf-8" />
-        <title>NodeBird</title>
+        <title>SNS</title>
       </Head>
       <Component />
     </>

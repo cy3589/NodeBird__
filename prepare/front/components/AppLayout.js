@@ -9,10 +9,6 @@ import LoginForm from "../components/LoginForm";
 import { useSelector } from "react-redux";
 import styled from "@emotion/styled";
 
-const UserProfileCardStyle = styled(Card)`
-  border-radius: 10px;
-  overflow: hidden;
-`;
 // import { useForm } from "react-hook-form";
 const GlobalStyle = () => (
   <Global
@@ -35,15 +31,21 @@ const GlobalStyle = () => (
       }
       .ant-card-head-wrapper {
       }
+      .ant-card-body * {
+      }
     `}
   />
 );
 const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
   const { me } = useSelector((state) => state.user);
   return (
-    <div style={{ backgroundColor: "#B0B0B0" }}>
+    <div style={{ backgroundColor: "#B0B0B0", height: "100%" }}>
       <GlobalStyle />
-      <Menu mode="horizontal" selectedKeys={[Router.pathname]}>
+      <Menu
+        mode="horizontal"
+        selectedKeys={[Router.pathname]}
+        style={{ position: "sticky", top: "0", zIndex: "1" }}
+      >
         <Menu.Item key="node-bird">
           <Link href="/">
             <a>노드버드</a>
@@ -72,8 +74,13 @@ const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
         <Col xs={24} md={12}>
           {anotherUserInfo &&
           parseInt(anotherUserInfo.id, 10) !== parseInt(me?.id) ? (
-            <UserProfileCardStyle
-              style={{ margin: "10px 0 10px 0" }}
+            <Card
+              key={anotherUserInfo.id}
+              style={{
+                margin: "10px 0 10px 0",
+                borderRadius: "10px",
+                overflow: "hidden",
+              }}
               actions={[
                 <div key="twit">
                   게시물
@@ -96,19 +103,10 @@ const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
                 title={anotherUserInfo.nickname}
                 avatar={<Avatar>{anotherUserInfo.nickname[0]}</Avatar>}
               />
-            </UserProfileCardStyle>
+            </Card>
           ) : null}
           {children}
         </Col>
-        {/* <Col xs={24} md={6}>
-          <a
-            href="https://www.naver.com"
-            target="__blank"
-            rel="noreferrer noopener"
-          >
-            Link
-          </a>
-        </Col> */}
       </Row>
     </div>
   );

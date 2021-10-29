@@ -36,10 +36,18 @@ const User = () => {
   return (
     <>
       <AppLayout anotherUserProfile={true} anotherUserInfo={getUserInfo}>
-        {mainPosts.map((post) => {
-          return <PostCard key={post.id} post={post} />;
+        {mainPosts.map((post, index) => {
+          return (
+            <div key={post.id}>
+              {mainPosts.length - 4 === index && (
+                <div
+                  ref={hasMorePosts && !loadPostsLoading ? ref : undefined}
+                />
+              )}
+              <PostCard key={post.id} post={post} />
+            </div>
+          );
         })}
-        <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} />
       </AppLayout>
     </>
   );

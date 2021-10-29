@@ -116,7 +116,7 @@ const PostForm = () => {
           style={{ float: "right", borderRadius: "10px" }}
           htmlType="submit"
         >
-          짹짹
+          게시
         </Button>
       </div>
       <div

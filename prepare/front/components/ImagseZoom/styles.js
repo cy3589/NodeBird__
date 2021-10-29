@@ -61,11 +61,15 @@ export const Header = styled.header`
 `;
 export const SlickWrapper = styled.div`
   height: calc(100% - 44px);
-  background: #090909;
-  $ 
+  backdrop-filter: blur(10px) brightness(50%);
+
+  & * {
+    height: 100%;
+  }
 `;
 
 export const ImgWrapper = styled.div`
+  height: 100%;
   padding: 32px;
   text-align: center;
   & img {

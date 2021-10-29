@@ -9,9 +9,14 @@ const StyleTwoImages = styled.img`
   height: 100%;
   object-fit: contain;
 `;
-const StyleOneImage = styled.img`
+const StyleOneImage = styled.div`
   width: 100%;
-  object-fit: contain;
+  img {
+    width: 100%;
+    object-fit: contain;
+    padding: 10px;
+    border-radius: 20px;
+  }
 `;
 const MoreDiv = styled.div`
   display: flex;
@@ -22,6 +27,9 @@ const MoreDiv = styled.div`
   vertical-align: middle;
   border-bottom: 1px solid #f0f0f0;
   transition: all 0.25s;
+  transform: scale(1);
+  border-radius: 0 10px 10px 0;
+  overflow: hidden;
 
   :hover {
     background-color: rgba(211, 211, 211, 0.8);
@@ -44,6 +52,9 @@ const PostImagesDiv = styled.div`
   > MoreDiv {
     width: 30%;
   }
+  padding: 10px;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 const PostImages = ({ images }) => {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
@@ -57,11 +68,9 @@ const PostImages = ({ images }) => {
     return (
       <div>
         <div onClick={onZoom} style={{ zIndex: 0 }}>
-          <StyleOneImage
-            role="presentation"
-            src={images[0].src}
-            alt={images[0].src}
-          />
+          <StyleOneImage role="presentation">
+            <img src={images[0].src} alt={images[0].src} />
+          </StyleOneImage>
         </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </div>
@@ -70,11 +79,14 @@ const PostImages = ({ images }) => {
   if (images.length === 2) {
     return (
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          placeItems: "center",
-        }}
+        css={css`
+          overflow: hidden;
+          display: grid;
+          grid-gap: 1%;
+          grid-template-columns: 1fr 1fr;
+          place-items: center;
+          padding: 10px;
+        `}
       >
         <div style={{ width: "100%", height: "100%" }} onClick={onZoom}>
           <StyleTwoImages
@@ -100,7 +112,12 @@ const PostImages = ({ images }) => {
   return (
     <>
       <PostImagesDiv>
-        <img role="presentation" src={images[0].src} alt={images[0].src} />
+        <img
+          style={{ borderRadius: "10px 0 0 10px" }}
+          role="presentation"
+          src={images[0].src}
+          alt={images[0].src}
+        />
         {/* 더보기 div: MoreDiv */}
         <MoreDiv role="presentation" onClick={onZoom}>
           <img src={images[1].src} />
