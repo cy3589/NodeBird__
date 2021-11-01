@@ -7,6 +7,7 @@ import styled from "@emotion/styled";
 const UserProfileCardStyle = styled(Card)`
   border-radius: 10px;
   overflow: hidden;
+  border: 1px solid #f0f0f0;
 `;
 
 const anotherUserProfileCardStyle = styled(Card)`
@@ -49,7 +50,11 @@ const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
         <Button
           onClick={onLogout}
           loading={logOutLoading}
-          style={{ borderRadius: "10px" }}
+          style={{
+            borderRadius: "10px",
+            marginTop: "10%",
+            marginRight: "100%",
+          }}
         >
           로그아웃
         </Button>

@@ -56,7 +56,7 @@ function* addPost(action) {
     });
     yield put({
       type: ADD_POST_TO_ME, //user 리듀서 조작부
-      data: result.data.id,
+      data: { id: result.data.id, RetweetId: result.data.RetweetId },
     });
   } catch (err) {
     console.error(err);
@@ -194,6 +194,10 @@ function* retweet(action) {
     yield put({
       type: RETWEET_SUCCESS,
       data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME, //user 리듀서 조작부
+      data: { id: result.data.id, RetweetId: result.data.RetweetId },
     });
   } catch (err) {
     console.error(err);

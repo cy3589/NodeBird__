@@ -33,13 +33,35 @@ const GlobalStyle = () => (
       }
       .ant-card-body * {
       }
+
+      .testTransition-enter {
+        opacity: 0;
+        transform: scale(0.9);
+        max-height: 0;
+      }
+      .testTransition-enter-active {
+        opacity: 1;
+        transform: translateX(0);
+        transition: 1s;
+        max-height: 1500px;
+      }
+      .testTransition-exit {
+        opacity: 1;
+        max-height: 1500px;
+      }
+      .testTransition-exit-active {
+        opacity: 0;
+        max-height: 0;
+        transform: scale(0.9);
+        transition: 1s;
+      }
     `}
   />
 );
 const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
   const { me } = useSelector((state) => state.user);
   return (
-    <div style={{ backgroundColor: "#B0B0B0", height: "100%" }}>
+    <div style={{ backgroundColor: "aliceblue", height: "100%" }}>
       <GlobalStyle />
       <Menu
         mode="horizontal"

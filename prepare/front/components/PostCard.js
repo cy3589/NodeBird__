@@ -7,7 +7,19 @@ import {
   HeartTwoTone,
   CloseCircleFilled,
 } from "@ant-design/icons";
-import { Button, Card, Popover, Avatar, List, Comment, Modal } from "antd";
+import {
+  Button,
+  Card,
+  Popover,
+  Avatar,
+  List,
+  Comment,
+  Modal,
+  Popconfirm,
+  Badge,
+  Space,
+  Input,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
@@ -23,7 +35,10 @@ import {
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 import confirm from "antd/lib/modal/confirm";
-
+import CommentModal from "./CommentModal";
+import { css } from "@emotion/react";
+import { CSSTransition } from "react-transition-group";
+import IndividualComment from "./IndividualComment";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
 const PostCard = ({ post }) => {
@@ -38,9 +53,13 @@ const PostCard = ({ post }) => {
   const [commentFormOpend, setCommentFormOpend] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editTextParent, setEditTextParent] = useState(post.content);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const dispatch = useDispatch();
 
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   const onMoreComments = useCallback(
     (postId, lastCommentId) => () => {
       dispatch({
@@ -52,6 +71,12 @@ const PostCard = ({ post }) => {
   );
 
   const liked = post.Likers.find((v) => v.id === id);
+  // let retweetInvaild = true;
+  // if (post.RetweetId) {
+  //   retweetInvaild = !me?.Posts.find((v) => v.RetweetId === post.RetweetId);
+  // } else {
+  //   retweetInvaild = !me?.Posts.find((v) => v.RetweetId === post.id);
+  // }
 
   const onClickEditMode = useCallback(() => {
     setEditMode(true);
@@ -63,9 +88,10 @@ const PostCard = ({ post }) => {
 
   const onClickEditCancel = useCallback(() => {
     confirm({
+      maskClosable: true,
       title: "취소하시겠어요?",
       content: "지금 취소하면 변경 내역이 삭제됩니다.",
-      okText: "삭제",
+      okText: "수정 취소",
       cancelText: "계속 수정하기",
       onOk() {
         setEditTextParent(post.content);
@@ -94,11 +120,12 @@ const PostCard = ({ post }) => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
+
     dispatch({
       type: RETWEET_REQUEST,
       data: post.id,
     });
-  }, [id]);
+  }, [id, me?.Posts]);
 
   // setState에 콜백함수를 넣으면 전달되는 인자(prev부분)에는 이전의 데이터가 들어있다.
   const onLike = useCallback(() => {
@@ -136,36 +163,93 @@ const PostCard = ({ post }) => {
       },
     });
   }, [id]);
-  const onclickComment = (commentInfo) => (e) => {
-    if (e.target.nodeName === "DIV") {
-      console.log("commentId: ", commentInfo.id);
-      console.log("commentUserId: ", commentInfo.User.id);
-      console.log("comment's PostId:", commentInfo.PostId);
-      console.log("me.id:", me.id);
-      confirm({
-        okText: "수정",
-        cancelText: "삭제",
-        onOk() {
-          return;
-        },
-        onCancel() {
-          return;
-        },
-      });
-    }
-  };
+
+  const onclickComment = useCallback(
+    (commentInfo) => (e) => {
+      console.log(commentInfo);
+      // const mode =
+      //   e.target.nodeName === "DIV" && me
+      //     ? "myComment"
+      //     : me.id === post.User.id
+      //     ? "myPostNotMyComment"
+      //     : "notMyPostNotMyComment";
+      // // setIsModalVisible(true);
+
+      // Modal.info({
+      //   maskClosable: true,
+      //   title: (
+      //     <div>
+      //       {mode === "myComment"
+      //         ? "삭제 또는 수정 "
+      //         : mode === "myPostNotMyComment"
+      //         ? "삭제 또는 신고 "
+      //         : "신고 "}
+      //       하시겠습니까?
+      //     </div>
+      //   ),
+      //   content: (
+      //     <div>
+      //       <div>
+      //         {commentEditMode ? (
+      //           <>
+      //             <Input.TextArea defaultValue={commentInfo.content} />
+      //           </>
+      //         ) : (
+      //           <>{commentInfo.content}</>
+      //         )}
+      //       </div>
+      //       <div
+      //         style={{ position: "absolute", bottom: "14.5%", right: "25%" }}
+      //       >
+      //         <Space>
+      //           {mode === "myComment" ? (
+      //             <>
+      //               <Button type="danger">삭제</Button>
+      //               <Button type="primary">수정</Button>
+      //             </>
+      //           ) : mode === "myPostNotMyComment" ? (
+      //             <>
+      //               <>
+      //                 <Button type="dagner">삭제</Button>
+      //                 <Button type="default">신고</Button>
+      //               </>
+      //             </>
+      //           ) : (
+      //             <>
+      //               <Button type="default">신고</Button>
+      //             </>
+      //           )}
+      //         </Space>
+      //       </div>
+      //     </div>
+      //   ),
+      //   okText: "취소",
+      //   okType: "danger",
+      //   cancelText: "계속 수정하기",
+      //   okCancel: false,
+
+      //   onOk() {
+      //     return;
+      //   },
+      //   onCancel() {
+      //     return; //editMode 유지
+      //   },
+      // });
+    },
+    [isModalVisible, me]
+  );
 
   return (
     <>
-      <div>
+      <div style={{ marginBottom: "20px" }}>
         <Card
           size="default"
           cover={<PostImages images={post.Images} />}
           style={{
             width: "100%",
-            backgroundColor: "#f0f0f0",
+            backgroundColor: "rgba(255,255,255)",
             borderRadius: "10px",
-            border: "1px solid #707070",
+            border: "1px solid #f0f0f0",
             overflow: "hidden",
             paddingTop: "6px",
             padding: "1px 1px 1px 1px",
@@ -173,16 +257,21 @@ const PostCard = ({ post }) => {
           actions={
             editMode
               ? [
-                  <div
+                  <Space
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",
-                      gridColumnGap: "2%",
-                      paddingLeft: "2%",
-                      paddingRight: "2%",
+                      float: "right",
+                      paddingRight: "5%",
                     }}
                   >
-                    <Button block type="primary" ghost onClick={onChangePost}>
+                    <Button
+                      block
+                      type="primary"
+                      ghost
+                      onClick={onChangePost}
+                      style={{ width: "fit-content" }}
+                    >
                       저장
                     </Button>
                     <Button
@@ -191,41 +280,102 @@ const PostCard = ({ post }) => {
                       ghost
                       icon={<CloseCircleFilled />}
                       onClick={onClickEditCancel}
-                    />
-                  </div>,
+                    ></Button>
+                  </Space>,
                 ]
               : [
-                  <RetweetOutlined key="retweet" onClick={onRetweet} />,
+                  // retweetInvaild
+                  <RetweetOutlined
+                    css={css`
+                      color: #a0a0a0;
+                      transform: scale(1.5);
+                      :hover {
+                        transform: scale(1.8);
+                      }
+                    `}
+                    style={{ transition: "0.3s" }}
+                    key="retweet"
+                    onClick={onRetweet}
+                  />,
                   liked ? (
-                    <HeartTwoTone
-                      key="heart"
-                      twoToneColor="#eb2f96"
-                      onClick={onUnLike}
-                    />
+                    <div onClick={onUnLike}>
+                      <Badge size="small" count={post.Likers.length}>
+                        <HeartTwoTone
+                          css={css`
+                            transform: scale(1.5);
+                            :hover {
+                              transform: scale(1.8);
+                            }
+                          `}
+                          style={{ transition: "0.3s" }}
+                          key="heart"
+                          twoToneColor="#eb2f96"
+                        />
+                      </Badge>
+                    </div>
                   ) : (
-                    <HeartOutlined key="heart" onClick={onLike} />
+                    <div onClick={onLike}>
+                      <Badge size="small" count={post.Likers.length}>
+                        <HeartOutlined
+                          css={css`
+                            color: #a0a0a0;
+                            transform: scale(1.5);
+                            :hover {
+                              transform: scale(1.8);
+                            }
+                          `}
+                          style={{ transition: "0.3s" }}
+                          key="heart"
+                        />
+                      </Badge>
+                    </div>
                   ),
-                  <MessageOutlined key="comment" onClick={onToggleComment} />,
+                  <div onClick={onToggleComment}>
+                    <Badge size="small" count={post.Comments.length}>
+                      <MessageOutlined
+                        css={css`
+                          color: #a0a0a0;
+                          transform: scale(1.5);
+                          :hover {
+                            transform: scale(1.8);
+                          }
+                        `}
+                        style={{ transition: "0.3s" }}
+                        key="comment"
+                      />
+                    </Badge>
+                  </div>,
                   <Popover
+                    overlayInnerStyle={{ borderRadius: "10px" }}
                     key="more"
                     content={
                       <Button.Group>
-                        {id && post.User.id === id ? (
-                          <>
-                            {!post.RetweetId && (
-                              <Button onClick={onClickEditMode}>수정</Button>
-                            )}
-                            <Button
-                              type="danger"
-                              onClick={onRemovePost}
-                              loading={removePostLoading}
-                            >
-                              삭제
+                        <Space>
+                          {id && post.User.id === id ? (
+                            <>
+                              {!post.RetweetId && (
+                                <Button
+                                  style={{ borderRadius: "10px" }}
+                                  onClick={onClickEditMode}
+                                >
+                                  수정
+                                </Button>
+                              )}
+                              <Button
+                                style={{ borderRadius: "10px" }}
+                                type="danger"
+                                onClick={onRemovePost}
+                                loading={removePostLoading}
+                              >
+                                삭제
+                              </Button>
+                            </>
+                          ) : (
+                            <Button style={{ borderRadius: "10px" }}>
+                              신고
                             </Button>
-                          </>
-                        ) : (
-                          <Button>신고</Button>
-                        )}
+                          )}
+                        </Space>
                       </Button.Group>
                     }
                   >
@@ -238,8 +388,6 @@ const PostCard = ({ post }) => {
               <div
                 style={{
                   fontSize: "12px",
-                  borderBottom: "1px solid #707070",
-                  width: "95%",
                 }}
               >
                 {`${post.User.nickname}님이 리트윗 했습니다`}
@@ -322,72 +470,24 @@ const PostCard = ({ post }) => {
             </>
           )}
         </Card>
-        {commentFormOpend ? (
+        <CSSTransition
+          in={commentFormOpend}
+          timeout={1000}
+          classNames="testTransition"
+          unmountOnExit
+        >
           <div>
             <List
               header={
-                <div key={post.id}>
-                  {post.commentsCount >= post.Comments.length
-                    ? `${post.commentsCount}개의 댓글`
-                    : `${post.Comments.length}개의 댓글`}
-                  <p />
-                  {post.commentsCount > post.Comments.length && (
-                    <Button
-                      onClick={onMoreComments(post.id, post.Comments[0].id)}
-                    >
-                      댓글 더보기
-                    </Button>
-                  )}
-                </div>
+                <div key={post.id}>{`${post.Comments.length}개의 댓글`}</div>
               }
               itemLayout="horizontal"
               dataSource={post.Comments}
-              renderItem={(item) => (
-                <>
-                  <li>
-                    <span onClick={onclickComment(item)}>
-                      <Comment
-                        style={{
-                          border: "1px solid black",
-                          borderRadius: "10px",
-                          paddingLeft: "10px",
-                          paddingRight: "10%",
-                          margin: "10px 0 10px 0",
-                          backgroundColor: "#f0f0f0",
-                        }}
-                        key={item.id}
-                        author={
-                          <a
-                            href={`/user/${item.UserId}`}
-                            css={css`
-                              color: black;
-                              :hover {
-                                color: aquablue;
-                              }
-                            `}
-                          >
-                            {item.User.nickname}
-                          </a>
-                        }
-                        avatar={
-                          <a href={`/user/${item.UserId}`}>
-                            <Avatar>{item.User.nickname[0]}</Avatar>
-                          </a>
-                        }
-                        content={item.content}
-                      />
-                    </span>
-                  </li>
-                </>
-              )}
+              renderItem={(item) => <IndividualComment item={item} me={me} />}
             />
             <CommentForm post={post} commentFormOpend={commentFormOpend} />
           </div>
-        ) : (
-          <>
-            <CommentForm post={post} commentFormOpend={commentFormOpend} />
-          </>
-        )}
+        </CSSTransition>
       </div>
     </>
   );

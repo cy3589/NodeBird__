@@ -228,7 +228,10 @@ const reducer = (state = initialState, action) =>
         break;
 
       case ADD_POST_TO_ME:
-        draft.me.Posts.unshift({ id: action.data });
+        draft.me.Posts.push({
+          id: action.data.id,
+          RetweetId: action.data.RetweetId,
+        });
         break;
 
       case REMOVE_POST_OF_ME:
