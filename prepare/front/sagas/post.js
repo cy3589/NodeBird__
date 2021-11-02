@@ -42,6 +42,9 @@ import {
   LOAD_USER_POSTS_FAILURE,
   LOAD_HASHTAG_POSTS_SUCCESS,
   LOAD_HASHTAG_POSTS_FAILURE,
+  REMOVE_COMMENT_REQUEST,
+  REMOVE_COMMENT_SUCCESS,
+  REMOVE_COMMENT_FAILURE,
 } from "../reducers/post";
 
 function addPostAPI(data) {
@@ -309,6 +312,27 @@ function* loadHashtagPosts(action) {
   }
 }
 
+function removeCommentAPI(data) {
+  return axios.delete(
+    `/post/${data.postId}/${data.commentUserId}/${data.commentId}`
+  );
+}
+function* removeComment(action) {
+  try {
+    const result = yield call(removeCommentAPI, action.data);
+    //action.data에는 postId, commentId가 담겨있다.
+    yield put({
+      type: REMOVE_COMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REMOVE_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -348,6 +372,9 @@ function* watchLoadUserPosts() {
 function* watchLoadHashtagPosts() {
   yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
 }
+function* watchRemoveComment() {
+  yield takeLatest(REMOVE_COMMENT_REQUEST, removeComment);
+}
 
 export default function* postSaga() {
   yield all([
@@ -364,5 +391,6 @@ export default function* postSaga() {
     fork(watchEditPost),
     fork(watchLoadUserPosts),
     fork(watchLoadHashtagPosts),
+    fork(watchRemoveComment),
   ]);
 }

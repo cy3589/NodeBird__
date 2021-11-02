@@ -42,7 +42,7 @@ const GlobalStyle = () => (
       .testTransition-enter-active {
         opacity: 1;
         transform: translateX(0);
-        transition: 1s;
+        transition: 0.7s;
         max-height: 1500px;
       }
       .testTransition-exit {
@@ -53,7 +53,7 @@ const GlobalStyle = () => (
         opacity: 0;
         max-height: 0;
         transform: scale(0.9);
-        transition: 1s;
+        transition: 0.7s;
       }
     `}
   />
@@ -70,14 +70,16 @@ const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
       >
         <Menu.Item key="node-bird">
           <Link href="/">
-            <a>노드버드</a>
+            <a>HOME</a>
           </Link>
         </Menu.Item>
-        <Menu.Item key="profile">
-          <Link href="/profile">
-            <a>프로필</a>
-          </Link>
-        </Menu.Item>
+        {me && (
+          <Menu.Item key="profile">
+            <Link href="/profile">
+              <a>내 프로필</a>
+            </Link>
+          </Menu.Item>
+        )}
         <Menu.Item key="search-button">
           <Input.Search style={{ verticalAlign: "middle" }} enterButton />
         </Menu.Item>

@@ -34,15 +34,15 @@ import {
   EDIT_POST_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
-import confirm from "antd/lib/modal/confirm";
 import CommentModal from "./CommentModal";
 import { css } from "@emotion/react";
 import { CSSTransition } from "react-transition-group";
 import IndividualComment from "./IndividualComment";
+import { EDIT_MODE_WHAT } from "../reducers/user";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
 const PostCard = ({ post }) => {
-  const { me } = useSelector((state) => state.user);
+  const { me, editModeWhat } = useSelector((state) => state.user);
   const {
     removePostLoading,
     loadMoreCommentsLoading,
@@ -71,23 +71,20 @@ const PostCard = ({ post }) => {
   );
 
   const liked = post.Likers.find((v) => v.id === id);
-  // let retweetInvaild = true;
-  // if (post.RetweetId) {
-  //   retweetInvaild = !me?.Posts.find((v) => v.RetweetId === post.RetweetId);
-  // } else {
-  //   retweetInvaild = !me?.Posts.find((v) => v.RetweetId === post.id);
-  // }
-
   const onClickEditMode = useCallback(() => {
+    console.log("onClickEditMode Clicked!!");
+    dispatch({ type: EDIT_MODE_WHAT, data: { edit: "Post", id: post.id } });
     setEditMode(true);
-  }, [editMode]);
+  }, [editModeWhat, editMode]);
 
   useEffect(() => {
+    // if (isEditMode) setEditMode(false);
     setEditMode(false);
   }, [editPostDone]);
 
   const onClickEditCancel = useCallback(() => {
-    confirm({
+    console.log("onClickEditCancel");
+    Modal.confirm({
       maskClosable: true,
       title: "취소하시겠어요?",
       content: "지금 취소하면 변경 내역이 삭제됩니다.",
@@ -96,13 +93,15 @@ const PostCard = ({ post }) => {
       onOk() {
         setEditTextParent(post.content);
         setEditMode(false); //editMode가 취소됨
+        dispatch({ type: EDIT_MODE_WHAT, data: null });
         return;
       },
       onCancel() {
         return; //editMode 유지
       },
     });
-  }, [editMode]);
+    return;
+  }, [editMode, editModeWhat]);
 
   const onChangePost = useCallback(() => {
     if (!editTextParent || !editTextParent.trim()) {
@@ -148,7 +147,8 @@ const PostCard = ({ post }) => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    confirm({
+    Modal.confirm({
+      maskClosable: true,
       title: "삭제하시겠어요?",
       okText: "삭제",
       cancelText: "취소",
@@ -163,82 +163,6 @@ const PostCard = ({ post }) => {
       },
     });
   }, [id]);
-
-  const onclickComment = useCallback(
-    (commentInfo) => (e) => {
-      console.log(commentInfo);
-      // const mode =
-      //   e.target.nodeName === "DIV" && me
-      //     ? "myComment"
-      //     : me.id === post.User.id
-      //     ? "myPostNotMyComment"
-      //     : "notMyPostNotMyComment";
-      // // setIsModalVisible(true);
-
-      // Modal.info({
-      //   maskClosable: true,
-      //   title: (
-      //     <div>
-      //       {mode === "myComment"
-      //         ? "삭제 또는 수정 "
-      //         : mode === "myPostNotMyComment"
-      //         ? "삭제 또는 신고 "
-      //         : "신고 "}
-      //       하시겠습니까?
-      //     </div>
-      //   ),
-      //   content: (
-      //     <div>
-      //       <div>
-      //         {commentEditMode ? (
-      //           <>
-      //             <Input.TextArea defaultValue={commentInfo.content} />
-      //           </>
-      //         ) : (
-      //           <>{commentInfo.content}</>
-      //         )}
-      //       </div>
-      //       <div
-      //         style={{ position: "absolute", bottom: "14.5%", right: "25%" }}
-      //       >
-      //         <Space>
-      //           {mode === "myComment" ? (
-      //             <>
-      //               <Button type="danger">삭제</Button>
-      //               <Button type="primary">수정</Button>
-      //             </>
-      //           ) : mode === "myPostNotMyComment" ? (
-      //             <>
-      //               <>
-      //                 <Button type="dagner">삭제</Button>
-      //                 <Button type="default">신고</Button>
-      //               </>
-      //             </>
-      //           ) : (
-      //             <>
-      //               <Button type="default">신고</Button>
-      //             </>
-      //           )}
-      //         </Space>
-      //       </div>
-      //     </div>
-      //   ),
-      //   okText: "취소",
-      //   okType: "danger",
-      //   cancelText: "계속 수정하기",
-      //   okCancel: false,
-
-      //   onOk() {
-      //     return;
-      //   },
-      //   onCancel() {
-      //     return; //editMode 유지
-      //   },
-      // });
-    },
-    [isModalVisible, me]
-  );
-
   return (
     <>
       <div style={{ marginBottom: "20px" }}>
@@ -255,7 +179,9 @@ const PostCard = ({ post }) => {
             padding: "1px 1px 1px 1px",
           }}
           actions={
-            editMode
+            editMode &&
+            editModeWhat?.edit === "Post" &&
+            editModeWhat?.id === post.id
               ? [
                   <Space
                     style={{
@@ -427,8 +353,9 @@ const PostCard = ({ post }) => {
                 description={
                   <PostCardContent
                     key={post.id}
-                    editMode={editMode}
                     postData={post.Retweet.content}
+                    postId={post.id}
+                    postContent={post.Retweet.content}
                   />
                 }
               />
@@ -463,7 +390,9 @@ const PostCard = ({ post }) => {
                   <PostCardContent
                     editMode={editMode}
                     postData={editTextParent}
+                    postId={post.id}
                     setPostData={(v) => setEditTextParent(v)}
+                    postContent={post.content}
                   />
                 }
               />
@@ -472,7 +401,7 @@ const PostCard = ({ post }) => {
         </Card>
         <CSSTransition
           in={commentFormOpend}
-          timeout={1000}
+          timeout={700}
           classNames="testTransition"
           unmountOnExit
         >
@@ -483,7 +412,9 @@ const PostCard = ({ post }) => {
               }
               itemLayout="horizontal"
               dataSource={post.Comments}
-              renderItem={(item) => <IndividualComment item={item} me={me} />}
+              renderItem={(item) => (
+                <IndividualComment item={item} me={me} post={post} />
+              )}
             />
             <CommentForm post={post} commentFormOpend={commentFormOpend} />
           </div>

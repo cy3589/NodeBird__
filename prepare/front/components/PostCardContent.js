@@ -3,7 +3,15 @@ import Link from "next/link";
 import useInput from "../hooks/useInput";
 import { useCallback } from "react";
 import { Input } from "antd";
-const PostCardContent = ({ postData, editMode, setPostData }) => {
+import { useSelector } from "react-redux";
+const PostCardContent = ({
+  postData,
+  editMode,
+  setPostData,
+  postId,
+  postContent,
+}) => {
+  const { editModeWhat } = useSelector((state) => state.user);
   const onChangeEditText = useCallback(
     (e) => {
       setPostData(e.target.value);
@@ -12,7 +20,9 @@ const PostCardContent = ({ postData, editMode, setPostData }) => {
   );
   return (
     <>
-      {editMode ? (
+      {editMode &&
+      editModeWhat?.edit === "Post" &&
+      editModeWhat?.id === postId ? (
         <>
           <Input.TextArea
             autoSize={{ minRows: 4, maxRows: 10 }}
@@ -23,7 +33,7 @@ const PostCardContent = ({ postData, editMode, setPostData }) => {
         </>
       ) : (
         <>
-          {postData.split(/(#[^\s#]+)/g).map((v, i) => {
+          {postContent.split(/(#[^\s#]+)/g).map((v, i) => {
             if (v.match(/(#[^\s#]+)/)) {
               return (
                 <Link key={i} href={`/hashtag/${v.slice(1)}`}>

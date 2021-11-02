@@ -49,6 +49,10 @@ export const initialState = {
   editPostLoading: false,
   editPostDone: false,
   editPostError: null,
+
+  removeCommentLoading: false,
+  removeCommentDone: false,
+  removeCommentError: null,
 };
 
 export const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
@@ -106,6 +110,10 @@ export const LOAD_MORE_COMMENTS_FAILURE = "LOAD_MORE_COMMENTS_FAILURE";
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
+export const REMOVE_COMMENT_REQUEST = "REMOVE_COMMENT_REQUEST";
+export const REMOVE_COMMENT_SUCCESS = "REMOVE_COMMENT_SUCCESS";
+export const REMOVE_COMMENT_FAILURE = "REMOVE_COMMENT_FAILURE";
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data, // TEXT정보만 담겨있음, ADD_POST_REQUEST 액션 실행->SAGA에서 data를 가지고 실행
@@ -119,6 +127,29 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case REMOVE_COMMENT_REQUEST:
+        draft.removeCommentLoading = true;
+        draft.removeCommentDone = false;
+        draft.removeCommentError = null;
+        break;
+      case REMOVE_COMMENT_SUCCESS:
+        const postIndex = draft.mainPosts.findIndex((v) => {
+          return v.id === action.data.PostId;
+        });
+
+        draft.mainPosts[postIndex].Comments = draft.mainPosts[
+          postIndex
+        ].Comments.filter((v) => v.id !== action.data.CommentId);
+        // const comments = draft.mainPosts[postIndex].Comments;
+        // comments = comments.filter((v) => v.id !== action.data.CommentId);
+        draft.removeCommentLoading = false;
+        draft.removeCommentDone = true;
+        break;
+      case REMOVE_COMMENT_FAILURE:
+        draft.removeCommentLoading = false;
+        draft.removeCommentError = action.error;
+        break;
+
       case EDIT_POST_REQUEST:
         draft.editPostLoading = true;
         draft.editPostDone = false;

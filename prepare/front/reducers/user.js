@@ -45,6 +45,8 @@ export const initialState = {
   getUserInfoDone: false,
   getUserInfoError: null,
 
+  editModeWhat: null,
+
   getUserInfo: null,
   me: null,
   sighUpData: {},
@@ -97,6 +99,8 @@ export const GET_USER_INFO_FAILURE = "GET_USER_INFO_FAILURE";
 
 export const SIGN_UP_DONE = "SIGN_UP_DONE";
 
+export const EDIT_MODE_WHAT = "EDIT_MODE_WHAT";
+
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
 
 export const loginRequestAction = (data) => {
@@ -115,6 +119,10 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case EDIT_MODE_WHAT:
+        draft.editModeWhat = action.data;
+        break;
+
       case GET_USER_INFO_REQUEST:
         draft.getUserInfoLoading = true;
         draft.getUserInfoDone = false;
