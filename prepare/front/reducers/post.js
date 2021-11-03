@@ -53,6 +53,10 @@ export const initialState = {
   removeCommentLoading: false,
   removeCommentDone: false,
   removeCommentError: null,
+
+  editCommentLoading: false,
+  editCommentDone: false,
+  editCommentError: null,
 };
 
 export const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
@@ -114,6 +118,10 @@ export const REMOVE_COMMENT_REQUEST = "REMOVE_COMMENT_REQUEST";
 export const REMOVE_COMMENT_SUCCESS = "REMOVE_COMMENT_SUCCESS";
 export const REMOVE_COMMENT_FAILURE = "REMOVE_COMMENT_FAILURE";
 
+export const EDIT_COMMENT_REQUEST = "EDIT_COMMENT_REQUEST";
+export const EDIT_COMMENT_SUCCESS = "EDIT_COMMENT_SUCCESS";
+export const EDIT_COMMENT_FAILURE = "EDIT_COMMENT_FAILURE";
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data, // TEXT정보만 담겨있음, ADD_POST_REQUEST 액션 실행->SAGA에서 data를 가지고 실행
@@ -127,6 +135,27 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case EDIT_COMMENT_REQUEST:
+        draft.editCommentLoading = true;
+        draft.editCommentDone = false;
+        draft.editCommentError = null;
+        break;
+      case EDIT_COMMENT_SUCCESS:
+        const postIndex_ = draft.mainPosts.findIndex((v) => {
+          return v.id === action.data.PostId;
+        });
+        const targetComment = draft.mainPosts[postIndex_].Comments.find(
+          (v) => v.id === action.data.CommentId
+        );
+        targetComment.content = action.data.comment;
+        draft.editCommentLoading = false;
+        draft.editCommentDone = true;
+        break;
+      case EDIT_COMMENT_FAILURE:
+        draft.editCommentLoading = false;
+        draft.editCommentError = action.error;
+        break;
+
       case REMOVE_COMMENT_REQUEST:
         draft.removeCommentLoading = true;
         draft.removeCommentDone = false;
@@ -140,8 +169,6 @@ const reducer = (state = initialState, action) => {
         draft.mainPosts[postIndex].Comments = draft.mainPosts[
           postIndex
         ].Comments.filter((v) => v.id !== action.data.CommentId);
-        // const comments = draft.mainPosts[postIndex].Comments;
-        // comments = comments.filter((v) => v.id !== action.data.CommentId);
         draft.removeCommentLoading = false;
         draft.removeCommentDone = true;
         break;

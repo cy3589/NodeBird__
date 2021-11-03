@@ -45,6 +45,9 @@ import {
   REMOVE_COMMENT_REQUEST,
   REMOVE_COMMENT_SUCCESS,
   REMOVE_COMMENT_FAILURE,
+  EDIT_COMMENT_REQUEST,
+  EDIT_COMMENT_SUCCESS,
+  EDIT_COMMENT_FAILURE,
 } from "../reducers/post";
 
 function addPostAPI(data) {
@@ -273,15 +276,6 @@ function loadUserPostsAPI(data, lastId) {
 function* loadUserPosts(action) {
   try {
     const result = yield call(loadUserPostsAPI, action.data, action.lastId);
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
-    console.log(result.data.length);
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
-    console.log("resultresultresultresultresultresultresult");
     yield put({
       type: LOAD_USER_POSTS_SUCCESS,
       data: result.data,
@@ -327,7 +321,28 @@ function* removeComment(action) {
     });
   } catch (err) {
     yield put({
-      type: REMOVE_POST_FAILURE,
+      type: REMOVE_COMMENT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function editCommentAPI(data) {
+  return axios.patch(
+    `/post/${data.postId}/${data.commentUserId}/${data.commentId}`,
+    data
+  );
+}
+function* editComment(action) {
+  try {
+    const result = yield call(editCommentAPI, action.data);
+    yield put({
+      type: EDIT_COMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: EDIT_COMMENT_FAILURE,
       error: err.response.data,
     });
   }
@@ -375,6 +390,9 @@ function* watchLoadHashtagPosts() {
 function* watchRemoveComment() {
   yield takeLatest(REMOVE_COMMENT_REQUEST, removeComment);
 }
+function* watchEditComment() {
+  yield takeLatest(EDIT_COMMENT_REQUEST, editComment);
+}
 
 export default function* postSaga() {
   yield all([
@@ -392,5 +410,6 @@ export default function* postSaga() {
     fork(watchLoadUserPosts),
     fork(watchLoadHashtagPosts),
     fork(watchRemoveComment),
+    fork(watchEditComment),
   ]);
 }

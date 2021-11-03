@@ -1,15 +1,18 @@
 import { CloseCircleFilled } from "@ant-design/icons";
 import { Avatar, Button, Comment, Input, Modal, Space } from "antd";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { EDIT_MODE_WHAT } from "../reducers/user";
-import { REMOVE_COMMENT_REQUEST } from "../reducers/post";
+import { EDIT_COMMENT_REQUEST, REMOVE_COMMENT_REQUEST } from "../reducers/post";
 
 const IndividualComment = ({ item, me, post }) => {
   const [commentEditMode, setCommentEditMode] = useState(false);
   const [comment, onChangeComment, setComment] = useInput(item.content);
   const { editModeWhat } = useSelector((state) => state.user);
+  const { editCommentLoading, editCommentDone } = useSelector(
+    (state) => state.post
+  );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [mode, setMode] = useState(null);
 
@@ -17,6 +20,26 @@ const IndividualComment = ({ item, me, post }) => {
   const myComment = "myComment";
   const myPostNotMyComment = "myPostNotMyComment";
   const notMyPostNotMyComment = "notMyPostNotMyComment";
+
+  useEffect(() => {
+    // if (isEditMode) setEditMode(false);
+    setCommentEditMode(false);
+  }, [editCommentDone]);
+
+  const onEditComment = useCallback(() => {
+    if (!comment || !comment.trim()) {
+      return alert("댓글을 작성하세요.");
+    }
+    dispatch({
+      type: EDIT_COMMENT_REQUEST,
+      data: {
+        postId: post.id,
+        commentId: item.id,
+        commentUserId: item.UserId,
+        comment: comment,
+      },
+    });
+  }, [comment]);
 
   const onRemoveComment = useCallback(() => {
     if (!me?.id) {
@@ -166,6 +189,8 @@ const IndividualComment = ({ item, me, post }) => {
                         type="primary"
                         ghost
                         style={{ width: "fit-content" }}
+                        onClick={onEditComment}
+                        loading={editCommentLoading}
                       >
                         저장
                       </Button>
