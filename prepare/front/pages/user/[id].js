@@ -16,6 +16,7 @@ import PostCard from "../../components/PostCard";
 import wrapper from "../../store/configureStore";
 import AppLayout from "../../components/AppLayout";
 import UserProfile from "../../components/UserProfile";
+import Error from "next/error";
 
 const User = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,12 @@ const User = () => {
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state) => state.post
   );
-  const { getUserInfo, me } = useSelector((state) => state.user);
+  const { getUserInfo, me, getUserInfoError } = useSelector(
+    (state) => state.user
+  );
+  if (getUserInfoError) {
+    return <Error statusCode={404} title="존재하지 않는 사용자입니다" />;
+  }
   useEffect(() => {
     if (inView && hasMorePosts && !loadPostsLoading) {
       const lastId = mainPosts[mainPosts.length - 1]?.id;

@@ -64,7 +64,7 @@ const PostImages = ({ images }) => {
   const onZoom = useCallback(() => {
     setShowImagesZoom(true);
   }, []);
-  if (images.length === 1) {
+  if (images?.length === 1) {
     return (
       <div>
         <div onClick={onZoom} style={{ zIndex: 0 }}>
@@ -76,7 +76,7 @@ const PostImages = ({ images }) => {
       </div>
     );
   }
-  if (images.length === 2) {
+  if (images?.length === 2) {
     return (
       <div
         css={css`
@@ -106,7 +106,7 @@ const PostImages = ({ images }) => {
       </div>
     );
   }
-  if (images.length === 0) {
+  if (images?.length === 0) {
     return <></>;
   }
   return (
@@ -124,7 +124,7 @@ const PostImages = ({ images }) => {
           <div>
             <PlusOutlined />
             <br />
-            {images.length - 1}개의 사진 더보기
+            {images?.length - 1}개의 사진 더보기
           </div>
         </MoreDiv>
       </PostImagesDiv>

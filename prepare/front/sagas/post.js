@@ -225,6 +225,7 @@ function* loadPost(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
       error: err.response.data,
@@ -245,6 +246,7 @@ function* loadMoreComments(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_MORE_COMMENTS_FAILURE,
       error: err.response.data,
@@ -263,6 +265,7 @@ function* editPost(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: EDIT_POST_FAILURE,
       error: err.response.data,
@@ -281,6 +284,7 @@ function* loadUserPosts(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_USER_POSTS_FAILURE,
       error: err.response.data,
@@ -289,16 +293,19 @@ function* loadUserPosts(action) {
 }
 
 function loadHashtagPostsAPI(data, lastId) {
-  return axios.get(`/hashtag/${data}?lastId=${lastId || 0}`);
+  return axios.get(
+    `/hashtag/${encodeURIComponent(data)}?lastId=${lastId || 0}`
+  );
 }
 function* loadHashtagPosts(action) {
   try {
-    const result = yield call(loadHashtagPostsAPI, action.data, lastId);
+    const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
     yield put({
       type: LOAD_HASHTAG_POSTS_SUCCESS,
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_HASHTAG_POSTS_FAILURE,
       error: err.response.data,
@@ -317,9 +324,10 @@ function* removeComment(action) {
     //action.data에는 postId, commentId가 담겨있다.
     yield put({
       type: REMOVE_COMMENT_SUCCESS,
-      data: result.data,
+      data: { ...result.data, isSinglePost: action.data?.isSinglePost },
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: REMOVE_COMMENT_FAILURE,
       error: err.response.data,
@@ -341,6 +349,7 @@ function* editComment(action) {
       data: result.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: EDIT_COMMENT_FAILURE,
       error: err.response.data,

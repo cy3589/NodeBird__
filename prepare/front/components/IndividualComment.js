@@ -64,6 +64,7 @@ const IndividualComment = ({ item, me, post }) => {
             commentUserId: item.UserId,
             commentId: item.id,
             postId: post.id,
+            isSinglePost: post.isSinglePost,
           },
         });
         setIsModalVisible(false);
@@ -72,7 +73,7 @@ const IndividualComment = ({ item, me, post }) => {
         return;
       },
     });
-  }, [me, mode, item]);
+  }, [me, mode, item, post.commentsCount]);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -118,102 +119,105 @@ const IndividualComment = ({ item, me, post }) => {
 
   return (
     <>
+      {console.log(post.isSinglePost)}
       <li>
         <div onClick={onclickComment}>
-          <Comment
-            style={{
-              border: "1px solid #f0f0f0",
-              borderRadius: "10px",
-              paddingLeft: "10px",
-              paddingRight: "7%",
-              margin: "10px 0 10px 0",
-              backgroundColor: "rgba(255,255,255)",
-              width:
-                !(
-                  commentEditMode &&
-                  editModeWhat?.edit === "Comment" &&
-                  editModeWhat?.id === item.id
-                ) && "fit-content",
-              transition: "width 1s",
-            }}
-            key={item.id}
-            author={
-              <a
-                href={`/user/${item.UserId}`}
-                css={css`
-                  color: black;
-                  :hover {
-                    color: #1e5878;
-                  }
-                `}
-              >
-                {item.User.nickname}
-              </a>
-            }
-            avatar={
-              <a href={`/user/${item.UserId}`}>
-                <Avatar
+          <span>
+            <Comment
+              style={{
+                border: "1px solid #f0f0f0",
+                borderRadius: "10px",
+                paddingLeft: "10px",
+                paddingRight: "7%",
+                margin: "10px 0 10px 0",
+                backgroundColor: "rgba(255,255,255)",
+                width:
+                  !(
+                    commentEditMode &&
+                    editModeWhat?.edit === "Comment" &&
+                    editModeWhat?.id === item.id
+                  ) && "fit-content",
+                transition: "width 1s",
+              }}
+              key={item.id}
+              author={
+                <a
+                  href={`/user/${item.UserId}`}
                   css={css`
-                    transition: 0.2s;
+                    color: black;
                     :hover {
-                      transform: scale(1.2);
+                      color: #1e5878;
                     }
                   `}
                 >
-                  {item.User.nickname[0]}
-                </Avatar>
-              </a>
-            }
-            content={
-              <>
-                {commentEditMode &&
-                editModeWhat?.edit === "Comment" &&
-                editModeWhat?.id === item.id ? (
-                  <div>
-                    <Input.TextArea
-                      style={{
-                        borderRadius: "10px",
-                        position: "relative",
-                      }}
-                      autoSize={{ minRows: 2, maxRows: 10 }}
-                      value={comment}
-                      onChange={onChangeComment}
-                    />
-                    <Space
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        float: "right",
-                        paddingTop: "13px",
-                      }}
-                    >
-                      <Button
-                        block
-                        type="primary"
-                        ghost
-                        style={{ width: "fit-content" }}
-                        onClick={onEditComment}
-                        loading={editCommentLoading}
+                  {item.User.nickname}
+                </a>
+              }
+              avatar={
+                <a href={`/user/${item.UserId}`}>
+                  <Avatar
+                    css={css`
+                      transition: 0.2s;
+                      :hover {
+                        transform: scale(1.2);
+                      }
+                    `}
+                  >
+                    {item.User.nickname[0]}
+                  </Avatar>
+                </a>
+              }
+              content={
+                <>
+                  {commentEditMode &&
+                  editModeWhat?.edit === "Comment" &&
+                  editModeWhat?.id === item.id ? (
+                    <div>
+                      <Input.TextArea
+                        style={{
+                          borderRadius: "10px",
+                          position: "relative",
+                        }}
+                        autoSize={{ minRows: 2, maxRows: 10 }}
+                        value={comment}
+                        onChange={onChangeComment}
+                      />
+                      <Space
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          float: "right",
+                          paddingTop: "13px",
+                        }}
                       >
-                        저장
-                      </Button>
-                      <Button
-                        block
-                        type="danger"
-                        ghost
-                        icon={<CloseCircleFilled />}
-                        onClick={onCancelEditComment}
-                      ></Button>
-                    </Space>
-                  </div>
-                ) : (
-                  <>
-                    <div>{item.content}</div>
-                  </>
-                )}
-              </>
-            }
-          />
+                        <Button
+                          block
+                          type="primary"
+                          ghost
+                          style={{ width: "fit-content" }}
+                          onClick={onEditComment}
+                          loading={editCommentLoading}
+                        >
+                          저장
+                        </Button>
+                        <Button
+                          block
+                          type="danger"
+                          ghost
+                          icon={<CloseCircleFilled />}
+                          onClick={onCancelEditComment}
+                        ></Button>
+                      </Space>
+                    </div>
+                  ) : (
+                    <>
+                      <div>{item.content}</div>
+                    </>
+                  )}
+                </>
+              }
+            />{" "}
+          </span>
         </div>
         <Modal
           maskClosable={true}

@@ -54,7 +54,7 @@ const PostCard = ({ post }) => {
   const id = me?.id;
   const [commentFormOpend, setCommentFormOpend] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [editTextParent, setEditTextParent] = useState(post.content);
+  const [editTextParent, setEditTextParent] = useState(post?.content);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [reportContent, onChangeReportContent, setReportContent] = useInput("");
 
@@ -93,8 +93,8 @@ const PostCard = ({ post }) => {
         console.log({
           type: "REPORT_PORT_REQUEST",
           data: {
-            postId: post.id,
-            postedUserId: post.UserId,
+            postId: post?.id,
+            postedUserId: post?.UserId,
             reportUserId: me.id,
             reportContent: reportContent,
           },
@@ -109,13 +109,13 @@ const PostCard = ({ post }) => {
         data: { postId: postId, lastCommentId: lastCommentId },
       });
     },
-    []
+    [post.Comments]
   );
 
-  const liked = post.Likers.find((v) => v.id === id);
+  const liked = post?.Likers.find((v) => v.id === id);
   const onClickEditMode = useCallback(() => {
     console.log("onClickEditMode Clicked!!");
-    dispatch({ type: EDIT_MODE_WHAT, data: { edit: "Post", id: post.id } });
+    dispatch({ type: EDIT_MODE_WHAT, data: { edit: "Post", id: post?.id } });
     setEditMode(true);
   }, [editModeWhat, editMode]);
 
@@ -133,7 +133,7 @@ const PostCard = ({ post }) => {
       okText: "수정 취소",
       cancelText: "계속 수정하기",
       onOk() {
-        setEditTextParent(post.content);
+        setEditTextParent(post?.content);
         setEditMode(false); //editMode가 취소됨
         dispatch({ type: EDIT_MODE_WHAT, data: null });
         return;
@@ -153,7 +153,7 @@ const PostCard = ({ post }) => {
       type: EDIT_POST_REQUEST,
       data: {
         content: editTextParent,
-        postId: post.id,
+        postId: post?.id,
       },
     });
   }, [editTextParent]);
@@ -164,7 +164,7 @@ const PostCard = ({ post }) => {
 
     dispatch({
       type: RETWEET_REQUEST,
-      data: post.id,
+      data: post?.id,
     });
   }, [id, me?.Posts]);
 
@@ -173,13 +173,13 @@ const PostCard = ({ post }) => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    dispatch({ type: LIKE_POST_REQUEST, data: post.id });
+    dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
   }, [id]);
   const onUnLike = useCallback(() => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    dispatch({ type: UNLIKE_POST_REQUEST, data: post.id });
+    dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
   }, [id]);
 
   const onToggleComment = useCallback(() => {
@@ -197,7 +197,7 @@ const PostCard = ({ post }) => {
       onOk() {
         dispatch({
           type: REMOVE_POST_REQUEST,
-          data: post.id,
+          data: post?.id,
         });
       },
       onCancel() {
@@ -210,7 +210,7 @@ const PostCard = ({ post }) => {
       <div style={{ marginBottom: "20px" }}>
         <Card
           size="default"
-          cover={<PostImages images={post.Images} />}
+          cover={<PostImages images={post?.Images} />}
           style={{
             width: "100%",
             backgroundColor: "rgba(255,255,255)",
@@ -223,7 +223,7 @@ const PostCard = ({ post }) => {
           actions={
             editMode &&
             editModeWhat?.edit === "Post" &&
-            editModeWhat?.id === post.id
+            editModeWhat?.id === post?.id
               ? [
                   <Space
                     style={{
@@ -267,7 +267,7 @@ const PostCard = ({ post }) => {
                   />,
                   liked ? (
                     <div onClick={onUnLike}>
-                      <Badge size="small" count={post.Likers.length}>
+                      <Badge size="small" count={post?.Likers.length}>
                         <HeartTwoTone
                           css={css`
                             transform: scale(1.5);
@@ -283,7 +283,7 @@ const PostCard = ({ post }) => {
                     </div>
                   ) : (
                     <div onClick={onLike}>
-                      <Badge size="small" count={post.Likers.length}>
+                      <Badge size="small" count={post?.Likers.length}>
                         <HeartOutlined
                           css={css`
                             color: #a0a0a0;
@@ -299,7 +299,13 @@ const PostCard = ({ post }) => {
                     </div>
                   ),
                   <div onClick={onToggleComment}>
-                    <Badge size="small" count={post.Comments.length}>
+                    <Badge
+                      size="small"
+                      count={
+                        post?.commentsCount &&
+                        Math.max(post?.Comments.length, post?.commentsCount)
+                      }
+                    >
                       <MessageOutlined
                         css={css`
                           color: #a0a0a0;
@@ -319,9 +325,9 @@ const PostCard = ({ post }) => {
                     content={
                       <Button.Group>
                         <Space>
-                          {id && post.User.id === id ? (
+                          {id && post?.User.id === id ? (
                             <>
-                              {!post.RetweetId && (
+                              {!post?.RetweetId && (
                                 <Button
                                   style={{ borderRadius: "10px" }}
                                   onClick={onClickEditMode}
@@ -355,36 +361,36 @@ const PostCard = ({ post }) => {
                 ]
           }
           title={
-            post.RetweetId ? (
+            post?.RetweetId ? (
               <div
                 style={{
                   fontSize: "12px",
                 }}
               >
-                {`${post.User.nickname}님이 리트윗 했습니다`}
+                {`${post?.User.nickname}님이 리트윗 했습니다`}
               </div>
             ) : null
           }
         >
-          {post.RetweetId && post.Retweet ? (
+          {post?.RetweetId && post?.Retweet ? (
             <Card
               style={{ borderRadius: "10px" }}
-              key={post.id}
-              cover={<PostImages images={post.Retweet.Images} />}
+              key={post?.id}
+              cover={<PostImages images={post?.Retweet.Images} />}
             >
               <Card.Meta
-                key={post.id}
+                key={post?.id}
                 avatar={
-                  <a key={post.id} href={`/user/${post.Retweet.User.id}`}>
-                    <Avatar key={post.id}>
-                      {post.Retweet.User.nickname[0]}
+                  <a key={post?.id} href={`/user/${post?.Retweet.User.id}`}>
+                    <Avatar key={post?.id}>
+                      {post?.Retweet.User.nickname[0]}
                     </Avatar>
                   </a>
                 }
                 title={
                   <a
-                    key={post.id}
-                    href={`/user/${post.Retweet.User.id}`}
+                    key={post?.id}
+                    href={`/user/${post?.Retweet.User.id}`}
                     css={css`
                       color: black;
                       :hover {
@@ -392,15 +398,15 @@ const PostCard = ({ post }) => {
                       }
                     `}
                   >
-                    {post.Retweet.User.nickname}
+                    {post?.Retweet.User.nickname}
                   </a>
                 }
                 description={
                   <PostCardContent
-                    key={post.id}
-                    postData={post.Retweet.content}
-                    postId={post.id}
-                    postContent={post.Retweet.content}
+                    key={post?.id}
+                    postData={post?.Retweet.content}
+                    postId={post?.id}
+                    postContent={post?.Retweet.content}
                   />
                 }
               />
@@ -408,16 +414,16 @@ const PostCard = ({ post }) => {
           ) : (
             <>
               <Card.Meta
-                key={post.id}
+                key={post?.id}
                 avatar={
-                  <a key={post.id} href={`/user/${post.User.id}`}>
-                    <Avatar key={post.id}>{post.User.nickname[0]}</Avatar>
+                  <a key={post?.id} href={`/user/${post?.User.id}`}>
+                    <Avatar key={post?.id}>{post?.User.nickname[0]}</Avatar>
                   </a>
                 }
                 title={[
                   <a
-                    href={`/user/${post.User.id}`}
-                    key={post.id}
+                    href={`/user/${post?.User.id}`}
+                    key={post?.id}
                     css={css`
                       color: black;
                       :hover {
@@ -425,19 +431,19 @@ const PostCard = ({ post }) => {
                       }
                     `}
                   >
-                    {post.User.nickname}
+                    {post?.User.nickname}
                   </a>,
-                  <span key={post.id + 1} style={{ float: "right" }}>
-                    {id && id != post.User.id && <FollowButton post={post} />}
+                  <span key={post?.id + 1} style={{ float: "right" }}>
+                    {id && id != post?.User.id && <FollowButton post={post} />}
                   </span>,
                 ]}
                 description={
                   <PostCardContent
                     editMode={editMode}
                     postData={editTextParent}
-                    postId={post.id}
+                    postId={post?.id}
                     setPostData={(v) => setEditTextParent(v)}
-                    postContent={post.content}
+                    postContent={post?.content}
                   />
                 }
               />
@@ -452,11 +458,45 @@ const PostCard = ({ post }) => {
         >
           <div>
             <List
+              locale={{
+                emptyText: (
+                  <>
+                    <div>댓글이 없습니다.</div>
+                    <div>첫 댓글을 작성해보세요!</div>
+                  </>
+                ),
+              }}
               header={
-                <div key={post.id}>{`${post.Comments.length}개의 댓글`}</div>
+                <>
+                  {post?.Comments.length || post?.commentsCount ? (
+                    <>
+                      <Card size="small" key={post?.id}>
+                        {`${Math.max(
+                          post?.Comments.length,
+                          post?.commentsCount
+                        )}개의 댓글`}
+                      </Card>
+                      {post.Comments &&
+                        post.Comments.length < post.commentsCount && (
+                          <Button
+                            style={{ width: "fit-content", marginTop: "10px" }}
+                            size="default"
+                            onClick={
+                              post.Comments &&
+                              onMoreComments(post.id, post.Comments[0]?.id)
+                            }
+                          >
+                            {`${
+                              post?.commentsCount - post?.Comments.length
+                            }개의 댓글 더보기`}
+                          </Button>
+                        )}
+                    </>
+                  ) : null}
+                </>
               }
               itemLayout="horizontal"
-              dataSource={post.Comments}
+              dataSource={post?.Comments}
               renderItem={(item) => (
                 <IndividualComment item={item} me={me} post={post} />
               )}
@@ -468,10 +508,10 @@ const PostCard = ({ post }) => {
         {isModalVisible && (
           <ReportModal
             ReportWhat={"Post"}
-            reportPostId={post.id}
+            reportPostId={post?.id}
             reportPost={post}
-            reportUserNickname={post.User.nickname}
-            reportUserId={post.User.id}
+            reportUserNickname={post?.User.nickname}
+            reportUserId={post?.User.id}
             userId={me.id}
             setIsModalVisible={setIsModalVisible}
             isModalVisible={isModalVisible}

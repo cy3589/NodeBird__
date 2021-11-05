@@ -13,6 +13,14 @@ import styled from "@emotion/styled";
 const GlobalStyle = () => (
   <Global
     styles={css`
+      .ant-modal-content {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .ant-btn {
+        border-radius: 10px;
+      }
+
       .ant-row {
         margin-right: 0 !important;
         margin-left: 0 !important;
@@ -26,7 +34,11 @@ const GlobalStyle = () => (
       .ant-col:last-child {
         // padding-right: 0 !important;
       }
+      span {
+        white-space: nowrap;
+      }
       * {
+        white-space: pre-wrap;
         word-break: break-all;
       }
       .ant-card-head-wrapper {
@@ -58,7 +70,12 @@ const GlobalStyle = () => (
     `}
   />
 );
-const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
+const AppLayout = ({
+  children,
+  anotherUserProfile,
+  anotherUserInfo,
+  isHashtag,
+}) => {
   const { me } = useSelector((state) => state.user);
   return (
     <div style={{ backgroundColor: "aliceblue", height: "100%" }}>
@@ -93,6 +110,15 @@ const AppLayout = ({ children, anotherUserProfile, anotherUserInfo }) => {
             />
           ) : (
             !anotherUserProfile && <LoginForm />
+          )}
+          {isHashtag && (
+            <Card
+              style={{
+                width: "fit-content",
+                borderRadius: "10px",
+                marginBottom: "20px",
+              }}
+            >{`#${isHashtag}`}</Card>
           )}
         </Col>
         <Col xs={24} md={12}>

@@ -52,7 +52,7 @@ const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
           loading={logOutLoading}
           style={{
             borderRadius: "10px",
-            marginTop: "10%",
+            marginTop: "10px",
             marginRight: "100%",
           }}
         >

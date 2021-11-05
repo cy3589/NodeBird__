@@ -162,13 +162,22 @@ const reducer = (state = initialState, action) => {
         draft.removeCommentError = null;
         break;
       case REMOVE_COMMENT_SUCCESS:
-        const postIndex = draft.mainPosts.findIndex((v) => {
-          return v.id === action.data.PostId;
-        });
+        if (action.data.isSinglePost) {
+          draft.singlePost.Comments = draft.singlePost.Comments.filter(
+            (v) => v.id !== action.data.CommentId
+          );
+          draft.singlePost.commentsCount--;
+        } else {
+          const postIndex = draft.mainPosts.findIndex((v) => {
+            return v.id === action.data.PostId;
+          });
 
-        draft.mainPosts[postIndex].Comments = draft.mainPosts[
-          postIndex
-        ].Comments.filter((v) => v.id !== action.data.CommentId);
+          draft.mainPosts[postIndex].Comments = draft.mainPosts[
+            postIndex
+          ].Comments.filter((v) => v.id !== action.data.CommentId);
+          draft.mainPosts[postIndex].commentsCount--;
+        }
+
         draft.removeCommentLoading = false;
         draft.removeCommentDone = true;
         break;
@@ -203,6 +212,15 @@ const reducer = (state = initialState, action) => {
 
       case LOAD_MORE_COMMENTS_SUCCESS:
         //    `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`
+        console.log("comments: ", action.data.comments);
+        console.log("postId: ", action.data.postId);
+        const targetPostIndex = draft.mainPosts.findIndex(
+          (v) => v.id === action.data.postId
+        );
+        draft.mainPosts[targetPostIndex].Comments.unshift(
+          ...action.data.comments.reverse()
+        );
+
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
         break;
@@ -334,16 +352,13 @@ const reducer = (state = initialState, action) => {
       case ADD_COMMENT_SUCCESS:
         if (action.data.isSinglePost) {
           draft.singlePost.Comments.push(action.data);
-        }
-        // find함수는 배열 내 요소를 순회한다.
-        // 콜백함수의 인자 v에는 배열의 요소가 담겨있고
-        // 콜백이 true인 첫 번째 요소를 반환하고 종료됨
-        //post에는 v.id가 action.data.postId인 요소(post객체)가 담겨있음.
-        else {
+          draft.singlePost.commentsCount++;
+        } else {
           const post = draft.mainPosts.find(
             (v) => parseInt(v.id) === parseInt(action.data.PostId)
           );
           post.Comments.push(action.data);
+          post.commentsCount++;
         }
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
