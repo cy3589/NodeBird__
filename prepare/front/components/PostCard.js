@@ -39,6 +39,8 @@ import { css } from "@emotion/react";
 import { CSSTransition } from "react-transition-group";
 import IndividualComment from "./IndividualComment";
 import { EDIT_MODE_WHAT } from "../reducers/user";
+import useInput from "../hooks/useInput";
+import ReportModal from "./ReportModal";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
 const PostCard = ({ post }) => {
@@ -54,11 +56,51 @@ const PostCard = ({ post }) => {
   const [editMode, setEditMode] = useState(false);
   const [editTextParent, setEditTextParent] = useState(post.content);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [reportContent, onChangeReportContent, setReportContent] = useInput("");
+
+  const onClickReportButton = useCallback(() => {
+    console.log("onClickReportButton Clicked!!");
+    setIsModalVisible(true);
+  }, [isModalVisible]);
 
   const dispatch = useDispatch();
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const onReportPost = () => {
+    Modal.confirm({
+      title: "게시글 신고",
+      content: (
+        <Input.TextArea
+          placeholder="어떤 문제가 발생했나요?"
+          style={{
+            borderRadius: "10px",
+            position: "relative",
+          }}
+          autoSize={{ minRows: 2, maxRows: 10 }}
+          value={reportContent}
+          onChange={(e) => setReportContent(e.target.value)}
+        />
+      ),
+      maskClosable: true,
+      cancelText: "취소",
+      closable: true,
+      okText: "신고하기",
+      onOk: () => {
+        console.log("Reported Post!!");
+        console.log({
+          type: "REPORT_PORT_REQUEST",
+          data: {
+            postId: post.id,
+            postedUserId: post.UserId,
+            reportUserId: me.id,
+            reportContent: reportContent,
+          },
+        });
+      },
+    });
   };
   const onMoreComments = useCallback(
     (postId, lastCommentId) => () => {
@@ -297,7 +339,10 @@ const PostCard = ({ post }) => {
                               </Button>
                             </>
                           ) : (
-                            <Button style={{ borderRadius: "10px" }}>
+                            <Button
+                              style={{ borderRadius: "10px" }}
+                              onClick={onClickReportButton}
+                            >
                               신고
                             </Button>
                           )}
@@ -419,6 +464,19 @@ const PostCard = ({ post }) => {
             <CommentForm post={post} commentFormOpend={commentFormOpend} />
           </div>
         </CSSTransition>
+
+        {isModalVisible && (
+          <ReportModal
+            ReportWhat={"Post"}
+            reportPostId={post.id}
+            reportPost={post}
+            reportUserNickname={post.User.nickname}
+            reportUserId={post.User.id}
+            userId={me.id}
+            setIsModalVisible={setIsModalVisible}
+            isModalVisible={isModalVisible}
+          />
+        )}
       </div>
     </>
   );

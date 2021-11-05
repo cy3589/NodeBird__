@@ -1,10 +1,11 @@
 import { CloseCircleFilled } from "@ant-design/icons";
-import { Avatar, Button, Comment, Input, Modal, Space } from "antd";
+import { Avatar, Button, Card, Comment, Input, Modal, Space } from "antd";
 import { useState, useCallback, useEffect } from "react";
 import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { EDIT_MODE_WHAT } from "../reducers/user";
 import { EDIT_COMMENT_REQUEST, REMOVE_COMMENT_REQUEST } from "../reducers/post";
+import ReportModal from "./ReportModal";
 
 const IndividualComment = ({ item, me, post }) => {
   const [commentEditMode, setCommentEditMode] = useState(false);
@@ -15,17 +16,19 @@ const IndividualComment = ({ item, me, post }) => {
   );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [mode, setMode] = useState(null);
-
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const dispatch = useDispatch();
   const myComment = "myComment";
   const myPostNotMyComment = "myPostNotMyComment";
   const notMyPostNotMyComment = "notMyPostNotMyComment";
 
   useEffect(() => {
-    // if (isEditMode) setEditMode(false);
     setCommentEditMode(false);
   }, [editCommentDone]);
-
+  const onReportComment = useCallback(() => {
+    setIsModalVisible(false);
+    setIsReportModalVisible(true);
+  }, [isReportModalVisible, isModalVisible]);
   const onEditComment = useCallback(() => {
     if (!comment || !comment.trim()) {
       return alert("댓글을 작성하세요.");
@@ -45,7 +48,7 @@ const IndividualComment = ({ item, me, post }) => {
     if (!me?.id) {
       return alert("로그인이 필요합니다.");
     }
-    if (mode !== myComment) {
+    if (mode !== myComment && mode !== myPostNotMyComment) {
       return alert("타인의 게시글의 댓글은 삭제할 수 없습니다.");
     }
 
@@ -69,7 +72,7 @@ const IndividualComment = ({ item, me, post }) => {
         return;
       },
     });
-  }, [me, mode]);
+  }, [me, mode, item]);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -232,24 +235,42 @@ const IndividualComment = ({ item, me, post }) => {
                         data: { edit: "Comment", id: item.id },
                       });
                     }}
+                    type="primary"
+                    ghost
                   >
                     수정
                   </Button>
-                  <Button onClick={onRemoveComment}>삭제</Button>
+                  <Button onClick={onRemoveComment} type="danger">
+                    삭제
+                  </Button>
                 </>
               ) : mode === myPostNotMyComment ? (
                 <>
-                  <Button>신고</Button>
-                  <Button>삭제</Button>
+                  <Button onClick={onReportComment}>신고</Button>
+                  <Button onClick={onRemoveComment} type="danger">
+                    삭제
+                  </Button>
                 </>
               ) : (
-                <Button>신고</Button>
+                <Button onClick={onReportComment}>신고</Button>
               )}
             </div>
           }
         >
           {item.content}
         </Modal>
+        {isReportModalVisible && (
+          <ReportModal
+            ReportWhat="Comment"
+            reportPostId={post.id}
+            reportUserId={item.User.id}
+            reportUserNickname={item.User.nickname}
+            reportCommentId={item.id}
+            reportComment={item.content}
+            isModalVisible={isReportModalVisible}
+            setIsModalVisible={setIsReportModalVisible}
+          />
+        )}
       </li>
     </>
   );
