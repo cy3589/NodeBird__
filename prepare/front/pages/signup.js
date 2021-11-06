@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
-import AppLayout from "../components/AppLayout";
+import React, { useEffect, useState, useCallback } from "react";
 import Head from "next/head";
 import { Form, Input, Checkbox, Button } from "antd";
-import useInput from "../hooks/useInput";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { SIGN_UP_REQUEST, SIGN_UP_DONE } from "../reducers/user";
 import Router from "next/router";
+import AppLayout from "../components/AppLayout";
+import useInput from "../hooks/useInput";
+import { SIGN_UP_REQUEST, SIGN_UP_DONE } from "../reducers/user";
 
 const ErrorMessage = styled.div`
   color: red;
@@ -65,7 +65,7 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    dispatch({
+    return dispatch({
       type: SIGN_UP_REQUEST,
       data: { email, password, nickname },
     });

@@ -1,14 +1,14 @@
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { END } from "redux-saga";
+import axios from "axios";
 import AppLayout from "../components/AppLayout";
 import PostForm from "../components/PostForm";
 import PostCard from "../components/PostCard";
 import { LOAD_POSTS_REQUEST } from "../reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import wrapper from "../store/configureStore";
-import axios from "axios";
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
@@ -53,13 +53,13 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    ////////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
+    // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
     const cookie = context.req ? context.req.rawHeaders : "";
     axios.defaults.headers.Cookie = "";
     if (context.req && cookie) {
       axios.defaults.headers.Cookie = cookie;
     }
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
 

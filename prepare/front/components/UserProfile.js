@@ -1,8 +1,8 @@
-import { Avatar, Button, Card, Space } from "antd";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
+import { Avatar, Button, Card } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutRequestAction } from "../reducers/user";
 import styled from "@emotion/styled";
+import { logoutRequestAction } from "../reducers/user";
 
 const UserProfileCardStyle = styled(Card)`
   border-radius: 10px;
@@ -10,12 +10,13 @@ const UserProfileCardStyle = styled(Card)`
   border: 1px solid #f0f0f0;
 `;
 
-const anotherUserProfileCardStyle = styled(Card)`
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 10px;
-`;
-const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
+// const anotherUserProfileCardStyle = styled(Card)`
+//   border-radius: 10px;
+//   overflow: hidden;
+//   margin-top: 10px;
+// `;
+// const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
+const UserProfile = () => {
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
   const onLogout = useCallback(() => {

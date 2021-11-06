@@ -1,11 +1,10 @@
-import { Form, Input, Button } from "antd";
-import Link from "next/link";
 import React, { useEffect, useCallback } from "react";
-import useInput from "../hooks/useInput";
-import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequestAction } from "../reducers/user";
+import { Form, Input, Button } from "antd";
 import styled from "@emotion/styled";
+import Link from "next/link";
+import useInput from "../hooks/useInput";
+import { loginRequestAction } from "../reducers/user";
 // styled로 할 때에는 백틱으로 묶고 백틱 내에는 CSS적듯이 한다
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -38,24 +37,25 @@ const LoginForm = () => {
         <Input
           type="email"
           name="user-email"
+          id="user-email"
           value={email}
           onChange={onChangeEmail}
           required
           style={{ borderRadius: "10px" }}
-        ></Input>
+        />
       </div>
-
       <div>
         <label htmlFor="user-password">비밀번호</label>
         <br />
         <Input
           name="user-password"
+          id="user-password"
           type="password"
           value={password}
           onChange={onChangePassword}
           required
           style={{ borderRadius: "10px" }}
-        ></Input>
+        />
       </div>
       <ButtonWrapper>
         <Button

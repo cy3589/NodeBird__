@@ -1,13 +1,14 @@
-import { Button, Form, Input, Space } from "antd";
-import { useCallback, useEffect } from "react";
-import useInput from "../hooks/useInput";
+import { Button, Form, Input } from "antd";
+import React, { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { ADD_COMMENT_REQUEST } from "../reducers/post";
-import { LeftOutlined, SendOutlined } from "@ant-design/icons";
+import { SendOutlined } from "@ant-design/icons";
 import { css } from "@emotion/react";
+import useInput from "../hooks/useInput";
+import { ADD_COMMENT_REQUEST } from "../reducers/post";
 
-const CommentForm = ({ post, commentFormOpend }) => {
+// const CommentForm = ({ post, commentFormOpend }) => {
+const CommentForm = ({ post }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
   const { addCommentDone, addCommentLoading } = useSelector(
@@ -27,7 +28,7 @@ const CommentForm = ({ post, commentFormOpend }) => {
     if (!commentText) {
       return alert("댓글을 작성하세요");
     }
-    dispatch({
+    return dispatch({
       type: ADD_COMMENT_REQUEST,
       data: {
         content: commentText,
@@ -60,7 +61,7 @@ const CommentForm = ({ post, commentFormOpend }) => {
             value={commentText}
             onChange={onChangeCommentText}
             rows={4}
-            autoFocus={false} //true로 수정
+            autoFocus={false} // true로 수정
           />
           <Button
             loading={addCommentLoading}
@@ -115,7 +116,7 @@ const CommentForm = ({ post, commentFormOpend }) => {
 };
 
 CommentForm.propTypes = {
-  post: PropTypes.object.isRequired,
+  post: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 export default CommentForm;

@@ -1,3 +1,4 @@
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   EllipsisOutlined,
@@ -13,17 +14,19 @@ import {
   Popover,
   Avatar,
   List,
-  Comment,
+  // Comment,
   Modal,
-  Popconfirm,
+  // Popconfirm,
   Badge,
   Space,
-  Input,
+  // Input,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { css } from "@emotion/react";
+import { CSSTransition } from "react-transition-group";
+// import useInput from "../hooks/useInput";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
-import { useState, useCallback, useEffect } from "react";
 import PostCardContent from "./PostCardContent";
 import {
   REMOVE_POST_REQUEST,
@@ -34,12 +37,9 @@ import {
   EDIT_POST_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
-import CommentModal from "./CommentModal";
-import { css } from "@emotion/react";
-import { CSSTransition } from "react-transition-group";
+// import CommentModal from "./CommentModal";
 import IndividualComment from "./IndividualComment";
 import { EDIT_MODE_WHAT } from "../reducers/user";
-import useInput from "../hooks/useInput";
 import ReportModal from "./ReportModal";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
@@ -47,8 +47,8 @@ const PostCard = ({ post }) => {
   const { me, editModeWhat } = useSelector((state) => state.user);
   const {
     removePostLoading,
-    loadMoreCommentsLoading,
-    hasMoreComments,
+    // loadMoreCommentsLoading,
+    // hasMoreComments,
     editPostDone,
   } = useSelector((state) => state.post);
   const id = me?.id;
@@ -56,7 +56,8 @@ const PostCard = ({ post }) => {
   const [editMode, setEditMode] = useState(false);
   const [editTextParent, setEditTextParent] = useState(post?.content);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [reportContent, onChangeReportContent, setReportContent] = useInput("");
+  // const [reportContent, onChangeReportContent, setReportContent] = useInput("");
+  // const [reportContent, setReportContent] = useInput("");
 
   const onClickReportButton = useCallback(() => {
     console.log("onClickReportButton Clicked!!");
@@ -65,48 +66,49 @@ const PostCard = ({ post }) => {
 
   const dispatch = useDispatch();
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  // const handleCancel = () => {
+  //   setIsModalVisible(false);
+  // };
 
-  const onReportPost = () => {
-    Modal.confirm({
-      title: "게시글 신고",
-      content: (
-        <Input.TextArea
-          placeholder="어떤 문제가 발생했나요?"
-          style={{
-            borderRadius: "10px",
-            position: "relative",
-          }}
-          autoSize={{ minRows: 2, maxRows: 10 }}
-          value={reportContent}
-          onChange={(e) => setReportContent(e.target.value)}
-        />
-      ),
-      maskClosable: true,
-      cancelText: "취소",
-      closable: true,
-      okText: "신고하기",
-      onOk: () => {
-        console.log("Reported Post!!");
-        console.log({
-          type: "REPORT_PORT_REQUEST",
-          data: {
-            postId: post?.id,
-            postedUserId: post?.UserId,
-            reportUserId: me.id,
-            reportContent: reportContent,
-          },
-        });
-      },
-    });
-  };
+  // const onReportPost = () => {
+  //   Modal.confirm({
+  //     title: "게시글 신고",
+  //     content: (
+  //       <Input.TextArea
+  //         placeholder="어떤 문제가 발생했나요?"
+  //         style={{
+  //           borderRadius: "10px",
+  //           position: "relative",
+  //         }}
+  //         autoSize={{ minRows: 2, maxRows: 10 }}
+  //         value={reportContent}
+  //         onChange={(e) => setReportContent(e.target.value)}
+  //       />
+  //     ),
+  //     maskClosable: true,
+  //     cancelText: "취소",
+  //     closable: true,
+  //     okText: "신고하기",
+  //     onOk: () => {
+  //       console.log("Reported Post!!");
+  //       console.log({
+  //         type: "REPORT_PORT_REQUEST",
+  //         data: {
+  //           postId: post?.id,
+  //           postedUserId: post?.UserId,
+  //           reportUserId: me.id,
+  //           reportContent: reportContent,
+  //         },
+  //       });
+  //     },
+  //   });
+  // };
   const onMoreComments = useCallback(
     (postId, lastCommentId) => () => {
       dispatch({
         type: LOAD_MORE_COMMENTS_REQUEST,
-        data: { postId: postId, lastCommentId: lastCommentId },
+        // data: { postId: postId, lastCommentId: lastCommentId },
+        data: { postId, lastCommentId },
       });
     },
     [post.Comments]
@@ -134,22 +136,21 @@ const PostCard = ({ post }) => {
       cancelText: "계속 수정하기",
       onOk() {
         setEditTextParent(post?.content);
-        setEditMode(false); //editMode가 취소됨
-        dispatch({ type: EDIT_MODE_WHAT, data: null });
-        return;
+        setEditMode(false); // editMode가 취소됨
+        return dispatch({ type: EDIT_MODE_WHAT, data: null });
       },
       onCancel() {
-        return; //editMode 유지
+        return null; // editMode 유지
       },
     });
-    return;
+    return null;
   }, [editMode, editModeWhat]);
 
   const onChangePost = useCallback(() => {
     if (!editTextParent || !editTextParent.trim()) {
       return alert("게시글을 작성하세요.");
     }
-    dispatch({
+    return dispatch({
       type: EDIT_POST_REQUEST,
       data: {
         content: editTextParent,
@@ -162,7 +163,7 @@ const PostCard = ({ post }) => {
       return alert("로그인이 필요합니다.");
     }
 
-    dispatch({
+    return dispatch({
       type: RETWEET_REQUEST,
       data: post?.id,
     });
@@ -173,23 +174,23 @@ const PostCard = ({ post }) => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
+    return dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
   }, [id]);
   const onUnLike = useCallback(() => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
+    return dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
   }, [id]);
 
   const onToggleComment = useCallback(() => {
-    setCommentFormOpend((prev) => !prev);
+    return setCommentFormOpend((prev) => !prev);
   }, []);
   const onRemovePost = useCallback(() => {
     if (!id) {
       return alert("로그인이 필요합니다.");
     }
-    Modal.confirm({
+    return Modal.confirm({
       maskClosable: true,
       title: "삭제하시겠어요?",
       okText: "삭제",
@@ -201,7 +202,7 @@ const PostCard = ({ post }) => {
         });
       },
       onCancel() {
-        return;
+        return null;
       },
     });
   }, [id]);
@@ -248,7 +249,7 @@ const PostCard = ({ post }) => {
                       ghost
                       icon={<CloseCircleFilled />}
                       onClick={onClickEditCancel}
-                    ></Button>
+                    />
                   </Space>,
                 ]
               : [
@@ -325,32 +326,36 @@ const PostCard = ({ post }) => {
                     content={
                       <Button.Group>
                         <Space>
-                          {id && post?.User.id === id ? (
-                            <>
-                              {!post?.RetweetId && (
+                          {id ? (
+                            post?.User.id === id ? (
+                              <>
+                                {!post?.RetweetId && (
+                                  <Button
+                                    style={{ borderRadius: "10px" }}
+                                    onClick={onClickEditMode}
+                                  >
+                                    수정
+                                  </Button>
+                                )}
                                 <Button
                                   style={{ borderRadius: "10px" }}
-                                  onClick={onClickEditMode}
+                                  type="danger"
+                                  onClick={onRemovePost}
+                                  loading={removePostLoading}
                                 >
-                                  수정
+                                  삭제
                                 </Button>
-                              )}
+                              </>
+                            ) : (
                               <Button
                                 style={{ borderRadius: "10px" }}
-                                type="danger"
-                                onClick={onRemovePost}
-                                loading={removePostLoading}
+                                onClick={onClickReportButton}
                               >
-                                삭제
+                                신고
                               </Button>
-                            </>
+                            )
                           ) : (
-                            <Button
-                              style={{ borderRadius: "10px" }}
-                              onClick={onClickReportButton}
-                            >
-                              신고
-                            </Button>
+                            <div>로그인이 필요합니다</div>
                           )}
                         </Space>
                       </Button.Group>
@@ -434,7 +439,7 @@ const PostCard = ({ post }) => {
                     {post?.User.nickname}
                   </a>,
                   <span key={post?.id + 1} style={{ float: "right" }}>
-                    {id && id != post?.User.id && <FollowButton post={post} />}
+                    {id && id !== post?.User.id && <FollowButton post={post} />}
                   </span>,
                 ]}
                 description={
@@ -507,7 +512,7 @@ const PostCard = ({ post }) => {
 
         {isModalVisible && (
           <ReportModal
-            ReportWhat={"Post"}
+            ReportWhat="Post"
             reportPostId={post?.id}
             reportPost={post}
             reportUserNickname={post?.User.nickname}
@@ -525,13 +530,16 @@ const PostCard = ({ post }) => {
 PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
-    User: PropTypes.object,
+    RetweetId: PropTypes.number,
+    commentsCount: PropTypes.number,
+    User: PropTypes.objectOf(PropTypes.object),
+    Retweet: PropTypes.objectOf(PropTypes.object),
     content: PropTypes.string,
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
     Likers: PropTypes.arrayOf(PropTypes.object),
-  }),
+  }).isRequired,
 };
 
 export default PostCard;

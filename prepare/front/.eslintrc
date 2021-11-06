@@ -10,7 +10,19 @@
     "node": true,
     "es6": true
   },
-  "extends": ["airbnb"],
+  "extends": ["airbnb", "plugin:prettier/recommended"],
   "plugins": ["import", "react", "react-hooks"],
-  "rules": {}
+  "rules": {
+    "linebreak-style": ["error", "windows"],
+    "quotes": [2, "double", { "avoidEscape": false }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "no-console": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/no-array-index-key": "off",
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-nested-ternary": "off"
+  }
 }

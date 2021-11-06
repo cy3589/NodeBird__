@@ -1,11 +1,13 @@
+import React from "react";
 import { Avatar, Comment, Input, Modal } from "antd";
+import { css } from "@emotion/react";
+import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
 
 const ReportModal = ({
   ReportWhat,
 
   reportPostId,
-  reportPost,
   reportUserId,
   reportUserNickname,
 
@@ -14,38 +16,36 @@ const ReportModal = ({
 
   isModalVisible,
   setIsModalVisible,
-
-  userId,
 }) => {
   const [reportContent, onChangeReportContent] = useInput("");
   return isModalVisible ? (
     <>
       <Modal
         onOk={() => {
-          ReportWhat === "Post"
+          return ReportWhat === "Post"
             ? console.log({
                 type: "REPORT_POST_REQUEST",
                 data: {
-                  reportPostId: reportPostId,
-                  reportUserId: reportUserId,
-                  reportContent: reportContent,
+                  reportPostId,
+                  reportUserId,
+                  reportContent,
                 },
               })
             : ReportWhat === "Comment" &&
-              console.log({
-                type: "REPORT_COMMENT_REQUEST",
-                data: {
-                  reportPostId: reportPostId,
-                  reportUserId: reportUserId,
-                  reportCommentId: reportCommentId,
-                  reportContent: reportContent,
-                },
-              });
+                console.log({
+                  type: "REPORT_COMMENT_REQUEST",
+                  data: {
+                    reportPostId,
+                    reportUserId,
+                    reportCommentId,
+                    reportContent,
+                  },
+                });
         }}
         okText="신고"
         cancelText="신고 취소"
         visible={isModalVisible}
-        maskClosable={true}
+        maskClosable
         onCancel={() =>
           Modal.confirm({
             title: "취소하시겠어요?",
@@ -105,6 +105,25 @@ const ReportModal = ({
       </Modal>
     </>
   ) : null;
+};
+
+ReportModal.defaultProps = {
+  reportCommentId: null,
+  reportComment: null,
+};
+
+ReportModal.propTypes = {
+  ReportWhat: PropTypes.node.isRequired,
+
+  reportPostId: PropTypes.node.isRequired,
+  reportUserId: PropTypes.node.isRequired,
+  reportUserNickname: PropTypes.node.isRequired,
+
+  reportCommentId: PropTypes.number,
+  reportComment: PropTypes.string,
+
+  isModalVisible: PropTypes.node.isRequired,
+  setIsModalVisible: PropTypes.node.isRequired,
 };
 
 export default ReportModal;

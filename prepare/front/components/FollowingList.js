@@ -1,6 +1,6 @@
+import React from "react";
 import { List, Button, Card } from "antd";
 import PropTypes from "prop-types";
-import { StopOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { UNFOLLOW_REQUEST } from "../reducers/user";
 
@@ -48,6 +48,6 @@ const FollowingList = ({ header, data }) => {
 
 FollowingList.propTypes = {
   header: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 export default FollowingList;

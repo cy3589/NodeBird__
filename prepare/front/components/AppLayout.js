@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
+import React from "react";
 import { css, Global } from "@emotion/react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Menu, Input, Row, Col, Card, Avatar } from "antd";
-import { Router, useRouter } from "next/router";
-import UserProfile from "../components/UserProfile";
-import LoginForm from "../components/LoginForm";
+import { Router } from "next/router";
 import { useSelector } from "react-redux";
-import styled from "@emotion/styled";
+import UserProfile from "./UserProfile";
+import LoginForm from "./LoginForm";
 
 // import { useForm } from "react-hook-form";
 const GlobalStyle = () => (
@@ -106,7 +106,7 @@ const AppLayout = ({
           {me ? (
             <UserProfile
               anotherUserProfile={anotherUserProfile}
-              anotherUserInfo={anotherUserInfo} //id값 들어있음.
+              anotherUserInfo={anotherUserInfo} // id값 들어있음.
             />
           ) : (
             !anotherUserProfile && <LoginForm />
@@ -123,7 +123,7 @@ const AppLayout = ({
         </Col>
         <Col xs={24} md={12}>
           {anotherUserInfo &&
-          parseInt(anotherUserInfo.id, 10) !== parseInt(me?.id) ? (
+          parseInt(anotherUserInfo.id, 10) !== parseInt(me?.id, 10) ? (
             <Card
               key={anotherUserInfo.id}
               style={{
@@ -161,7 +161,16 @@ const AppLayout = ({
     </div>
   );
 };
+
+AppLayout.defaultProps = {
+  anotherUserProfile: false,
+  anotherUserInfo: null,
+  isHashtag: null,
+};
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,
+  anotherUserProfile: PropTypes.bool,
+  anotherUserInfo: PropTypes.objectOf(PropTypes.object),
+  isHashtag: PropTypes.string,
 };
 export default AppLayout;

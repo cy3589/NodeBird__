@@ -1,18 +1,19 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Form, Input, Button } from "antd";
+import { CloseCircleFilled } from "@ant-design/icons";
 import {
-  addPost,
+  // addPost,
   ADD_POST_REQUEST,
-  UPLOAD_IMAGES_REQUEST,
+  // UPLOAD_IMAGES_REQUEST,
 } from "../reducers/post";
 import useInput from "../hooks/useInput";
-import { CloseCircleFilled } from "@ant-design/icons";
 
 // const PostFormStyle = styled(Form)`
 // margin:"10px 0 20px`;
 const PostForm = () => {
-  const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  // const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  const { addPostDone } = useSelector((state) => state.post);
   const [text, onChangeText, setText] = useInput("");
   const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
@@ -33,7 +34,7 @@ const PostForm = () => {
       }
 
       if (images.length + e.target.files.length > 9) {
-        for (let i = 0; i < 9 - images.length; i++) {
+        for (let i = 0; i < 9 - images.length; i += 1) {
           const fileReader = new FileReader();
           fileReader.readAsDataURL(e.target.files[i]);
           fileReader.onload = (event) => {
@@ -80,6 +81,7 @@ const PostForm = () => {
 
     dispatch({ type: ADD_POST_REQUEST, data: formData });
     document.getElementById("textInputArea").focus();
+    return null;
   }, [text, imageFiles]);
 
   return (
@@ -129,9 +131,10 @@ const PostForm = () => {
         }}
       >
         {images.map((v, i) => (
-          <div key={v + i}>
+          <div key={v}>
             <img
               src={v}
+              alt={v}
               key={v}
               style={{
                 width: "100%",
@@ -149,7 +152,7 @@ const PostForm = () => {
               className="ImageRemoveButton"
               danger
               block
-              key={i}
+              key={v}
               style={{
                 height: "10%",
                 minHeight: "30px",

@@ -1,6 +1,6 @@
+import React from "react";
 import { List, Button, Card } from "antd";
 import PropTypes from "prop-types";
-import { StopOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { FOLLOW_REQUEST, BLOCK_USER_REQUEST } from "../reducers/user";
 
@@ -66,6 +66,6 @@ const FollowerList = ({ header, data }) => {
 
 FollowerList.propTypes = {
   header: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.objectOf(PropTypes.array).isRequired,
 };
 export default FollowerList;

@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar, Card } from "antd";
+// import { Avatar, Card } from "antd";
 import { END } from "redux-saga";
-import Head from "next/head";
+// import Head from "next/head";
 import { useRouter } from "next/router";
 import { useInView } from "react-intersection-observer";
-
+import Error from "next/error";
 import axios from "axios";
 import { LOAD_USER_POSTS_REQUEST } from "../../reducers/post";
 import {
@@ -15,20 +15,18 @@ import {
 import PostCard from "../../components/PostCard";
 import wrapper from "../../store/configureStore";
 import AppLayout from "../../components/AppLayout";
-import UserProfile from "../../components/UserProfile";
-import Error from "next/error";
+// import UserProfile from "../../components/UserProfile";
 
 const User = () => {
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const router = useRouter();
-  const id = router.query.id;
+  const id = router.query?.id;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state) => state.post
   );
-  const { getUserInfo, me, getUserInfoError } = useSelector(
-    (state) => state.user
-  );
+  // const { getUserInfo, me, getUserInfoError } = useSelector(
+  const { getUserInfo, getUserInfoError } = useSelector((state) => state.user);
   if (getUserInfoError) {
     return <Error statusCode={404} title="존재하지 않는 사용자입니다" />;
   }
@@ -41,7 +39,7 @@ const User = () => {
 
   return (
     <>
-      <AppLayout anotherUserProfile={true} anotherUserInfo={getUserInfo}>
+      <AppLayout anotherUserProfile anotherUserInfo={getUserInfo}>
         {mainPosts.map((post, index) => {
           return (
             <div key={post.id}>
@@ -59,8 +57,8 @@ const User = () => {
   );
 };
 
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
 // import { Avatar, Button, Card } from "antd";
 // import { useCallback } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -115,17 +113,17 @@ const User = () => {
 // };
 // export default UserProfile;
 
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    ////////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
+    // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
     const cookie = context.req ? context.req.rawHeaders : "";
     axios.defaults.headers.Cookie = "";
     if (context.req && cookie) {
       axios.defaults.headers.Cookie = cookie;
     }
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     // store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch({ type: GET_USER_INFO_REQUEST, data: context.params.id });

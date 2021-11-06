@@ -1,15 +1,16 @@
-import Router, { useRouter } from "next/router";
+import React from "react";
+import { useRouter } from "next/router";
 import Error from "next/error";
-import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import Head from "next/head";
+import wrapper from "../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { LOAD_POST_REQUEST } from "../../reducers/post";
 import AppLayout from "../../components/AppLayout";
 import PostCard from "../../components/PostCard";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import Head from "next/head";
-import { useEffect } from "react";
+
 const Post = () => {
   const { singlePost, loadPostError } = useSelector((state) => state.post);
   const router = useRouter();
@@ -22,12 +23,12 @@ const Post = () => {
       <AppLayout>
         <Head>
           <title>{singlePost.User.nickname}님의 글</title>
-          <meta name="description" content={singlePost.content}></meta>
+          <meta name="description" content={singlePost.content} />
           <meta
             property="og:title"
             content={`${singlePost.User.nickname}님의 게시글`}
-          ></meta>
-          <meta property="og:description" content={singlePost.content}></meta>
+          />
+          <meta property="og:description" content={singlePost.content} />
           <meta
             property="og:image"
             content={
@@ -35,12 +36,9 @@ const Post = () => {
                 ? singlePost.Images[0].src
                 : "https://nodebird.com/favicon.ico"
             }
-          ></meta>
-          <meta
-            property="og:url"
-            content={`https://nodebird.com/post/${id}`}
-          ></meta>
-        </Head>{" "}
+          />
+          <meta property="og:url" content={`https://nodebird.com/post/${id}`} />
+        </Head>
         <PostCard post={{ ...singlePost, isSinglePost: true }} />
       </AppLayout>
     )

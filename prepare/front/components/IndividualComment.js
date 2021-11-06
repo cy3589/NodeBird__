@@ -1,8 +1,10 @@
 import { CloseCircleFilled } from "@ant-design/icons";
-import { Avatar, Button, Card, Comment, Input, Modal, Space } from "antd";
-import { useState, useCallback, useEffect } from "react";
-import useInput from "../hooks/useInput";
+import { Avatar, Button, Comment, Input, Modal, Space } from "antd";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { css } from "@emotion/react";
+import PropTypes from "prop-types";
+import useInput from "../hooks/useInput";
 import { EDIT_MODE_WHAT } from "../reducers/user";
 import { EDIT_COMMENT_REQUEST, REMOVE_COMMENT_REQUEST } from "../reducers/post";
 import ReportModal from "./ReportModal";
@@ -33,13 +35,13 @@ const IndividualComment = ({ item, me, post }) => {
     if (!comment || !comment.trim()) {
       return alert("댓글을 작성하세요.");
     }
-    dispatch({
+    return dispatch({
       type: EDIT_COMMENT_REQUEST,
       data: {
         postId: post.id,
         commentId: item.id,
         commentUserId: item.UserId,
-        comment: comment,
+        comment,
       },
     });
   }, [comment]);
@@ -52,7 +54,7 @@ const IndividualComment = ({ item, me, post }) => {
       return alert("타인의 게시글의 댓글은 삭제할 수 없습니다.");
     }
 
-    Modal.confirm({
+    return Modal.confirm({
       maskClosable: true,
       title: "삭제하시겠어요?",
       okText: "삭제",
@@ -70,17 +72,17 @@ const IndividualComment = ({ item, me, post }) => {
         setIsModalVisible(false);
       },
       onCancel() {
-        return;
+        return null;
       },
     });
   }, [me, mode, item, post.commentsCount]);
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    return setIsModalVisible(false);
   };
 
   const onCancelEditComment = useCallback(() => {
-    Modal.confirm({
+    return Modal.confirm({
       maskClosable: true,
       title: "취소하시겠어요?",
       content: "지금 취소하면 변경 내역이 삭제됩니다.",
@@ -90,10 +92,10 @@ const IndividualComment = ({ item, me, post }) => {
         setCommentEditMode(false);
         setComment(item.content);
         dispatch({ type: EDIT_MODE_WHAT, data: null });
-        return;
+        return null;
       },
       onCancel() {
-        return; //editMode 유지
+        return null; // editMode 유지
       },
     });
   }, [commentEditMode]);
@@ -101,16 +103,18 @@ const IndividualComment = ({ item, me, post }) => {
     (e) => {
       if (me && e.target.nodeName === "DIV") {
         // 로그인 되어있고 아바타,닉네임이 아닌 '댓글'을 클릭했는지 확인
-        const mode =
-          item.UserId === me.id // 내가 작성한 댓글인지 => 수정,삭제
+        setMode(
+          item.UserId === me.id
             ? myComment
-            : me.id === post.User.id // 내 게시글인지+(남의 댓글인지) => 신고, 삭제
+            : me.id === post.User.id
             ? myPostNotMyComment
-            : notMyPostNotMyComment; // (남의 게시글인지)+(남의 댓글인지) => 신고
+            : notMyPostNotMyComment
+        );
         setIsModalVisible(true);
-        setMode(mode);
+        return null;
         // setPopoverVisible(true);
       }
+      return null;
     },
     [me, isModalVisible]
   );
@@ -206,7 +210,7 @@ const IndividualComment = ({ item, me, post }) => {
                           ghost
                           icon={<CloseCircleFilled />}
                           onClick={onCancelEditComment}
-                        ></Button>
+                        />
                       </Space>
                     </div>
                   ) : (
@@ -216,11 +220,11 @@ const IndividualComment = ({ item, me, post }) => {
                   )}
                 </>
               }
-            />{" "}
+            />
           </span>
         </div>
         <Modal
-          maskClosable={true}
+          maskClosable
           visible={isModalVisible}
           onCancel={handleCancel}
           title={
@@ -278,6 +282,17 @@ const IndividualComment = ({ item, me, post }) => {
       </li>
     </>
   );
+};
+
+IndividualComment.defaultProps = {
+  me: null,
+  item: null,
+};
+
+IndividualComment.propTypes = {
+  post: PropTypes.objectOf(PropTypes.object).isRequired,
+  me: PropTypes.objectOf(PropTypes.object),
+  item: PropTypes.objectOf(PropTypes.object),
 };
 
 export default IndividualComment;

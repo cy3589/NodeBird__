@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Slick from "react-slick";
 import styled from "@emotion/styled";
@@ -11,6 +11,7 @@ import {
   SlickWrapper,
   ImgWrapper,
 } from "./styles";
+
 const SlideImage = styled.img`
   width: 100%;
   object-fit: contain;
@@ -36,7 +37,7 @@ const ImagesZoom = ({ images, onClose }) => {
           slidesToScroll={1}
           style={{ height: "calc(100% - 44px)" }}
         >
-          {images.map((v, i) => (
+          {images.map((v) => (
             <ImgWrapper key={v.src}>
               <SlideImage src={v.src} alt={v.src} />
             </ImgWrapper>
@@ -50,7 +51,7 @@ const ImagesZoom = ({ images, onClose }) => {
   );
 };
 
-ImagesZoom.proptypes = {
+ImagesZoom.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   onClose: PropTypes.func.isRequired,
 };

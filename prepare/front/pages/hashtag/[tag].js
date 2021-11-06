@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar, Card } from "antd";
+// import { Avatar, Card } from "antd";
 import { END } from "redux-saga";
-import Head from "next/head";
+// import Head from "next/head";
 import { useRouter } from "next/router";
 import { useInView } from "react-intersection-observer";
 
@@ -13,22 +13,22 @@ import {
 } from "../../reducers/post";
 import {
   LOAD_MY_INFO_REQUEST,
-  GET_USER_INFO_REQUEST,
+  // GET_USER_INFO_REQUEST,
 } from "../../reducers/user";
 import PostCard from "../../components/PostCard";
 import wrapper from "../../store/configureStore";
 import AppLayout from "../../components/AppLayout";
-import UserProfile from "../../components/UserProfile";
+// import UserProfile from "../../components/UserProfile";
 
 const User = () => {
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
   const router = useRouter();
-  const tag = router.query.tag;
+  const tag = router.query?.tag;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state) => state.post
   );
-  const { getUserInfo, me } = useSelector((state) => state.user);
+  // const { getUserInfo, me } = useSelector((state) => state.user);
   useEffect(() => {
     if (inView && hasMorePosts && !loadPostsLoading) {
       const lastId = mainPosts[mainPosts.length - 1]?.id;
@@ -60,7 +60,7 @@ const User = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    ////////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
+    // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
     const cookie = context.req ? context.req.rawHeaders : "";
     axios.defaults.headers.Cookie = "";
     if (context.req && cookie) {

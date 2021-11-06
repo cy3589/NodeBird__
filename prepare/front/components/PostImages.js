@@ -1,7 +1,8 @@
-import { BlockOutlined, PlusOutlined } from "@ant-design/icons";
-import PropTypes from "prop-types";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { PlusOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
+import PropTypes from "prop-types";
 import ImagesZoom from "./ImagseZoom";
 
 const StyleTwoImages = styled.img`
@@ -67,7 +68,13 @@ const PostImages = ({ images }) => {
   if (images?.length === 1) {
     return (
       <div>
-        <div onClick={onZoom} style={{ zIndex: 0 }}>
+        <div
+          onClick={onZoom}
+          style={{ zIndex: 0 }}
+          onKeyDown={() => {}}
+          role="button"
+          tabIndex={0}
+        >
           <StyleOneImage role="presentation">
             <img src={images[0].src} alt={images[0].src} />
           </StyleOneImage>
@@ -88,14 +95,26 @@ const PostImages = ({ images }) => {
           padding: 10px;
         `}
       >
-        <div style={{ width: "100%", height: "100%" }} onClick={onZoom}>
+        <div
+          style={{ width: "100%", height: "100%" }}
+          onClick={onZoom}
+          onKeyDown={() => {}}
+          role="button"
+          tabIndex={0}
+        >
           <StyleTwoImages
             role="presentation"
             src={images[0].src}
             alt={images[0].src}
           />
         </div>
-        <div style={{ width: "100%", height: "100%" }} onClick={onZoom}>
+        <div
+          style={{ width: "100%", height: "100%" }}
+          onClick={onZoom}
+          onKeyDown={() => {}}
+          role="button"
+          tabIndex={0}
+        >
           <StyleTwoImages
             role="presentation"
             src={images[1].src}
@@ -120,7 +139,7 @@ const PostImages = ({ images }) => {
         />
         {/* 더보기 div: MoreDiv */}
         <MoreDiv role="presentation" onClick={onZoom}>
-          <img src={images[1].src} />
+          <img src={images[1].src} alt={images[1].src} />
           <div>
             <PlusOutlined />
             <br />
@@ -132,7 +151,9 @@ const PostImages = ({ images }) => {
     </>
   );
 };
-
+PostImages.defaultProps = {
+  images: null,
+};
 PostImages.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object),
 };

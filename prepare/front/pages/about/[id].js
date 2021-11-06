@@ -1,9 +1,11 @@
-import { Head } from "next/head";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import React from "react";
 import AppLayout from "../../components/AppLayout";
+
 const User = () => {
   const router = useRouter();
-  const id = router.query.id;
+  const id = router.query?.id;
   return (
     <>
       <AppLayout>

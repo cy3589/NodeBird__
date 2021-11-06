@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import Link from "next/link";
-import useInput from "../hooks/useInput";
-import { useCallback } from "react";
+// import useInput from "../hooks/useInput";
+import React, { useCallback } from "react";
 import { Input } from "antd";
 import { useSelector } from "react-redux";
+
 const PostCardContent = ({
   postData,
   editMode,
@@ -29,7 +30,7 @@ const PostCardContent = ({
             defaultValue={postData}
             onChange={onChangeEditText}
             style={{ borderRadius: "10px" }}
-          ></Input.TextArea>
+          />
         </>
       ) : (
         <>
@@ -48,9 +49,16 @@ const PostCardContent = ({
     </>
   );
 };
-
+PostCardContent.defaultProps = {
+  editMode: false,
+  setPostData: null,
+};
 PostCardContent.propTypes = {
   postData: PropTypes.string.isRequired,
+  editMode: PropTypes.bool,
+  setPostData: PropTypes.func,
+  postId: PropTypes.node.isRequired,
+  postContent: PropTypes.node.isRequired,
 };
 
 export default PostCardContent;
