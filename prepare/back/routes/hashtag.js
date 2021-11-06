@@ -1,14 +1,26 @@
 const express = require("express");
 const { User, Post, Hashtag, Image, Comment } = require("../models");
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const passport = require("passport");
-const db = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const { Op } = require("sequelize");
+const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
+  fullPostJSON.commentsCount = fullPostJSON.Comments.length;
+  fullPostJSON.Comments.splice(10);
+  return fullPostJSON; //객체배열의 map을 위해 추가
+};
 router.get("/:hashtag", async (req, res, next) => {
   // GET  /posts
   try {
-    const where = { UserId: parseInt(req.params.userId, 10) };
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log(decodeURIComponent(req.params.hashtag));
+    console.log(req.query);
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    const where = {};
     if (parseInt(req.query.lastId, 10)) {
       //req.query.lastId가 있을 때 (초기로딩이 아닐 때)
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) };
@@ -24,7 +36,7 @@ router.get("/:hashtag", async (req, res, next) => {
       include: [
         {
           model: Hashtag,
-          where: { name: req.params.hashtag },
+          where: { name: decodeURIComponent(req.params.hashtag) },
         },
         { model: User, attributes: ["id", "nickname"] },
         { model: Image },
@@ -46,8 +58,6 @@ router.get("/:hashtag", async (req, res, next) => {
     const postsJSON = posts.map((v) => {
       return PostAddCommentsCountAndSlice10Comments(v.toJSON());
     });
-    // postsJSON.forEach();
-    // res.status(201).json(posts);
     res.status(201).json(postsJSON);
   } catch (error) {
     console.error(error);

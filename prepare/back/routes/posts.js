@@ -6,7 +6,11 @@ const db = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
-  fullPostJSON.Comments.splice(10);
+  fullPostJSON.Comments.splice(
+    0,
+    !(fullPostJSON.Comments.length - 10 < 0) &&
+      fullPostJSON.Comments.length - 10
+  );
   return fullPostJSON; //객체배열의 map을 위해 추가
 };
 router.get("/", async (req, res, next) => {
@@ -40,14 +44,12 @@ router.get("/", async (req, res, next) => {
             { model: User, attributes: ["id", "nickname"] },
             { model: Image },
           ],
-        }, //좋아요 누른사람
+        },
       ],
     });
     const postsJSON = posts.map((v) => {
       return PostAddCommentsCountAndSlice10Comments(v.toJSON());
     });
-    // postsJSON.forEach();
-    // res.status(201).json(posts);
     res.status(201).json(postsJSON);
   } catch (error) {
     console.error(error);

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { Op } = require("sequelize");
 const { User, Post, Comment, Image, Hashtag, sequelize } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
@@ -16,13 +17,97 @@ try {
   fs.mkdirSync("uploads");
 }
 
+router.patch(
+  "/:postId/:commentUserId/:commentId",
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      const postId = parseInt(req.params.postId, 10);
+      const commentId = parseInt(req.params.commentId, 10);
+      const commentUserId = parseInt(req.params.commentUserId, 10);
+      if (commentUserId !== parseInt(req.user.id)) {
+        return res.status(403).send("타인의 게시글은 수정할 수 없습니다.");
+      }
+
+      const post = await Post.findOne({ where: { id: req.params.postId } });
+      if (!post) {
+        return res.status(403).send("존재하지 않는 게시글입니다.");
+      }
+      const comment = await Comment.findOne({
+        where: { id: req.params.commentId },
+      });
+      if (!comment) {
+        return res.status(403).send("존재하지 않는 댓글입니다.");
+      }
+
+      await Comment.update(
+        { content: req.body.comment },
+        { where: { id: commentId, PostId: postId, UserId: commentUserId } }
+      );
+
+      res.status(201).json({
+        PostId: postId,
+        CommentId: commentId,
+        comment: req.body.comment,
+      });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+router.delete(
+  "/:postId/:commentUserId/:commentId",
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      const postId = parseInt(req.params.postId, 10);
+      const commentId = parseInt(req.params.commentId, 10);
+      const commentUserId = parseInt(req.params.commentUserId, 10);
+
+      const post = await Post.findOne({ where: { id: req.params.postId } });
+      if (!post) {
+        return res.status(403).send("존재하지 않는 게시글입니다.");
+      }
+      const comment = await Comment.findOne({
+        where: { id: req.params.commentId },
+      });
+      if (!comment) {
+        return res.status(403).send("존재하지 않는 댓글입니다.");
+      }
+
+      await Comment.destroy({
+        where: {
+          id: req.params.commentId,
+          UserId: req.params.commentUserId,
+          PostId: req.params.postId,
+        },
+      });
+      res.status(201).json({ PostId: postId, CommentId: commentId });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
 // `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`;
 router.get("/:PostId/comments", async (req, res, next) => {
   try {
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(req.params.PostId, req.query.lastCommentId);
+    console.log(
+      "PostId: ",
+      req.params.PostId,
+      "LastCommentId: ",
+      req.query.lastCommentId
+    );
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
+    const where = {};
+    if (parseInt(req.query.lastCommentId, 10)) {
+      where.id = { [Op.lt]: parseInt(req.query.lastCommentId, 10) };
+    }
     const post = await Post.findOne({
       where: { id: parseInt(req.params.PostId) },
     });
@@ -30,40 +115,16 @@ router.get("/:PostId/comments", async (req, res, next) => {
     if (!post) {
       return res.status(403).send("존재하지 않는 게시글입니다.");
     }
-    const resComments = await Comment.fineAll({
-      where: {},
+    const resComments = await Comment.findAll({
+      where: { ...where, PostId: parseInt(req.params.PostId) },
+      order: [["createdAt", "DESC"]],
+      include: [{ model: User, attributes: ["id", "nickname"] }],
+      limit: 10,
     });
-    // const fullPost = await Post.findOne({
-    //   where: { id: post?.id },
-    //   include: [
-    //     {
-    //       model: Post,
-    //       as: "Retweet",
-    //       include: [
-    //         { model: User, attributes: ["id", "nickname"] },
-    //         { model: Image },
-    //       ],
-    //     },
-    //     { model: User, attributes: ["id", "nickname"] },
-    //     { model: Image },
-    //     {
-    //       model: Comment,
-    //       include: [
-    //         {
-    //           model: User,
-    //           attributes: ["id", "nickname"],
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       model: User,
-    //       as: "Likers",
-    //       attributes: ["id", "nickname"],
-    //     },
-    //   ],
-    // });
 
-    res.status(200).json("ok");
+    res
+      .status(200)
+      .json({ comments: resComments, postId: parseInt(req.params.PostId) });
   } catch (error) {
     console.error(error);
     next(error);
@@ -273,7 +334,7 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
       return res.status(403).send("존재하지 않는 게시글입니다.");
     }
     if (post.Retweet && post.Retweet.UserId === req.user.id) {
-      return res.status(403).send("자신의 글은 리트윗 할 수 없습니다.");
+      return res.status(403).send("자신의 글은 다시 리트윗 할 수 없습니다.");
     }
     const retweetTargetId = post.RetweetId || post.id;
     //post가 Retweet한 게시글이면 Retweet한 게시글의ID를 갖고오고 Null이면 post.id를 갖고온다.
@@ -284,6 +345,7 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
     if (exPost) {
       return res.status(403).send("이미 리트윗 했습니다.");
     }
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     const retweet = await Post.create({
       UserId: req.user.id,
       RetweetId: retweetTargetId,

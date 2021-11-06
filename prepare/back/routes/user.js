@@ -19,14 +19,14 @@ router.get("/", async (req, res, next) => {
         where: { id: req.user.id },
         attributes: { exclude: "password" },
         include: [
-          { model: Post, attributes: ["id"] },
+          { model: Post, attributes: ["id", "RetweetId"] },
           { model: User, as: "Followings", attributes: ["id"] },
           { model: User, as: "Followers", attributes: ["id"] },
         ],
       });
       res.status(200).json(fullUserWithoutPassword);
     } else {
-      res.status(200).json(null);
+      res.status(404).json(null);
     }
   } catch (error) {
     console.error(error);
@@ -253,11 +253,9 @@ router.get("/info/:userId", async (req, res, next) => {
         { model: User, as: "Followers", attributes: ["id"] },
       ],
     });
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
+    if (!UserInfo) {
+      return res.status(404).send("존재하지 않는 사용자입니다");
+    }
     const resUserInfo = {
       postsLength: UserInfo.Posts.length,
       id: UserInfo.id,
@@ -272,11 +270,6 @@ router.get("/info/:userId", async (req, res, next) => {
     console.log("팔로잉 수 ", UserInfo.Followings.length);
     console.log("팔로워 수 ", UserInfo.Followers.length);
     console.log("계정생성일 ", UserInfo.createdAt);
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
-    console.log("@@@@@@@@@@@*********&&&&&&&&&&&&&&&&&&&&&");
     res.status(201).json(resUserInfo);
   } catch (error) {
     console.error(error);
