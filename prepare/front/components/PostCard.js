@@ -8,6 +8,12 @@ import {
   HeartTwoTone,
   CloseCircleFilled,
 } from "@ant-design/icons";
+
+import "dayjs/locale/pt";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+// Load plugins
+
 import {
   Button,
   Card,
@@ -25,6 +31,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { css } from "@emotion/react";
 import { CSSTransition } from "react-transition-group";
 // import useInput from "../hooks/useInput";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
@@ -41,73 +50,33 @@ import FollowButton from "./FollowButton";
 import IndividualComment from "./IndividualComment";
 import { EDIT_MODE_WHAT } from "../reducers/user";
 import ReportModal from "./ReportModal";
+import ShowLikersModal from "./ShowLikersModal";
+import Router from "next/router";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
 const PostCard = ({ post }) => {
   const { me, editModeWhat } = useSelector((state) => state.user);
-  const {
-    removePostLoading,
-    // loadMoreCommentsLoading,
-    // hasMoreComments,
-    editPostDone,
-  } = useSelector((state) => state.post);
+  const { removePostLoading, editPostDone, singlePost } = useSelector(
+    (state) => state.post
+  );
   const id = me?.id;
   const [commentFormOpend, setCommentFormOpend] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editTextParent, setEditTextParent] = useState(post?.content);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [reportContent, onChangeReportContent, setReportContent] = useInput("");
-  // const [reportContent, setReportContent] = useInput("");
-
+  const [showLikersModal, setShowLikersModal] = useState(false);
+  dayjs.locale("ko");
+  dayjs.extend(relativeTime);
   const onClickReportButton = useCallback(() => {
     console.log("onClickReportButton Clicked!!");
     setIsModalVisible(true);
   }, [isModalVisible]);
-
   const dispatch = useDispatch();
 
-  // const handleCancel = () => {
-  //   setIsModalVisible(false);
-  // };
-
-  // const onReportPost = () => {
-  //   Modal.confirm({
-  //     title: "게시글 신고",
-  //     content: (
-  //       <Input.TextArea
-  //         placeholder="어떤 문제가 발생했나요?"
-  //         style={{
-  //           borderRadius: "10px",
-  //           position: "relative",
-  //         }}
-  //         autoSize={{ minRows: 2, maxRows: 10 }}
-  //         value={reportContent}
-  //         onChange={(e) => setReportContent(e.target.value)}
-  //       />
-  //     ),
-  //     maskClosable: true,
-  //     cancelText: "취소",
-  //     closable: true,
-  //     okText: "신고하기",
-  //     onOk: () => {
-  //       console.log("Reported Post!!");
-  //       console.log({
-  //         type: "REPORT_PORT_REQUEST",
-  //         data: {
-  //           postId: post?.id,
-  //           postedUserId: post?.UserId,
-  //           reportUserId: me.id,
-  //           reportContent: reportContent,
-  //         },
-  //       });
-  //     },
-  //   });
-  // };
   const onMoreComments = useCallback(
     (postId, lastCommentId) => () => {
       dispatch({
         type: LOAD_MORE_COMMENTS_REQUEST,
-        // data: { postId: postId, lastCommentId: lastCommentId },
         data: { postId, lastCommentId },
       });
     },
@@ -116,13 +85,12 @@ const PostCard = ({ post }) => {
 
   const liked = post?.Likers.find((v) => v.id === id);
   const onClickEditMode = useCallback(() => {
-    console.log("onClickEditMode Clicked!!");
     dispatch({ type: EDIT_MODE_WHAT, data: { edit: "Post", id: post?.id } });
     setEditMode(true);
+    return null;
   }, [editModeWhat, editMode]);
 
   useEffect(() => {
-    // if (isEditMode) setEditMode(false);
     setEditMode(false);
   }, [editPostDone]);
 
@@ -170,18 +138,30 @@ const PostCard = ({ post }) => {
   }, [id, me?.Posts]);
 
   // setState에 콜백함수를 넣으면 전달되는 인자(prev부분)에는 이전의 데이터가 들어있다.
-  const onLike = useCallback(() => {
-    if (!id) {
-      return alert("로그인이 필요합니다.");
-    }
-    return dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
-  }, [id]);
-  const onUnLike = useCallback(() => {
-    if (!id) {
-      return alert("로그인이 필요합니다.");
-    }
-    return dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
-  }, [id]);
+  const onLike = useCallback(
+    (e) => {
+      if (e.target.nodeName === "SPAN" || e.target.nodeName === "SUP") {
+        return setShowLikersModal(true);
+      }
+      if (!id) {
+        return alert("로그인이 필요합니다.");
+      }
+      return dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
+    },
+    [id]
+  );
+  const onUnLike = useCallback(
+    (e) => {
+      if (e.target.nodeName === "SPAN" || e.target.nodeName === "SUP") {
+        return setShowLikersModal(true);
+      }
+      if (!id) {
+        return alert("로그인이 필요합니다.");
+      }
+      return dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
+    },
+    [id]
+  );
 
   const onToggleComment = useCallback(() => {
     return setCommentFormOpend((prev) => !prev);
@@ -206,10 +186,21 @@ const PostCard = ({ post }) => {
       },
     });
   }, [id]);
+  const onClickCard = useCallback((e) => {
+    if (e.target.nodeName === "DIV" && !singlePost)
+      Router.push(`/post/${post.id}`);
+  }, []);
+
+  const onClickRetweetCard = useCallback((e, retweetId) => {
+    e.stopPropagation();
+    if (e.target.nodeName === "DIV") Router.push(`/post/${retweetId}`);
+  }, []);
+
   return (
     <>
       <div style={{ marginBottom: "20px" }}>
         <Card
+          onClick={onClickCard}
           size="default"
           cover={<PostImages images={post?.Images} />}
           style={{
@@ -220,6 +211,7 @@ const PostCard = ({ post }) => {
             overflow: "hidden",
             paddingTop: "6px",
             padding: "1px 1px 1px 1px",
+            marginTop: post.isSinglePost && 8,
           }}
           actions={
             editMode &&
@@ -235,6 +227,7 @@ const PostCard = ({ post }) => {
                     }}
                   >
                     <Button
+                      key="onChangePostBtn"
                       block
                       type="primary"
                       ghost
@@ -244,6 +237,7 @@ const PostCard = ({ post }) => {
                       저장
                     </Button>
                     <Button
+                      key="onClickEditCancelBtn"
                       block
                       type="danger"
                       ghost
@@ -268,7 +262,11 @@ const PostCard = ({ post }) => {
                   />,
                   liked ? (
                     <div onClick={onUnLike}>
-                      <Badge size="small" count={post?.Likers.length}>
+                      <Badge
+                        size="small"
+                        count={post?.Likers.length}
+                        offset={post?.Likers.length <= 10 ? [7] : [12, -2]}
+                      >
                         <HeartTwoTone
                           css={css`
                             transform: scale(1.5);
@@ -284,7 +282,11 @@ const PostCard = ({ post }) => {
                     </div>
                   ) : (
                     <div onClick={onLike}>
-                      <Badge size="small" count={post?.Likers.length}>
+                      <Badge
+                        size="small"
+                        count={post?.Likers.length}
+                        offset={post?.Likers.length <= 10 ? [7] : [12, -2]}
+                      >
                         <HeartOutlined
                           css={css`
                             color: #a0a0a0;
@@ -305,6 +307,12 @@ const PostCard = ({ post }) => {
                       count={
                         post?.commentsCount &&
                         Math.max(post?.Comments.length, post?.commentsCount)
+                      }
+                      offset={
+                        Math.max(post?.Comments.length, post?.commentsCount) <=
+                        10
+                          ? [7]
+                          : [12, -2]
                       }
                     >
                       <MessageOutlined
@@ -379,6 +387,7 @@ const PostCard = ({ post }) => {
         >
           {post?.RetweetId && post?.Retweet ? (
             <Card
+              onClick={(e) => onClickRetweetCard(e, post.RetweetId)}
               style={{ borderRadius: "10px" }}
               key={post?.id}
               cover={<PostImages images={post?.Retweet.Images} />}
@@ -417,18 +426,18 @@ const PostCard = ({ post }) => {
               />
             </Card>
           ) : (
-            <>
-              <Card.Meta
-                key={post?.id}
-                avatar={
-                  <a key={post?.id} href={`/user/${post?.User.id}`}>
-                    <Avatar key={post?.id}>{post?.User.nickname[0]}</Avatar>
-                  </a>
-                }
-                title={[
+            <Card.Meta
+              key={post?.id}
+              avatar={
+                <a key={post?.id} href={`/user/${post?.User.id}`}>
+                  <Avatar key={post?.id}>{post?.User.nickname[0]}</Avatar>
+                </a>
+              }
+              title={
+                <>
                   <a
+                    key="title-nickname"
                     href={`/user/${post?.User.id}`}
-                    key={post?.id}
                     css={css`
                       color: black;
                       :hover {
@@ -437,12 +446,23 @@ const PostCard = ({ post }) => {
                     `}
                   >
                     {post?.User.nickname}
-                  </a>,
-                  <span key={post?.id + 1} style={{ float: "right" }}>
-                    {id && id !== post?.User.id && <FollowButton post={post} />}
-                  </span>,
-                ]}
-                description={
+                  </a>
+                  <span key="title-button" style={{ float: "right" }}>
+                    {id && id !== post.User.id && <FollowButton post={post} />}
+                  </span>
+                  <div
+                    key="title-date"
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "rgba(0, 0, 0, 0.6)",
+                    }}
+                  >
+                    {dayjs(post.createdAt).fromNow()}
+                  </div>
+                </>
+              }
+              description={
+                <>
                   <PostCardContent
                     editMode={editMode}
                     postData={editTextParent}
@@ -450,9 +470,9 @@ const PostCard = ({ post }) => {
                     setPostData={(v) => setEditTextParent(v)}
                     postContent={post?.content}
                   />
-                }
-              />
-            </>
+                </>
+              }
+            />
           )}
         </Card>
         <CSSTransition
@@ -510,6 +530,14 @@ const PostCard = ({ post }) => {
           </div>
         </CSSTransition>
 
+        <CSSTransition in={showLikersModal} timeout={700} unmountOnExit>
+          <ShowLikersModal
+            postId={post.id}
+            showLikersModal={showLikersModal}
+            setShowLikersModal={setShowLikersModal}
+          />
+        </CSSTransition>
+
         {isModalVisible && (
           <ReportModal
             ReportWhat="Post"
@@ -533,7 +561,12 @@ PostCard.propTypes = {
     RetweetId: PropTypes.number,
     commentsCount: PropTypes.number,
     User: PropTypes.objectOf(PropTypes.object),
-    Retweet: PropTypes.objectOf(PropTypes.object),
+    User: PropTypes.shape({
+      id: PropTypes.number,
+    }),
+    Retweet: PropTypes.shape({
+      id: PropTypes.number,
+    }),
     content: PropTypes.string,
     createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),

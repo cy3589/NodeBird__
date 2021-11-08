@@ -123,7 +123,6 @@ const IndividualComment = ({ item, me, post }) => {
 
   return (
     <>
-      {console.log(post.isSinglePost)}
       <li>
         <div onClick={onclickComment}>
           <span>
@@ -290,9 +289,13 @@ IndividualComment.defaultProps = {
 };
 
 IndividualComment.propTypes = {
-  post: PropTypes.objectOf(PropTypes.object).isRequired,
-  me: PropTypes.objectOf(PropTypes.object),
-  item: PropTypes.objectOf(PropTypes.object),
+  post: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+  }).isRequired,
+  me: PropTypes.shape({
+    id: PropTypes.number,
+  }),
+  item: PropTypes.shape({ id: PropTypes.number }),
 };
 
 export default IndividualComment;

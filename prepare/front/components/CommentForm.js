@@ -117,6 +117,7 @@ const CommentForm = ({ post }) => {
 
 CommentForm.propTypes = {
   post: PropTypes.objectOf(PropTypes.object).isRequired,
+  post: PropTypes.shape({ id: PropTypes.number }),
 };
 
 export default CommentForm;

@@ -21,7 +21,6 @@ const ImagesZoom = ({ images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   return (
     <Overlay>
-      {console.log(images)}
       <Globaled />
       <Header style={{ zIndex: 2 }}>
         <h1>상세 이미지</h1>

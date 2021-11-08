@@ -1,8 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Avatar, Button, Card } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "@emotion/styled";
 import { logoutRequestAction } from "../reducers/user";
+import { CSSTransition } from "react-transition-group";
+import ShowFollowModal from "./ShowFollowModal";
 
 const UserProfileCardStyle = styled(Card)`
   border-radius: 10px;
@@ -17,27 +19,48 @@ const UserProfileCardStyle = styled(Card)`
 // `;
 // const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
 const UserProfile = () => {
+  const [showFollowModal, setShowFollowModal] = useState(false);
+  const [showWhat, setShowWhat] = useState(null);
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
   const onLogout = useCallback(() => {
     dispatch(logoutRequestAction());
   }, []);
+  const onClickFollowings = useCallback(() => {
+    setShowWhat("followings");
+    setShowFollowModal(true);
+    return null;
+  }, [showWhat, showFollowModal]);
+  const onClickFollowers = useCallback(() => {
+    setShowWhat("followers");
+    setShowFollowModal(true);
+    return null;
+  }, [showWhat, showFollowModal]);
   // parseInt(anotherUserInfo.id ,10) == parseInt(me.id) 라면 내 정보 보는중.
   return (
     <div style={{ paddingTop: "8px", marginBottom: "10px" }}>
+      <CSSTransition in={showFollowModal} timeout={700} unmountOnExit>
+        <ShowFollowModal
+          id={me.id}
+          showFollowModal={showFollowModal}
+          setShowFollowModal={setShowFollowModal}
+          showWhat={showWhat}
+          setShowWhat={setShowWhat}
+        />
+      </CSSTransition>
       <UserProfileCardStyle
         actions={[
-          <div key="twit">
+          <a href={`/user/${me.id}`} key="twit">
             게시물
             <br />
             {me.Posts.length}
-          </div>,
-          <div key="followings">
+          </a>,
+          <div key="followings" onClick={onClickFollowings}>
             팔로잉
             <br />
             {me.Followings.length}
           </div>,
-          <div key="followers">
+          <div key="followers" onClick={onClickFollowers}>
             팔로워
             <br />
             {me.Followers.length}

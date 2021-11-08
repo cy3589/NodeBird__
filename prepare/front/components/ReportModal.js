@@ -113,17 +113,17 @@ ReportModal.defaultProps = {
 };
 
 ReportModal.propTypes = {
-  ReportWhat: PropTypes.node.isRequired,
+  ReportWhat: PropTypes.string.isRequired,
 
-  reportPostId: PropTypes.node.isRequired,
-  reportUserId: PropTypes.node.isRequired,
-  reportUserNickname: PropTypes.node.isRequired,
+  reportPostId: PropTypes.number.isRequired,
+  reportUserId: PropTypes.number.isRequired,
+  reportUserNickname: PropTypes.string.isRequired,
 
   reportCommentId: PropTypes.number,
   reportComment: PropTypes.string,
 
-  isModalVisible: PropTypes.node.isRequired,
-  setIsModalVisible: PropTypes.node.isRequired,
+  isModalVisible: PropTypes.bool.isRequired,
+  setIsModalVisible: PropTypes.func,
 };
 
 export default ReportModal;

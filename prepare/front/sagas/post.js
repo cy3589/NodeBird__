@@ -48,6 +48,9 @@ import {
   EDIT_COMMENT_REQUEST,
   EDIT_COMMENT_SUCCESS,
   EDIT_COMMENT_FAILURE,
+  SHOW_LIKERS_MODAL_REQUEST,
+  SHOW_LIKERS_MODAL_SUCCESS,
+  SHOW_LIKERS_MODAL_FAILURE,
 } from "../reducers/post";
 
 function addPostAPI(data) {
@@ -357,6 +360,27 @@ function* editComment(action) {
   }
 }
 
+function showLikersModalAPI(data) {
+  return axios.get(
+    `/post/${data.postId}/likers?lastLikerId=${data.lastLikerId || 0}`
+  );
+}
+function* showLikersModal(action) {
+  try {
+    const result = yield call(showLikersModalAPI, action.data);
+    yield put({
+      type: SHOW_LIKERS_MODAL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: SHOW_LIKERS_MODAL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -402,6 +426,9 @@ function* watchRemoveComment() {
 function* watchEditComment() {
   yield takeLatest(EDIT_COMMENT_REQUEST, editComment);
 }
+function* watchShowLikersModal() {
+  yield takeLatest(SHOW_LIKERS_MODAL_REQUEST, showLikersModal);
+}
 
 export default function* postSaga() {
   yield all([
@@ -420,5 +447,6 @@ export default function* postSaga() {
     fork(watchLoadHashtagPosts),
     fork(watchRemoveComment),
     fork(watchEditComment),
+    fork(watchShowLikersModal),
   ]);
 }

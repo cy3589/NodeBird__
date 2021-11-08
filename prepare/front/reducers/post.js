@@ -3,6 +3,7 @@ export const initialState = {
   mainPosts: [],
   imagePaths: [],
   singlePost: null,
+  nowShowLikers: [],
 
   likePostLoading: false,
   likePostDone: false,
@@ -57,7 +58,16 @@ export const initialState = {
   editCommentLoading: false,
   editCommentDone: false,
   editCommentError: null,
+
+  loadLikersLoading: false,
+  loadLikersDone: false,
+  loadLikersError: null,
+  hasMoreLikers: true,
+
+  isAnothersProfile: false,
 };
+
+export const IS_ANOTHERS_PROFILE = "IS_ANOTHERS_PROFILE";
 
 export const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
 export const EDIT_POST_SUCCESS = "EDIT_POST_SUCCESS";
@@ -122,6 +132,11 @@ export const EDIT_COMMENT_REQUEST = "EDIT_COMMENT_REQUEST";
 export const EDIT_COMMENT_SUCCESS = "EDIT_COMMENT_SUCCESS";
 export const EDIT_COMMENT_FAILURE = "EDIT_COMMENT_FAILURE";
 
+export const SHOW_LIKERS_MODAL_REQUEST = "SHOW_LIKERS_MODAL_REQUEST";
+export const SHOW_LIKERS_MODAL_SUCCESS = "SHOW_LIKERS_MODAL_SUCCESS";
+export const SHOW_LIKERS_MODAL_FAILURE = "SHOW_LIKERS_MODAL_FAILURE";
+export const SHOW_LIKERS_MODAL_CLOSE = "SHOW_LIKERS_MODAL_CLOSE";
+
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
   data, // TEXT정보만 담겨있음, ADD_POST_REQUEST 액션 실행->SAGA에서 data를 가지고 실행
@@ -135,6 +150,29 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case IS_ANOTHERS_PROFILE:
+        draft.isAnothersProfile = action.data;
+
+      case SHOW_LIKERS_MODAL_REQUEST:
+        draft.loadLikersLoading = true;
+        draft.loadLikersDone = false;
+        draft.loadLikersError = null;
+        break;
+      case SHOW_LIKERS_MODAL_SUCCESS:
+        console.log(action.data);
+        action.data.forEach((v) => console.log(new Date(v.Like.createdAt)));
+        draft.nowShowLikers.push(...action.data);
+        draft.loadLikersLoading = false;
+        draft.loadLikersDone = true;
+        draft.hasMoreLikers = action.data.length === 10;
+        break;
+      case SHOW_LIKERS_MODAL_FAILURE:
+        draft.loadLikersLoading = false;
+        draft.loadLikersError = action.error;
+        break;
+      case SHOW_LIKERS_MODAL_CLOSE:
+        draft.nowShowLikers = [];
+
       case EDIT_COMMENT_REQUEST:
         draft.editCommentLoading = true;
         draft.editCommentDone = false;
@@ -211,15 +249,16 @@ const reducer = (state = initialState, action) => {
         break;
 
       case LOAD_MORE_COMMENTS_SUCCESS:
-        //    `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`
-        console.log("comments: ", action.data.comments);
-        console.log("postId: ", action.data.postId);
-        const targetPostIndex = draft.mainPosts.findIndex(
-          (v) => v.id === action.data.postId
-        );
-        draft.mainPosts[targetPostIndex].Comments.unshift(
-          ...action.data.comments.reverse()
-        );
+        if (!draft.singlePost) {
+          const targetPostIndex = draft.mainPosts.findIndex(
+            (v) => v.id === action.data.postId
+          );
+          draft.mainPosts[targetPostIndex].Comments.unshift(
+            ...action.data.comments.reverse()
+          );
+        } else {
+          draft.singlePost.Comments.unshift(...action.data.comments.reverse());
+        }
 
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
@@ -250,7 +289,10 @@ const reducer = (state = initialState, action) => {
         draft.retweetError = null;
         break;
       case RETWEET_SUCCESS:
-        draft.mainPosts.unshift(action.data);
+        console.log(state.isAnothersProfile);
+        if (!draft.isAnothersProfile) {
+          draft.mainPosts.unshift(action.data);
+        }
         draft.retweetLoading = false;
         draft.retweetDone = true;
         break;

@@ -9,7 +9,7 @@ const NicknameEditForm = () => {
   const [nickname, onChangeNickname] = useInput(me?.nickname || "");
   const dispatch = useDispatch();
   const onSubmit = useCallback(() => {
-    dispatch({
+    return dispatch({
       type: CHANGE_NICKNAME_REQUEST,
       data: nickname,
     });
@@ -17,9 +17,11 @@ const NicknameEditForm = () => {
 
   const style = useMemo(
     () => ({
+      marginTop: "8px",
       marginBottom: "20px",
       border: "1px solid #d9d9d9",
       padding: "20px",
+      borderRadius: "10px",
     }),
     []
   );
@@ -30,6 +32,8 @@ const NicknameEditForm = () => {
         enterButton="수정"
         onChange={onChangeNickname}
         onSearch={onSubmit}
+        placeholder="바꿀 닉네임을 입력해주세요"
+        type="text"
       />
     </Form>
   );

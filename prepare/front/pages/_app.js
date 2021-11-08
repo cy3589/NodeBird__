@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import Head from "next/head";
 import wrapper from "../store/configureStore";
 
-const Nodebird = ({ Component }) => {
+const SNS = ({ Component }) => {
   return (
     <>
       <Head>
@@ -16,8 +16,8 @@ const Nodebird = ({ Component }) => {
   );
 };
 
-Nodebird.propTypes = {
+SNS.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 
-export default wrapper.withRedux(Nodebird);
+export default wrapper.withRedux(SNS);

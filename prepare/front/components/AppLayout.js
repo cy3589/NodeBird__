@@ -1,18 +1,25 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import React, { useCallback } from "react";
 import { css, Global } from "@emotion/react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Menu, Input, Row, Col, Card, Avatar } from "antd";
-import { Router } from "next/router";
+import Router from "next/router";
 import { useSelector } from "react-redux";
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
+import useInput from "../hooks/useInput";
 
 // import { useForm } from "react-hook-form";
 const GlobalStyle = () => (
   <Global
     styles={css`
+      .ant-input-search
+        > .ant-input-group
+        > .ant-input-group-addon:last-child
+        .ant-input-search-button {
+        border-radius: 10px;
+      }
       .ant-modal-content {
         border-radius: 10px;
         overflow: hidden;
@@ -77,12 +84,16 @@ const AppLayout = ({
   isHashtag,
 }) => {
   const { me } = useSelector((state) => state.user);
+  const [searchInput, onChangeSerachInput] = useInput("");
+  const onSerach = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
   return (
     <div style={{ backgroundColor: "aliceblue", height: "100%" }}>
       <GlobalStyle />
       <Menu
         mode="horizontal"
-        selectedKeys={[Router.pathname]}
+        // selectedKeys={[Router.pathname]}
         style={{ position: "sticky", top: "0", zIndex: "1" }}
       >
         <Menu.Item key="node-bird">
@@ -98,7 +109,13 @@ const AppLayout = ({
           </Menu.Item>
         )}
         <Menu.Item key="search-button">
-          <Input.Search style={{ verticalAlign: "middle" }} enterButton />
+          <Input.Search
+            style={{ verticalAlign: "middle" }}
+            enterButton
+            value={searchInput}
+            onChange={onChangeSerachInput}
+            onSearch={onSerach}
+          />
         </Menu.Item>
       </Menu>
       <Row gutter={8}>
@@ -170,7 +187,9 @@ AppLayout.defaultProps = {
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,
   anotherUserProfile: PropTypes.bool,
-  anotherUserInfo: PropTypes.objectOf(PropTypes.object),
+  anotherUserInfo: PropTypes.shape({
+    postsLength: PropTypes.number,
+  }),
   isHashtag: PropTypes.string,
 };
 export default AppLayout;
