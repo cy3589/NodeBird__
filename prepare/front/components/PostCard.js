@@ -568,7 +568,10 @@ PostCard.propTypes = {
     Retweet: PropTypes.shape({
       id: PropTypes.number,
       Images: PropTypes.arrayOf(PropTypes.object),
-      User: PropTypes.shape({ id: PropTypes.number }),
+      User: PropTypes.shape({
+        id: PropTypes.number,
+        nickname: PropTypes.string,
+      }),
       UserId: PropTypes.number,
       content: PropTypes.string,
     }),

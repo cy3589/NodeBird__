@@ -20,7 +20,7 @@ const UserProfileCardStyle = styled(Card)`
 // const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
 const UserProfile = () => {
   const [showFollowModal, setShowFollowModal] = useState(false);
-  const [showWhat, setShowWhat] = useState(null);
+  const [showWhat, setShowWhat] = useState(" ");
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
   const onLogout = useCallback(() => {

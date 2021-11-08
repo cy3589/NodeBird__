@@ -38,7 +38,7 @@ const ShowFollowModal = ({
         title="Like"
         visible={showFollowModal}
         onCancel={() => {
-          setShowWhat(null);
+          setShowWhat(" ");
           setShowFollowModal(false);
           return null;
         }}
@@ -74,13 +74,14 @@ const ShowFollowModal = ({
 };
 
 ShowFollowModal.defaultProps = {
-  showWhat: null,
+  showWhat: " ",
 };
 ShowFollowModal.propTypes = {
   id: PropTypes.number.isRequired,
   showFollowModal: PropTypes.bool.isRequired,
   setShowFollowModal: PropTypes.func.isRequired,
   setShowWhat: PropTypes.func.isRequired,
+  showWhat: PropTypes.string,
 };
 
 export default ShowFollowModal;

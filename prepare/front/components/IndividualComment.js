@@ -302,7 +302,7 @@ IndividualComment.propTypes = {
     id: PropTypes.number,
     content: PropTypes.string,
     UserId: PropTypes.number,
-    User: PropTypes.shape({ id: PropTypes.number }),
+    User: PropTypes.shape({ id: PropTypes.number, nickname: PropTypes.string }),
   }),
 };
 
