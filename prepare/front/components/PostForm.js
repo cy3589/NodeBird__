@@ -135,7 +135,6 @@ const PostForm = () => {
             <img
               src={v}
               alt={v}
-              key={v}
               style={{
                 width: "100%",
                 paddingBottom: "1%",

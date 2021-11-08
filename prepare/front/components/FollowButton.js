@@ -49,7 +49,7 @@ const FollowButton = ({ post }) => {
 FollowButton.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
-    User: PropTypes.objectOf(PropTypes.object),
+    User: PropTypes.shape({ id: PropTypes.number }),
   }).isRequired,
 };
 

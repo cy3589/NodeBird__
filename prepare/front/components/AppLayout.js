@@ -128,17 +128,21 @@ const AppLayout = ({
           ) : (
             !anotherUserProfile && <LoginForm />
           )}
+        </Col>
+        <Col xs={24} md={12}>
           {isHashtag && (
             <Card
               style={{
                 width: "fit-content",
                 borderRadius: "10px",
                 marginBottom: "20px",
+                marginTop: "8px",
+                left: "50%",
+                right: "50%",
+                transform: "translate(-50% )",
               }}
             >{`#${isHashtag}`}</Card>
           )}
-        </Col>
-        <Col xs={24} md={12}>
           {anotherUserInfo &&
           parseInt(anotherUserInfo.id, 10) !== parseInt(me?.id, 10) ? (
             <Card

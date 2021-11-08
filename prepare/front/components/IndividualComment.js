@@ -292,7 +292,7 @@ IndividualComment.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number.isRequired,
     isSinglePost: PropTypes.bool,
-    User: PropTypes.objectOf(PropTypes.object),
+    User: PropTypes.shape({ id: PropTypes.number }),
     commentsCount: PropTypes.number,
   }).isRequired,
   me: PropTypes.shape({
@@ -302,7 +302,7 @@ IndividualComment.propTypes = {
     id: PropTypes.number,
     content: PropTypes.string,
     UserId: PropTypes.number,
-    User: PropTypes.objectOf(PropTypes.object),
+    User: PropTypes.shape({ id: PropTypes.number }),
   }),
 };
 

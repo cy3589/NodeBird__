@@ -94,7 +94,6 @@ const PostCard = ({ post }) => {
   }, [editPostDone]);
 
   const onClickEditCancel = useCallback(() => {
-    console.log("onClickEditCancel");
     Modal.confirm({
       maskClosable: true,
       title: "취소하시겠어요?",
@@ -102,6 +101,7 @@ const PostCard = ({ post }) => {
       okText: "수정 취소",
       cancelText: "계속 수정하기",
       onOk() {
+        Modal.destroyAll();
         setEditTextParent(post?.content);
         setEditMode(false); // editMode가 취소됨
         return dispatch({ type: EDIT_MODE_WHAT, data: null });
@@ -568,7 +568,7 @@ PostCard.propTypes = {
     Retweet: PropTypes.shape({
       id: PropTypes.number,
       Images: PropTypes.arrayOf(PropTypes.object),
-      User: PropTypes.objectOf(PropTypes.object),
+      User: PropTypes.shape({ id: PropTypes.number }),
       UserId: PropTypes.number,
       content: PropTypes.string,
     }),

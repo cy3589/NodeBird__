@@ -73,12 +73,14 @@ const ShowFollowModal = ({
   );
 };
 
+ShowFollowModal.defaultProps = {
+  showWhat: null,
+};
 ShowFollowModal.propTypes = {
   id: PropTypes.number.isRequired,
   showFollowModal: PropTypes.bool.isRequired,
   setShowFollowModal: PropTypes.func.isRequired,
   setShowWhat: PropTypes.func.isRequired,
-  showWhat: PropTypes.string.isRequired,
 };
 
 export default ShowFollowModal;
