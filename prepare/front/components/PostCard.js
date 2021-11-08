@@ -33,7 +33,7 @@ import { CSSTransition } from "react-transition-group";
 // import useInput from "../hooks/useInput";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
-
+import Router from "next/router";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
@@ -51,7 +51,6 @@ import IndividualComment from "./IndividualComment";
 import { EDIT_MODE_WHAT } from "../reducers/user";
 import ReportModal from "./ReportModal";
 import ShowLikersModal from "./ShowLikersModal";
-import Router from "next/router";
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 
 const PostCard = ({ post }) => {
@@ -555,17 +554,23 @@ const PostCard = ({ post }) => {
   );
 };
 
+PostCard.defaultProps = {};
 PostCard.propTypes = {
   post: PropTypes.shape({
+    isSinglePost: PropTypes.bool,
     id: PropTypes.number,
     RetweetId: PropTypes.number,
     commentsCount: PropTypes.number,
-    User: PropTypes.objectOf(PropTypes.object),
     User: PropTypes.shape({
       id: PropTypes.number,
-    }),
+      nickname: PropTypes.string,
+    }).isRequired,
     Retweet: PropTypes.shape({
       id: PropTypes.number,
+      Images: PropTypes.arrayOf(PropTypes.object),
+      User: PropTypes.objectOf(PropTypes.object),
+      UserId: PropTypes.number,
+      content: PropTypes.string,
     }),
     content: PropTypes.string,
     createdAt: PropTypes.string,

@@ -66,6 +66,7 @@ const ShowLikersModal = ({ postId, showLikersModal, setShowLikersModal }) => {
 };
 
 ShowLikersModal.propTypes = {
+  postId: PropTypes.number.isRequired,
   showLikersModal: PropTypes.bool.isRequired,
   setShowLikersModal: PropTypes.func.isRequired,
 };

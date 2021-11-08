@@ -24,9 +24,10 @@ const User = () => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const router = useRouter();
-  const id = parseInt(router.query?.id);
-  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
-    useSelector((state) => state.post);
+  const id = parseInt(router.query?.id, 10);
+  const { mainPosts, hasMorePosts, retweetError } = useSelector(
+    (state) => state.post
+  );
   // const { getUserInfo, me, getUserInfoError } = useSelector(
   const { getUserInfo, getUserInfoError } = useSelector((state) => state.user);
   if (getUserInfoError) {

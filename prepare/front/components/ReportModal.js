@@ -123,7 +123,7 @@ ReportModal.propTypes = {
   reportComment: PropTypes.string,
 
   isModalVisible: PropTypes.bool.isRequired,
-  setIsModalVisible: PropTypes.func,
+  setIsModalVisible: PropTypes.func.isRequired,
 };
 
 export default ReportModal;

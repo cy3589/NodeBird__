@@ -2,8 +2,8 @@ import React, { useCallback, useState } from "react";
 import { Avatar, Button, Card } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "@emotion/styled";
-import { logoutRequestAction } from "../reducers/user";
 import { CSSTransition } from "react-transition-group";
+import { logoutRequestAction } from "../reducers/user";
 import ShowFollowModal from "./ShowFollowModal";
 
 const UserProfileCardStyle = styled(Card)`

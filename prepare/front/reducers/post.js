@@ -63,11 +63,7 @@ export const initialState = {
   loadLikersDone: false,
   loadLikersError: null,
   hasMoreLikers: true,
-
-  isAnothersProfile: false,
 };
-
-export const IS_ANOTHERS_PROFILE = "IS_ANOTHERS_PROFILE";
 
 export const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
 export const EDIT_POST_SUCCESS = "EDIT_POST_SUCCESS";
@@ -150,9 +146,6 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
-      case IS_ANOTHERS_PROFILE:
-        draft.isAnothersProfile = action.data;
-
       case SHOW_LIKERS_MODAL_REQUEST:
         draft.loadLikersLoading = true;
         draft.loadLikersDone = false;
@@ -289,10 +282,9 @@ const reducer = (state = initialState, action) => {
         draft.retweetError = null;
         break;
       case RETWEET_SUCCESS:
-        console.log(state.isAnothersProfile);
-        if (!draft.isAnothersProfile) {
-          draft.mainPosts.unshift(action.data);
+        if (true) {
         }
+        draft.mainPosts.unshift(action.data);
         draft.retweetLoading = false;
         draft.retweetDone = true;
         break;

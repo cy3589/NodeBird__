@@ -291,11 +291,19 @@ IndividualComment.defaultProps = {
 IndividualComment.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number.isRequired,
+    isSinglePost: PropTypes.bool,
+    User: PropTypes.objectOf(PropTypes.object),
+    commentsCount: PropTypes.number,
   }).isRequired,
   me: PropTypes.shape({
     id: PropTypes.number,
   }),
-  item: PropTypes.shape({ id: PropTypes.number }),
+  item: PropTypes.shape({
+    id: PropTypes.number,
+    content: PropTypes.string,
+    UserId: PropTypes.number,
+    User: PropTypes.objectOf(PropTypes.object),
+  }),
 };
 
 export default IndividualComment;

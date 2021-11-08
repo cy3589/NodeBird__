@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Button, Card, Skeleton, Avatar, Space } from "antd";
+import { List, Button, Skeleton, Avatar, Space } from "antd";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { FOLLOW_REQUEST, BLOCK_USER_REQUEST } from "../reducers/user";

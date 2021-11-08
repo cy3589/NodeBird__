@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Button, Card, Avatar, Skeleton } from "antd";
+import { List, Button, Avatar, Skeleton } from "antd";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { UNFOLLOW_REQUEST } from "../reducers/user";

@@ -189,6 +189,10 @@ AppLayout.propTypes = {
   anotherUserProfile: PropTypes.bool,
   anotherUserInfo: PropTypes.shape({
     postsLength: PropTypes.number,
+    id: PropTypes.number,
+    followingsLength: PropTypes.number,
+    followersLength: PropTypes.number,
+    nickname: PropTypes.string,
   }),
   isHashtag: PropTypes.string,
 };

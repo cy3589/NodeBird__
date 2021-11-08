@@ -14,8 +14,8 @@ const ShowFollowModal = ({
   const [follows, setFollows] = useState([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const loadMoreFollows = useCallback(async () => {
-    return await axios
+  const loadMoreFollows = useCallback(() => {
+    return axios
       .get(
         `/user/${id}/${showWhat}?lastFollowId=${
           follows[follows.length - 1]?.id || 0
@@ -78,6 +78,7 @@ ShowFollowModal.propTypes = {
   showFollowModal: PropTypes.bool.isRequired,
   setShowFollowModal: PropTypes.func.isRequired,
   setShowWhat: PropTypes.func.isRequired,
+  showWhat: PropTypes.string.isRequired,
 };
 
 export default ShowFollowModal;
