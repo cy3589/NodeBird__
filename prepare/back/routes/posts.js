@@ -2,8 +2,8 @@ const express = require("express");
 const { Op } = require("sequelize");
 const router = express.Router();
 const { User, Post, Comment, Image } = require("../models");
-const db = require("../models");
-const { isLoggedIn } = require("./middlewares");
+// const db = require("../models");
+// const { isLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
   fullPostJSON.Comments.splice(
@@ -11,8 +11,9 @@ const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
     !(fullPostJSON.Comments.length - 10 < 0) &&
       fullPostJSON.Comments.length - 10
   );
-  return fullPostJSON; //객체배열의 map을 위해 추가
+  return fullPostJSON; // 객체배열의 map을 위해 추가
 };
+
 router.get("/", async (req, res, next) => {
   // GET  /posts
   try {

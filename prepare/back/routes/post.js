@@ -8,7 +8,12 @@ const { User, Post, Comment, Image, Hashtag, sequelize } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
-  fullPostJSON.Comments.splice(10);
+  fullPostJSON.Comments.splice(
+    0,
+    !(fullPostJSON.Comments.length - 10 < 0) &&
+      fullPostJSON.Comments.length - 10
+  );
+  return fullPostJSON; // 객체배열의 map을 위해 추가
 };
 try {
   fs.accessSync("uploads");
@@ -16,6 +21,28 @@ try {
   console.log("uploads폴더가 없으므로 생성합니다");
   fs.mkdirSync("uploads");
 }
+
+router.get("/:PostId/likers", async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: parseInt(req.params.PostId) },
+    });
+    console.log(!post);
+    if (!post) {
+      return res.status(403).send("존재하지 않는 게시글입니다.");
+    }
+    const lastDate = new Date(parseInt(req.query.lastAt, 10)).toISOString();
+    const lastLikerId = parseInt(req.query.lastLikerId, 10);
+    const [result, metadata] = await sequelize.query(
+      "SELECT * FROM (SELECT `Like`.`createdAt` AS `createdAt`,`Like`.`UserId` AS `id`,`nickname` FROM `Users` AS `User` INNER JOIN `Like` AS `Like` ON `User`.`id` = `Like`.`UserId` AND `Like`.`PostId` = :PostId GROUP BY createdAt) AS TB WHERE createdAt >=:lastDate AND id!=:lastLikerId LIMIT 10",
+      { replacements: { PostId: req.params.PostId, lastDate, lastLikerId } }
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 router.patch(
   "/:postId/:commentUserId/:commentId",
@@ -95,15 +122,6 @@ router.delete(
 // `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`;
 router.get("/:PostId/comments", async (req, res, next) => {
   try {
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(
-      "PostId: ",
-      req.params.PostId,
-      "LastCommentId: ",
-      req.query.lastCommentId
-    );
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
     const where = {};
     if (parseInt(req.query.lastCommentId, 10)) {
       where.id = { [Op.lt]: parseInt(req.query.lastCommentId, 10) };
@@ -111,10 +129,14 @@ router.get("/:PostId/comments", async (req, res, next) => {
     const post = await Post.findOne({
       where: { id: parseInt(req.params.PostId) },
     });
-    console.log(!post);
     if (!post) {
       return res.status(403).send("존재하지 않는 게시글입니다.");
     }
+    // const [result, metadata] = await sequelize.query(
+    //   "SELECT * FROM (SELECT `Like`.`createdAt` AS `createdAt`,`Like`.`UserId` AS `id`,`nickname` FROM `Users` AS `User` INNER JOIN `Like` AS `Like` ON `User`.`id` = `Like`.`UserId` AND `Like`.`PostId` = :PostId GROUP BY createdAt) AS TB WHERE createdAt >=:lastDate AND id!=:lastLikerId LIMIT 10",
+    //   { replacements: { PostId: req.params.PostId, lastDate, lastLikerId } }
+    // );
+
     const resComments = await Comment.findAll({
       where: { ...where, PostId: parseInt(req.params.PostId) },
       order: [["createdAt", "DESC"]],
@@ -149,6 +171,10 @@ router.get("/:postId", async (req, res, next) => {
     }
     const fullPost = await Post.findOne({
       where: { id: post?.id },
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt", "ASC"],
+      ],
       include: [
         {
           model: Post,
@@ -162,12 +188,7 @@ router.get("/:postId", async (req, res, next) => {
         { model: Image },
         {
           model: Comment,
-          include: [
-            {
-              model: User,
-              attributes: ["id", "nickname"],
-            },
-          ],
+          include: [{ model: User, attributes: ["id", "nickname"] }],
         },
         {
           model: User,
@@ -179,8 +200,8 @@ router.get("/:postId", async (req, res, next) => {
     const fullPostJSON = fullPost.toJSON();
 
     PostAddCommentsCountAndSlice10Comments(fullPostJSON);
-    console.log(fullPostJSON);
-    console.log(fullPostJSON.Comments.length);
+    console.log("fullPostJSON", fullPostJSON);
+    console.log("fullPostJSON.Comments.length", fullPostJSON.Comments.length);
     // res.status(200).json(fullPost);
     res.status(200).json(fullPostJSON);
   } catch (error) {

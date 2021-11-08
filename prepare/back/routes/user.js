@@ -1,5 +1,5 @@
 const express = require("express");
-const { User, Post, Comment, Image } = require("../models");
+const { User, Post, Comment, Image, sequelize } = require("../models");
 const router = express.Router();
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
@@ -277,4 +277,43 @@ router.get("/info/:userId", async (req, res, next) => {
   }
 });
 
+router.get("/:UserId/:followWhat", async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: parseInt(req.params.UserId) },
+    });
+    console.log(!user);
+    if (!user) {
+      return res.status(403).send("존재하지 않는 사용자입니다.");
+    }
+    const UserId = parseInt(req.params.UserId);
+    const lastDate = new Date(parseInt(req.query.lastAt, 10)).toISOString();
+    const lastFollowId = parseInt(req.query.lastFollowId, 10);
+    console.log(UserId, lastDate, lastFollowId);
+    if (req.params.followWhat === "followings") {
+      const [result, metadata] = await sequelize.query(
+        "SELECT * FROM (SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollwingId` AS `id`, `Follow`.`FollwerId` AS `myId` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollwingId` AND `Follow`.`FollwerId` = :UserId GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
+        { replacements: { UserId, lastDate, lastFollowId } }
+      );
+      console.log(result);
+      res.status(200).json(result);
+    } else if (req.params.followWhat === "followers") {
+      const [result, metadata] = await sequelize.query(
+        "SELECT * FROM ( SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollwingId` AS `myId`, `Follow`.`FollwerId` AS `id` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollwerId` AND `Follow`.`FollwingId` = :UserId  GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
+        { replacements: { UserId, lastDate, lastFollowId } }
+      );
+      console.log(result);
+      res.status(200).json(result);
+    }
+    console.log();
+    console.log("lastFollowId : ", lastFollowId);
+    console.log("lastDate : ", lastDate);
+    console.log(req.params.UserId);
+    console.log(req.params.followWhat);
+    // res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 module.exports = router;
