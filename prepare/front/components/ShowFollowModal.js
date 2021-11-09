@@ -35,7 +35,7 @@ const ShowFollowModal = ({
   return (
     <>
       <Modal
-        title="Like"
+        title={showWhat}
         visible={showFollowModal}
         onCancel={() => {
           setShowWhat(" ");
@@ -47,10 +47,10 @@ const ShowFollowModal = ({
           dataLength={follows.length}
           next={loadMoreFollows}
           hasMore={hasMore}
-          scrollableTarget="scrollableDiv"
+          scrollableTarget="scrollableFollow"
         >
           <List
-            id="scrollableDiv"
+            id="scrollableFollow"
             style={{ height: "45vh", overflow: "auto" }}
             dataSource={follows}
             renderItem={(item) => (
