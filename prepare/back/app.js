@@ -6,15 +6,23 @@ const dotenv = require("dotenv");
 const passport = require("passport");
 const morgan = require("morgan");
 const path = require("path");
-
+const helmet = require("helmet");
+const hpp = require("hpp");
 const userRouter = require("./routes/user");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const passportConfig = require("./passport");
-dotenv.config();
 const app = express();
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined"));
+  app.use(hpp());
+  app.use(helmet());
+} else {
+  app.use(morgan("dev"));
+}
+dotenv.config();
 app.use(
   cors({
     origin: true,
@@ -22,7 +30,6 @@ app.use(
   })
 );
 app.use("/", express.static(path.join(__dirname, "uploads")));
-app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -60,6 +67,6 @@ app.get("/", (req, res) => {
 // app.use((err, req, res, next) => {});  //에러처리 미들웨어는 기본적으로 포함되나 에러에 대해
 // 특별한 동작을 하게 하고싶을 때 작성한다.
 
-app.listen(3065, () => {
+app.listen(80, () => {
   console.log("서버 실행 중");
 });
