@@ -49,7 +49,7 @@ export const initialState = {
 
   getUserInfo: null,
   me: null,
-  sighUpData: {},
+  signUpData: {},
   loginData: {},
   userInfo: {},
 };
