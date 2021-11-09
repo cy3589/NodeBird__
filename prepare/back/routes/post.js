@@ -91,7 +91,6 @@ router.delete(
     try {
       const postId = parseInt(req.params.postId, 10);
       const commentId = parseInt(req.params.commentId, 10);
-      const commentUserId = parseInt(req.params.commentUserId, 10);
 
       const post = await Post.findOne({ where: { id: req.params.postId } });
       if (!post) {
@@ -119,7 +118,6 @@ router.delete(
   }
 );
 
-// `/post/${data.postId}/comments?lastCommentId=${data.lastCommentId || 0}`;
 router.get("/:PostId/comments", async (req, res, next) => {
   try {
     const where = {};
@@ -132,11 +130,6 @@ router.get("/:PostId/comments", async (req, res, next) => {
     if (!post) {
       return res.status(403).send("존재하지 않는 게시글입니다.");
     }
-    // const [result, metadata] = await sequelize.query(
-    //   "SELECT * FROM (SELECT `Like`.`createdAt` AS `createdAt`,`Like`.`UserId` AS `id`,`nickname` FROM `Users` AS `User` INNER JOIN `Like` AS `Like` ON `User`.`id` = `Like`.`UserId` AND `Like`.`PostId` = :PostId GROUP BY createdAt) AS TB WHERE createdAt >=:lastDate AND id!=:lastLikerId LIMIT 10",
-    //   { replacements: { PostId: req.params.PostId, lastDate, lastLikerId } }
-    // );
-
     const resComments = await Comment.findAll({
       where: { ...where, PostId: parseInt(req.params.PostId) },
       order: [["createdAt", "DESC"]],
@@ -218,6 +211,7 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
+
 router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
