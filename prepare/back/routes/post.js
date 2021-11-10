@@ -6,7 +6,7 @@ const fs = require("fs");
 const { Op } = require("sequelize");
 const { User, Post, Comment, Image, Hashtag, sequelize } = require("../models");
 const { isLoggedIn } = require("./middlewares");
-const backUrl = "http://52.79.104.197";
+const backUrl = "http://api.mynodesns.shop";
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
   fullPostJSON.Comments.splice(
