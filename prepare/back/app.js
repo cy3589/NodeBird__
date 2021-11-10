@@ -67,6 +67,7 @@ app.get("/", (req, res) => {
 // app.use((err, req, res, next) => {});  //에러처리 미들웨어는 기본적으로 포함되나 에러에 대해
 // 특별한 동작을 하게 하고싶을 때 작성한다.
 
-app.listen(80, () => {
+app.listen(3065, () => {
+  // dev: localhost:3065 , prod:80
   console.log("서버 실행 중");
 });

@@ -6,6 +6,7 @@ const fs = require("fs");
 const { Op } = require("sequelize");
 const { User, Post, Comment, Image, Hashtag, sequelize } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+const backUrl = "http://52.79.104.197";
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
   fullPostJSON.Comments.splice(
@@ -452,7 +453,7 @@ router.post("/", upload.array("image"), isLoggedIn, async (req, res, next) => {
 
     const images = await Promise.all(
       req.files.map((image) =>
-        Image.create({ src: `http://localhost:3065/${image.filename}` })
+        Image.create({ src: `${backUrl}/${image.filename}` })
       )
     );
     await post.addImages(images);
