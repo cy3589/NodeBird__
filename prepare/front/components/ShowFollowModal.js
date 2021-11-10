@@ -38,6 +38,7 @@ const ShowFollowModal = ({
         title={showWhat}
         visible={showFollowModal}
         onCancel={() => {
+          setFollows([]);
           setShowWhat(" ");
           setShowFollowModal(false);
           return null;

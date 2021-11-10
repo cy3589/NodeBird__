@@ -58,7 +58,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
     // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
-
     store.dispatch(END);
     await store.sagaTask.toPromise();
   }

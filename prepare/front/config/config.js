@@ -1,1 +1,2 @@
-export const backUrl = "http://52.79.104.197";
+export const backUrl = "http://api.mynodesns.shop";
+// export const backUrl = "http://localhost:3065";

@@ -39,6 +39,11 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      domain: process.env.NODE_ENV === "production" && ".mynodesns.shop", //도메인 연결 후 작성 .xxx.xx 형식으로 작성
+    },
   })
 );
 
@@ -67,7 +72,7 @@ app.get("/", (req, res) => {
 // app.use((err, req, res, next) => {});  //에러처리 미들웨어는 기본적으로 포함되나 에러에 대해
 // 특별한 동작을 하게 하고싶을 때 작성한다.
 
-app.listen(3065, () => {
+app.listen(80, () => {
   // dev: localhost:3065 , prod:80
   console.log("서버 실행 중");
 });

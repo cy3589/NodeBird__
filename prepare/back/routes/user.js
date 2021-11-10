@@ -4,7 +4,6 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const db = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
