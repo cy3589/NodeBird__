@@ -304,8 +304,9 @@ const PostCard = ({ post }) => {
                     <Badge
                       size="small"
                       count={
-                        post?.commentsCount &&
-                        Math.max(post?.Comments.length, post?.commentsCount)
+                        post?.commentsCount
+                          ? Math.max(post?.Comments.length, post?.commentsCount)
+                          : 0
                       }
                       offset={
                         Math.max(post?.Comments.length, post?.commentsCount) <=
