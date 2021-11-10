@@ -5,7 +5,7 @@ const { User, Post, Comment, Image } = require("../models");
 // const db = require("../models");
 // const { isLoggedIn } = require("./middlewares");
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
-  fullPostJSON.commentsCount = fullPostJSON.Comments.length;
+  fullPostJSON.commentsCount = fullPostJSON.Comments.length || 0;
   fullPostJSON.Comments.splice(
     0,
     !(fullPostJSON.Comments.length - 10 < 0) &&
