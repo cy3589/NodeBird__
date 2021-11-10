@@ -15,6 +15,7 @@ const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const passportConfig = require("./passport");
 const app = express();
+dotenv.config();
 if (process.env.NODE_ENV === "production") {
   app.use(morgan("combined"));
   app.use(hpp());
@@ -22,7 +23,6 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.use(morgan("dev"));
 }
-dotenv.config();
 app.use(
   cors({
     origin: true,
