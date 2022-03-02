@@ -1,28 +1,67 @@
 {
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module",
-    "ecmaFeatures": { "jsx": true }
-  },
+  "parser": "@typescript-eslint/parser",
+  // "parser": "babel-eslint",
+  // "parserOptions": {
+  //   "ecmaVersion": 2020,
+  //   "sourceType": "module",
+  //   "ecmaFeatures": { "jsx": true }
+  // },
   "env": {
     "browser": true,
     "node": true,
     "es6": true
   },
-  "extends": ["airbnb", "plugin:prettier/recommended"],
-  "plugins": ["import", "react", "react-hooks"],
+  "extends": ["airbnb", "plugin:prettier/recommended", "next/core-web-vitals"],
+  "plugins": ["@typescript-eslint/eslint-plugin"],
   "rules": {
-    "linebreak-style": ["error", "windows"],
-    "quotes": [2, "double", { "avoidEscape": false }],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "no-console": "off",
-    "jsx-a11y/anchor-is-valid": "off",
-    "react/no-array-index-key": "off",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }],
-    "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/label-has-associated-control": "off",
-    "no-nested-ternary": "off"
+    "react/jsx-filename-extension": [
+      2,
+      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    ],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "prettier/prettier": ["error"],
+    "react/jsx-props-no-spreading": "off",
+    "no-alert": "off",
+    "no-param-reassign": 0,
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+      }
+    ],
+    "jsx-a11y/label-has-for": [
+      "error",
+      {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+      }
+    ]
+  },
+  "globals": {
+    "Generator": true
   }
 }
+// "rules": {
+//   "linebreak-style": ["error", "windows"],
+//   "quotes": [2, "double", { "avoidEscape": false }],
+//   "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+//   "no-console": "off",
+//   "jsx-a11y/anchor-is-valid": "off",
+//   "react/no-array-index-key": "off",
+//   "prettier/prettier": ["error", { "endOfLine": "auto" }],
+//   "jsx-a11y/click-events-have-key-events": "off",
+//   "jsx-a11y/no-static-element-interactions": "off",
+//   "jsx-a11y/label-has-associated-control": "off",
+//   "no-nested-ternary": "off"
+// }

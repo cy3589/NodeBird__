@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
-import Head from "next/head";
-import { Form, Input, Checkbox, Button } from "antd";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import Router from "next/router";
-import AppLayout from "../components/AppLayout";
-import useInput from "../hooks/useInput";
-import { SIGN_UP_REQUEST, SIGN_UP_DONE } from "../reducers/user";
+import { useEffect, useState, useCallback } from 'react';
+import Head from 'next/head';
+import { Form, Input, Checkbox, Button } from 'antd';
+import styled from '@emotion/styled';
+import { useDispatch, useSelector } from 'react-redux';
+import Router from 'next/router';
+import AppLayout from '@components/AppLayout';
+import useInput from '@hooks/useInput';
+import { SIGN_UP_REQUEST, SIGN_UP_DONE } from '@reducers/user';
+import storeInterface from '@interfaces/storeInterface';
 
 const ErrorMessage = styled.div`
   color: red;
@@ -17,27 +18,27 @@ const SignupBtton = styled.div`
 const Signup = () => {
   const dispatch = useDispatch();
 
-  const [email, onChangeEmail] = useInput("");
-  const [nickname, onChangeNickname] = useInput("");
-  const [password, onChangePassword] = useInput("");
-  const [passwordCheck, setPasswordCheck] = useState("");
+  const [email, onChangeEmail] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
+  const [password, onChangePassword] = useInput('');
+  const [passwordCheck, setPasswordCheck] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const { signUpLoading, signUpDone, signUpError, me } = useSelector(
-    (state) => state.user
+    (state: storeInterface) => state.user,
   );
 
   useEffect(() => {
     if (me && me.id) {
-      Router.replace("/");
+      Router.replace('/');
     }
-  }, [me && me.id]);
+  }, [me]);
 
   useEffect(() => {
     if (signUpDone) {
       dispatch({ type: SIGN_UP_DONE });
-      Router.replace("/");
+      Router.replace('/');
     }
-  }, [signUpDone]);
+  }, [dispatch, signUpDone]);
   useEffect(() => {
     if (signUpError) {
       alert(signUpError);
@@ -48,10 +49,10 @@ const Signup = () => {
       setPasswordCheck(e.target.value);
       setPasswordError(e.target.value !== password);
     },
-    [password]
+    [password],
   );
   const [term, setTerm] = useState();
-  const [termError, setTermError] = useState();
+  const [termError, setTermError] = useState<boolean>();
 
   const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked);
@@ -69,7 +70,7 @@ const Signup = () => {
       type: SIGN_UP_REQUEST,
       data: { email, password, nickname },
     });
-  }, [email, nickname, password, passwordCheck, term]);
+  }, [dispatch, email, nickname, password, passwordCheck, term]);
 
   return (
     <AppLayout>

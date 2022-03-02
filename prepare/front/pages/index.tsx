@@ -1,19 +1,21 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { END } from "redux-saga";
-import axios from "axios";
-import InfiniteScroll from "react-infinite-scroll-component";
-import AppLayout from "../components/AppLayout";
-import PostForm from "../components/PostForm";
-import PostCard from "../components/PostCard";
-import { LOAD_POSTS_REQUEST } from "../reducers/post";
-import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
-import wrapper from "../store/configureStore";
+import { useEffect } from 'react';
+import { GetServerSidePropsContext } from 'next';
+import { useSelector, useDispatch } from 'react-redux';
+import { END } from 'redux-saga';
+import axios from 'axios';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import AppLayout from '@components/AppLayout';
+import PostForm from '@components/PostForm';
+import PostCard from '@components/PostCard';
+import { LOAD_POSTS_REQUEST } from '@reducers/post';
+import { LOAD_MY_INFO_REQUEST } from '@reducers/user';
+import wrapper from '@store/configureStore';
+import storeInterface, { SagaStore } from '@interfaces/storeInterface';
 
 const Home = () => {
-  const { me } = useSelector((state) => state.user);
+  const { me } = useSelector((state: storeInterface) => state.user);
   const { mainPosts, hasMorePosts, retweetError } = useSelector(
-    (state) => state.post
+    (state: storeInterface) => state.post,
   );
   const dispatch = useDispatch();
 
@@ -38,6 +40,7 @@ const Home = () => {
           return dispatch({ type: LOAD_POSTS_REQUEST, lastId });
         }}
         hasMore={hasMorePosts}
+        loader=""
       >
         {mainPosts.map((post) => (
           <PostCard key={post.id} post={post} />
@@ -48,18 +51,21 @@ const Home = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
+  (store) => async (ctx: GetServerSidePropsContext) => {
     // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
-    const cookie = context.req ? context.req.rawHeaders : "";
-    axios.defaults.headers.Cookie = "";
-    if (context.req && cookie) {
-      axios.defaults.headers.Cookie = cookie;
+    if (axios.defaults.headers) {
+      const cookie = ctx.req ? ctx.req.rawHeaders : '';
+      axios.defaults.headers.Cookie = '';
+      if (ctx.req && cookie) {
+        axios.defaults.headers.Cookie = cookie.toString();
+      }
     }
     // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
-    await store.sagaTask.toPromise();
-  }
+    await (store as SagaStore).sagaTask.toPromise();
+    return { props: {} };
+  },
 );
 export default Home;

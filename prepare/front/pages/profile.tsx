@@ -1,31 +1,32 @@
-import React, { useEffect } from "react";
-import Router from "next/router";
-import Head from "next/head";
-import { useSelector, useDispatch } from "react-redux";
-import { END } from "redux-saga";
-import axios from "axios";
-import AppLayout from "../components/AppLayout";
-import NicknameEditForm from "../components/NicknameEditForm";
-import FollowingList from "../components/FollowingList";
-import FollowerList from "../components/FollowerList";
+import { useEffect } from 'react';
+import Router from 'next/router';
+import Head from 'next/head';
+import { useSelector, useDispatch } from 'react-redux';
+import { END } from 'redux-saga';
+import axios from 'axios';
+import AppLayout from '@components/AppLayout';
+import NicknameEditForm from '@components/NicknameEditForm';
+import FollowingList from '@components/FollowingList';
+import FollowerList from '@components/FollowerList';
 import {
   LOAD_FOLLOWERS_REQUEST,
   LOAD_FOLLOWINGS_REQUEST,
   LOAD_MY_INFO_REQUEST,
-} from "../reducers/user";
-import wrapper from "../store/configureStore";
+} from '@reducers/user';
+import wrapper from '@store/configureStore';
+import storeInterface, { SagaStore } from '@interfaces/storeInterface';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
+  const { me } = useSelector((state: storeInterface) => state.user);
   useEffect(() => {
     if (!(me && me.id)) {
-      Router.push("/");
+      Router.push('/');
     }
 
     dispatch({ type: LOAD_FOLLOWERS_REQUEST });
     dispatch({ type: LOAD_FOLLOWINGS_REQUEST });
-  }, [me && me.id]);
+  }, [dispatch, me]);
   if (!(me && me.id)) return null;
 
   return (
@@ -43,20 +44,23 @@ const Profile = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
+  (store) => async (ctx) => {
     // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
-    const cookie = context.req ? context.req.rawHeaders : "";
-    axios.defaults.headers.Cookie = "";
-    if (context.req && cookie) {
-      axios.defaults.headers.Cookie = cookie;
+    if (axios.defaults.headers) {
+      const cookie = ctx.req ? ctx.req.rawHeaders : '';
+      axios.defaults.headers.Cookie = '';
+      if (ctx.req && cookie) {
+        axios.defaults.headers.Cookie = cookie.toString();
+      }
     }
     // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_FOLLOWERS_REQUEST });
     store.dispatch({ type: LOAD_FOLLOWINGS_REQUEST });
     store.dispatch(END);
-    await store.sagaTask.toPromise();
-  }
+    await (store as SagaStore).sagaTask.toPromise();
+    return { props: {} };
+  },
 );
 
 export default Profile;

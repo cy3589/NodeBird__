@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { css } from "@emotion/react";
-import PropTypes from "prop-types";
-import ImagesZoom from "./ImagseZoom";
+import { useCallback, useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
+import ImagesZoom from '@components/ImagseZoom';
 
 const StyleTwoImages = styled.img`
   width: 100%;
@@ -57,7 +56,7 @@ const PostImagesDiv = styled.div`
   border-radius: 10px;
   overflow: hidden;
 `;
-const PostImages = ({ images }) => {
+const PostImages = ({ images }: { images: { src: string }[] }) => {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
   const onClose = useCallback(() => {
     setShowImagesZoom(false);
@@ -76,6 +75,7 @@ const PostImages = ({ images }) => {
           tabIndex={0}
         >
           <StyleOneImage role="presentation">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[0].src} alt={images[0].src} />
           </StyleOneImage>
         </div>
@@ -86,6 +86,7 @@ const PostImages = ({ images }) => {
   if (images?.length === 2) {
     return (
       <div
+        // @ts-ignore
         css={css`
           overflow: hidden;
           display: grid;
@@ -96,7 +97,7 @@ const PostImages = ({ images }) => {
         `}
       >
         <div
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: '100%', height: '100%' }}
           onClick={onZoom}
           onKeyDown={() => {}}
           role="button"
@@ -109,7 +110,7 @@ const PostImages = ({ images }) => {
           />
         </div>
         <div
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: '100%', height: '100%' }}
           onClick={onZoom}
           onKeyDown={() => {}}
           role="button"
@@ -126,36 +127,32 @@ const PostImages = ({ images }) => {
     );
   }
   if (images?.length === 0) {
-    return <></>;
+    return null;
   }
   return (
     <>
       <PostImagesDiv>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          style={{ borderRadius: "10px 0 0 10px" }}
+          style={{ borderRadius: '10px 0 0 10px' }}
           role="presentation"
           src={images[0].src}
           alt={images[0].src}
         />
         {/* 더보기 div: MoreDiv */}
         <MoreDiv role="presentation" onClick={onZoom}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={images[1].src} alt={images[1].src} />
           <div>
             <PlusOutlined />
             <br />
-            {images?.length - 1}개의 사진 더보기
+            {images.length - 1}개의 사진 더보기
           </div>
         </MoreDiv>
       </PostImagesDiv>
       {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
     </>
   );
-};
-PostImages.defaultProps = {
-  images: null,
-};
-PostImages.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default PostImages;

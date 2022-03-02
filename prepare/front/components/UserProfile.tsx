@@ -1,10 +1,12 @@
-import React, { useCallback, useState } from "react";
-import { Avatar, Button, Card } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "@emotion/styled";
-import { CSSTransition } from "react-transition-group";
-import { logoutRequestAction } from "../reducers/user";
-import ShowFollowModal from "./ShowFollowModal";
+import { useCallback, useState } from 'react';
+import { Avatar, Button, Card } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import styled from '@emotion/styled';
+import { CSSTransition } from 'react-transition-group';
+import { logoutRequestAction } from '@reducers/user';
+import ShowFollowModal from '@components/ShowFollowModal';
+import storeInterface from '@interfaces/storeInterface';
+import { useRouter } from 'next/router';
 
 const UserProfileCardStyle = styled(Card)`
   border-radius: 10px;
@@ -19,26 +21,36 @@ const UserProfileCardStyle = styled(Card)`
 // `;
 // const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
 const UserProfile = () => {
+  const router = useRouter();
   const [showFollowModal, setShowFollowModal] = useState(false);
-  const [showWhat, setShowWhat] = useState(" ");
+  const [showWhat, setShowWhat] = useState(' ');
   const dispatch = useDispatch();
-  const { me, logOutLoading } = useSelector((state) => state.user);
+  const { me, logOutLoading, loadMyInfoLoading } = useSelector(
+    (state: storeInterface) => state.user,
+  );
   const onLogout = useCallback(() => {
     dispatch(logoutRequestAction());
-  }, []);
+  }, [dispatch]);
   const onClickFollowings = useCallback(() => {
-    setShowWhat("followings");
+    setShowWhat('followings');
     setShowFollowModal(true);
     return null;
-  }, [showWhat, showFollowModal]);
+  }, []);
   const onClickFollowers = useCallback(() => {
-    setShowWhat("followers");
+    setShowWhat('followers');
     setShowFollowModal(true);
     return null;
-  }, [showWhat, showFollowModal]);
+  }, []);
+  if (!me) {
+    if (!loadMyInfoLoading) {
+      router.push('/');
+      return null;
+    }
+    return <div>Loading...</div>;
+  }
   // parseInt(anotherUserInfo.id ,10) == parseInt(me.id) 라면 내 정보 보는중.
   return (
-    <div style={{ paddingTop: "8px", marginBottom: "10px" }}>
+    <div style={{ paddingTop: '8px', marginBottom: '10px' }}>
       <CSSTransition in={showFollowModal} timeout={700} unmountOnExit>
         <ShowFollowModal
           id={me.id}
@@ -55,12 +67,24 @@ const UserProfile = () => {
             <br />
             {me.Posts.length}
           </a>,
-          <div key="followings" onClick={onClickFollowings}>
+          <div
+            key="followings"
+            onClick={onClickFollowings}
+            onKeyPress={onClickFollowings}
+            tabIndex={0}
+            role="button"
+          >
             팔로잉
             <br />
             {me.Followings.length}
           </div>,
-          <div key="followers" onClick={onClickFollowers}>
+          <div
+            key="followers"
+            onClick={onClickFollowers}
+            onKeyPress={onClickFollowers}
+            tabIndex={0}
+            role="button"
+          >
             팔로워
             <br />
             {me.Followers.length}
@@ -75,9 +99,9 @@ const UserProfile = () => {
           onClick={onLogout}
           loading={logOutLoading}
           style={{
-            borderRadius: "10px",
-            marginTop: "10px",
-            marginRight: "100%",
+            borderRadius: '10px',
+            marginTop: '10px',
+            marginRight: '100%',
           }}
         >
           로그아웃

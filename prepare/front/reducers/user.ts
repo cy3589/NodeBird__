@@ -1,6 +1,9 @@
-import produce from "immer";
+import produce from 'immer';
+import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '@reducers/post';
+import { AnyAction } from 'redux';
+import { userStoreInterface } from '@interfaces/storeInterface';
 
-export const initialState = {
+export const initialState: userStoreInterface = {
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
@@ -53,57 +56,58 @@ export const initialState = {
   loginData: {},
   userInfo: {},
 };
-export const LOG_IN_REQUEST = "LOG_IN_REQUEST";
-export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
-export const LOG_IN_FAILURE = "LOG_IN_FAILURE";
+export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
+export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
+export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 
-export const LOG_OUT_REQUEST = "LOG_OUT_REQUEST";
-export const LOG_OUT_SUCCESS = "LOG_OUT_SUCCESS";
-export const LOG_OUT_FAILURE = "LOG_OUT_FAILURE";
+export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
+export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
+export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 
-export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
-export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
-export const SIGN_UP_FAILURE = "SIGN_UP_FAILURE";
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
-export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAME_REQUEST";
-export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAME_SUCCESS";
-export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAME_FAILURE";
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
 
-export const FOLLOW_REQUEST = "FOLLOW_REQUEST";
-export const FOLLOW_SUCCESS = "FOLLOW_SUCCESS";
-export const FOLLOW_FAILURE = "FOLLOW_FAILURE";
+export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
+export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
+export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 
-export const UNFOLLOW_REQUEST = "UNFOLLOW_REQUEST";
-export const UNFOLLOW_SUCCESS = "UNFOLLOW_SUCCESS";
-export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
+export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
+export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
+export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
-export const LOAD_MY_INFO_REQUEST = "LOAD_MY_INFO_REQUEST";
-export const LOAD_MY_INFO_SUCCESS = "LOAD_MY_INFO_SUCCESS";
-export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
-export const LOAD_FOLLOWINGS_REQUEST = "LOAD_FOLLOWINGS_REQUEST";
-export const LOAD_FOLLOWINGS_SUCCESS = "LOAD_FOLLOWINGS_SUCCESS";
-export const LOAD_FOLLOWINGS_FAILURE = "LOAD_FOLLOWINGS_FAILURE";
+export const LOAD_FOLLOWINGS_REQUEST = 'LOAD_FOLLOWINGS_REQUEST';
+export const LOAD_FOLLOWINGS_SUCCESS = 'LOAD_FOLLOWINGS_SUCCESS';
+export const LOAD_FOLLOWINGS_FAILURE = 'LOAD_FOLLOWINGS_FAILURE';
 
-export const LOAD_FOLLOWERS_REQUEST = "LOAD_FOLLOWERS_REQUEST";
-export const LOAD_FOLLOWERS_SUCCESS = "LOAD_FOLLOWERS_SUCCESS";
-export const LOAD_FOLLOWERS_FAILURE = "LOAD_FOLLOWERS_FAILURE";
+export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';
+export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
+export const LOAD_FOLLOWERS_FAILURE = 'LOAD_FOLLOWERS_FAILURE';
 
-export const BLOCK_USER_REQUEST = "BLOCK_USER_REQUEST";
-export const BLOCK_USER_SUCCESS = "BLOCK_USER_SUCCESS";
-export const BLOCK_USER_FAILURE = "BLOCK_USER_FAILURE";
+export const BLOCK_USER_REQUEST = 'BLOCK_USER_REQUEST';
+export const BLOCK_USER_SUCCESS = 'BLOCK_USER_SUCCESS';
+export const BLOCK_USER_FAILURE = 'BLOCK_USER_FAILURE';
 
-export const GET_USER_INFO_REQUEST = "GET_USER_INFO_REQUEST";
-export const GET_USER_INFO_SUCCESS = "GET_USER_INFO_SUCCESS";
-export const GET_USER_INFO_FAILURE = "GET_USER_INFO_FAILURE";
+export const GET_USER_INFO_REQUEST = 'GET_USER_INFO_REQUEST';
+export const GET_USER_INFO_SUCCESS = 'GET_USER_INFO_SUCCESS';
+export const GET_USER_INFO_FAILURE = 'GET_USER_INFO_FAILURE';
 
-export const SIGN_UP_DONE = "SIGN_UP_DONE";
+export const SIGN_UP_DONE = 'SIGN_UP_DONE';
 
-export const EDIT_MODE_WHAT = "EDIT_MODE_WHAT";
+export const EDIT_MODE_WHAT = 'EDIT_MODE_WHAT';
 
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "./post";
-
-export const loginRequestAction = (data) => {
+export const loginRequestAction = (data: {
+  email: string;
+  password: string;
+}) => {
   return {
     type: LOG_IN_REQUEST,
     data,
@@ -116,7 +120,7 @@ export const logoutRequestAction = () => {
   };
 };
 
-const reducer = (state = initialState, action) =>
+const reducer = (state = initialState, action: AnyAction = { type: '' }) =>
   produce(state, (draft) => {
     switch (action.type) {
       case EDIT_MODE_WHAT:
@@ -144,9 +148,10 @@ const reducer = (state = initialState, action) =>
         draft.blcokUserError = null;
         break;
       case BLOCK_USER_SUCCESS:
-        draft.me.Followers = draft.me.Followers.filter((v) => {
-          return v.id !== action.data.UserId;
-        });
+        if (draft.me)
+          draft.me.Followers = draft.me.Followers.filter((v) => {
+            return v.id !== action.data.UserId;
+          });
         draft.blcokUserLoading = false;
         draft.blcokUserDone = true;
         break;
@@ -228,7 +233,7 @@ const reducer = (state = initialState, action) =>
       case CHANGE_NICKNAME_SUCCESS:
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
-        draft.me.nickname = action.data.nickname;
+        if (draft.me) draft.me.nickname = action.data.nickname;
         break;
       case CHANGE_NICKNAME_FAILURE:
         draft.changeNicknameLoading = false;
@@ -236,16 +241,17 @@ const reducer = (state = initialState, action) =>
         break;
 
       case ADD_POST_TO_ME:
-        draft.me.Posts.push({
+        draft.me?.Posts.push({
           id: action.data.id,
           RetweetId: action.data.RetweetId,
         });
         break;
 
       case REMOVE_POST_OF_ME:
-        draft.me.Posts = draft.me.Posts.filter((v) => {
-          return v.id !== action.data.PostId;
-        });
+        if (draft.me)
+          draft.me.Posts = draft.me.Posts.filter((v) => {
+            return v.id !== action.data.PostId;
+          });
         break;
 
       case FOLLOW_REQUEST:
@@ -254,10 +260,11 @@ const reducer = (state = initialState, action) =>
         draft.followError = null;
         break;
       case FOLLOW_SUCCESS:
-        draft.me.Followings.push({
-          id: action.data.UserId,
-          nickname: action.data.Nickname,
-        });
+        if (draft.me)
+          draft.me.Followings.push({
+            id: action.data.UserId,
+            nickname: action.data.Nickname,
+          });
         draft.followLoading = false;
         draft.followDone = true;
         break;
@@ -272,9 +279,10 @@ const reducer = (state = initialState, action) =>
         draft.unFollowError = null;
         break;
       case UNFOLLOW_SUCCESS:
-        draft.me.Followings = draft.me.Followings.filter((v) => {
-          return v.id !== action.data;
-        });
+        if (draft.me)
+          draft.me.Followings = draft.me.Followings.filter((v) => {
+            return v.id !== action.data;
+          });
         draft.unFollowLoading = false;
         draft.unFollowDone = true;
         break;
@@ -291,7 +299,7 @@ const reducer = (state = initialState, action) =>
       case LOAD_FOLLOWINGS_SUCCESS:
         draft.loadFollowingsLoading = false;
         draft.loadFollowingsDone = true;
-        draft.me.Followings = action.data;
+        if (draft.me) draft.me.Followings = action.data;
         break;
       case LOAD_FOLLOWINGS_FAILURE:
         draft.loadFollowingsLoading = false;
@@ -306,7 +314,7 @@ const reducer = (state = initialState, action) =>
       case LOAD_FOLLOWERS_SUCCESS:
         draft.loadFollowersLoading = false;
         draft.loadFollowersDone = true;
-        draft.me.Followers = action.data;
+        if (draft.me) draft.me.Followers = action.data;
         break;
       case LOAD_FOLLOWERS_FAILURE:
         draft.loadFollowersLoading = false;

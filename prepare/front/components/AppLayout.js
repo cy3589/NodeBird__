@@ -10,7 +10,6 @@ import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
 import useInput from "../hooks/useInput";
 
-// import { useForm } from "react-hook-form";
 const GlobalStyle = () => (
   <Global
     styles={css`

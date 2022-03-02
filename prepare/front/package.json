@@ -1,10 +1,9 @@
 {
   "name": "react-nodebird-front",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3060",
     "build": "cross-env ANALYZE=true NODE_ENV=production next build",
     "lint": "eslint ./components/ReportModal.js --fix",
     "start": "cross-env NODE_ENV=production next start -p 80"
@@ -17,13 +16,15 @@
     "@emotion/styled": "^11.3.0",
     "@next/bundle-analyzer": "^11.1.2",
     "antd": "^4.16.13",
+    "audit": "^0.0.6",
     "axios": "^0.22.0",
     "babel-plugin-styled-components": "^1.13.3",
     "cross-env": "^7.0.3",
     "dayjs": "^1.10.7",
     "faker": "^5.5.3",
+    "fix": "^0.0.6",
     "immer": "^9.0.6",
-    "next": "^11.1.2",
+    "next": "12.1.0",
     "next-redux-wrapper": "^7.0.5",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
@@ -45,14 +46,21 @@
     "styled-components": "^5.3.1"
   },
   "devDependencies": {
+    "@types/node": "17.0.21",
+    "@types/react": "17.0.39",
+    "@types/react-transition-group": "^4.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
     "babel-eslint": "^10.1.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-next": "12.1.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.26.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.4.1"
+    "eslint-plugin-react": "^7.29.2",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "prettier": "^2.4.1",
+    "typescript": "4.6.2"
   }
 }
