@@ -25,6 +25,7 @@ router.get("/", async (req, res, next) => {
       });
       res.status(200).json(fullUserWithoutPassword);
     } else {
+      console.log(12345);
       res.status(404).json(null);
     }
   } catch (error) {
@@ -281,7 +282,6 @@ router.get("/:UserId/:followWhat", async (req, res, next) => {
     const user = await User.findOne({
       where: { id: parseInt(req.params.UserId) },
     });
-    console.log(!user);
     if (!user) {
       return res.status(403).send("존재하지 않는 사용자입니다.");
     }
@@ -290,25 +290,35 @@ router.get("/:UserId/:followWhat", async (req, res, next) => {
     const lastFollowId = parseInt(req.query.lastFollowId, 10);
     console.log(UserId, lastDate, lastFollowId);
     if (req.params.followWhat === "followings") {
-      const [result, metadata] = await sequelize.query(
-        "SELECT * FROM (SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollwingId` AS `id`, `Follow`.`FollwerId` AS `myId` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollwingId` AND `Follow`.`FollwerId` = :UserId GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
-        { replacements: { UserId, lastDate, lastFollowId } }
-      );
+      const result = await user.getFollowings({
+        attributes: ["id", "nickname", "createdAt"],
+        limit: 10,
+      });
+      // const [result] = await sequelize.query(
+      //   "SELECT * FROM (SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollowingId` AS `id`, `Follow`.`FollowerId` AS `myId` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollowingId` AND `Follow`.`FollowerId` = :UserId GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
+      //   { replacements: { UserId, lastDate, lastFollowId } }
+      // );
+      // const result = [{ email: "email", id: 23, nickname: "nickname" }];
       console.log(result);
       res.status(200).json(result);
     } else if (req.params.followWhat === "followers") {
-      const [result, metadata] = await sequelize.query(
-        "SELECT * FROM ( SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollwingId` AS `myId`, `Follow`.`FollwerId` AS `id` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollwerId` AND `Follow`.`FollwingId` = :UserId  GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
-        { replacements: { UserId, lastDate, lastFollowId } }
-      );
-      console.log(result);
+      // const [result] = await sequelize.query(
+      //   "SELECT * FROM ( SELECT  `User`.`nickname`, `Follow`.`createdAt` AS `createdAt`, `Follow`.`FollowingId` AS `myId`, `Follow`.`FollowerId` AS `id` FROM `Users` AS `User` INNER JOIN `Follow` AS `Follow` ON `User`.`id` = `Follow`.`FollowerId` AND `Follow`.`FollowingId` = :UserId  GROUP BY createdAt) AS TB WHERE createdAt>:lastDate AND id!=:lastFollowId LIMIT 10",
+      //   { replacements: { UserId, lastDate, lastFollowId } }
+      // );
+      // console.log(result);
+      const result = await user.getFollowers({
+        attributes: ["id", "nickname", "createdAt"],
+        limit: 10,
+      });
+
       res.status(200).json(result);
     }
-    console.log();
-    console.log("lastFollowId : ", lastFollowId);
-    console.log("lastDate : ", lastDate);
-    console.log(req.params.UserId);
-    console.log(req.params.followWhat);
+    // console.log();
+    // console.log("lastFollowId : ", lastFollowId);
+    // console.log("lastDate : ", lastDate);
+    // console.log(req.params.UserId);
+    // console.log(req.params.followWhat);
     // res.status(200).json(result);
   } catch (error) {
     console.error(error);
