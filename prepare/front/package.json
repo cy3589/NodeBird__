@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next -p 3060",
     "build": "cross-env ANALYZE=true NODE_ENV=production next build",
-    "lint": "eslint ./components/ReportModal.js --fix",
-    "start": "cross-env NODE_ENV=production next start -p 80"
+    "start": "cross-env NODE_ENV=production next start -p 3060",
+    "lint": "next lint"
   },
   "author": "Chad",
   "license": "ISC",
@@ -48,9 +48,11 @@
   "devDependencies": {
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
+    "@types/react-slick": "^0.23.8",
     "@types/react-transition-group": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
+    "@typescript-eslint/typescript-estree": "^5.13.0",
     "babel-eslint": "^10.1.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "12.1.0",

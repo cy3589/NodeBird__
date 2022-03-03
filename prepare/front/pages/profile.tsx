@@ -26,7 +26,8 @@ const Profile = () => {
 
     dispatch({ type: LOAD_FOLLOWERS_REQUEST });
     dispatch({ type: LOAD_FOLLOWINGS_REQUEST });
-  }, [dispatch, me]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
   if (!(me && me.id)) return null;
 
   return (

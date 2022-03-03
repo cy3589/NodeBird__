@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import AppLayout from '../../components/AppLayout';
+import AppLayout from '@components/AppLayout';
 
 const User = () => {
   const router = useRouter();

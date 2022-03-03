@@ -69,7 +69,7 @@ export interface userStoreInterface {
   editModeWhat: any | null;
 
   getUserInfo: any | null;
-  me: null | meInterface;
+  me?: meInterface;
   signUpData: any;
   loginData: any;
   userInfo: any;
@@ -82,6 +82,13 @@ interface comment {
   UserId: number;
   PostId: number;
   isSinglePost: boolean;
+  User: { id: number; nickname: string };
+}
+export interface ImagesInterface {
+  id: number;
+  src: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface postInterface {
   id: number;
@@ -94,16 +101,12 @@ export interface postInterface {
     id: number;
     nickname: string;
   };
-  Images: {
-    id: number;
-    src: string;
-    createdAt: string;
-    updatedAt: string;
-  }[];
+  Images: ImagesInterface[];
   Comments: comment[];
   Likers: any[];
   Retweet: any;
   commentsCount: number;
+  isSinglePost?: boolean;
 }
 export interface postStoreInterface {
   mainPosts: Array<postInterface>;

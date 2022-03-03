@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, VFC } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import ImagesZoom from '@components/ImagseZoom';
+import { ImagesInterface } from '@interfaces/storeInterface';
 
 const StyleTwoImages = styled.img`
   width: 100%;
@@ -56,7 +57,7 @@ const PostImagesDiv = styled.div`
   border-radius: 10px;
   overflow: hidden;
 `;
-const PostImages = ({ images }: { images: { src: string }[] }) => {
+const PostImages: VFC<{ images: ImagesInterface[] }> = ({ images }) => {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
   const onClose = useCallback(() => {
     setShowImagesZoom(false);

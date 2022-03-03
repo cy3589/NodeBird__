@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import React, { useCallback } from "react";
-import { css, Global } from "@emotion/react";
-import PropTypes from "prop-types";
-import Link from "next/link";
-import { Menu, Input, Row, Col, Card, Avatar } from "antd";
-import Router from "next/router";
-import { useSelector } from "react-redux";
-import UserProfile from "./UserProfile";
-import LoginForm from "./LoginForm";
-import useInput from "../hooks/useInput";
+import { FC, useCallback } from 'react';
+import { css, Global } from '@emotion/react';
+import Link from 'next/link';
+import { Menu, Input, Row, Col, Card, Avatar } from 'antd';
+import Router from 'next/router';
+import { useSelector } from 'react-redux';
+import UserProfile from '@components/UserProfile';
+import LoginForm from '@components/LoginForm';
+import useInput from '@hooks/useInput';
+import storeInterface from '@interfaces/storeInterface';
 
 const GlobalStyle = () => (
   <Global
@@ -76,40 +76,51 @@ const GlobalStyle = () => (
     `}
   />
 );
-const AppLayout = ({
+interface AppLayoutProps {
+  anotherUserProfile?: boolean;
+  anotherUserInfo?: {
+    id: number;
+    postsLength: number;
+    followingsLength: number;
+    followersLength: number;
+    nickname: string;
+  };
+  isHashtag?: string;
+}
+const AppLayout: FC<AppLayoutProps> = ({
   children,
   anotherUserProfile,
   anotherUserInfo,
   isHashtag,
 }) => {
-  const { me } = useSelector((state) => state.user);
-  const [searchInput, onChangeSerachInput] = useInput("");
+  const { me } = useSelector((state: storeInterface) => state.user);
+  const [searchInput, onChangeSerachInput] = useInput('');
   const onSerach = useCallback(() => {
     Router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
   return (
-    <div style={{ backgroundColor: "aliceblue", height: "100%" }}>
+    <div style={{ backgroundColor: 'aliceblue', height: '100%' }}>
       <GlobalStyle />
       <Menu
         mode="horizontal"
         // selectedKeys={[Router.pathname]}
-        style={{ position: "sticky", top: "0", zIndex: "1" }}
+        style={{ position: 'sticky', top: '0', zIndex: 1 }}
       >
         <Menu.Item key="node-bird">
-          <Link href="/">
-            <a>HOME</a>
+          <Link href="/" passHref>
+            <p>HOME</p>
           </Link>
         </Menu.Item>
         {me && (
           <Menu.Item key="profile">
-            <Link href="/profile">
-              <a>내 프로필</a>
+            <Link href="/profile" passHref>
+              <p>내 프로필</p>
             </Link>
           </Menu.Item>
         )}
         <Menu.Item key="search-button">
           <Input.Search
-            style={{ verticalAlign: "middle" }}
+            style={{ verticalAlign: 'middle' }}
             enterButton
             value={searchInput}
             onChange={onChangeSerachInput}
@@ -132,24 +143,23 @@ const AppLayout = ({
           {isHashtag && (
             <Card
               style={{
-                width: "fit-content",
-                borderRadius: "10px",
-                marginBottom: "20px",
-                marginTop: "8px",
-                left: "50%",
-                right: "50%",
-                transform: "translate(-50% )",
+                width: 'fit-content',
+                borderRadius: '10px',
+                marginBottom: '20px',
+                marginTop: '8px',
+                left: '50%',
+                right: '50%',
+                transform: 'translate(-50% )',
               }}
             >{`#${isHashtag}`}</Card>
           )}
-          {anotherUserInfo &&
-          parseInt(anotherUserInfo.id, 10) !== parseInt(me?.id, 10) ? (
+          {anotherUserInfo && anotherUserInfo.id !== me?.id ? (
             <Card
               key={anotherUserInfo.id}
               style={{
-                margin: "10px 0 10px 0",
-                borderRadius: "10px",
-                overflow: "hidden",
+                margin: '10px 0 10px 0',
+                borderRadius: '10px',
+                overflow: 'hidden',
               }}
               actions={[
                 <div key="twit">
@@ -184,19 +194,7 @@ const AppLayout = ({
 
 AppLayout.defaultProps = {
   anotherUserProfile: false,
-  anotherUserInfo: null,
-  isHashtag: null,
-};
-AppLayout.propTypes = {
-  children: PropTypes.node.isRequired,
-  anotherUserProfile: PropTypes.bool,
-  anotherUserInfo: PropTypes.shape({
-    postsLength: PropTypes.number,
-    id: PropTypes.number,
-    followingsLength: PropTypes.number,
-    followersLength: PropTypes.number,
-    nickname: PropTypes.string,
-  }),
-  isHashtag: PropTypes.string,
+  anotherUserInfo: undefined,
+  isHashtag: undefined,
 };
 export default AppLayout;

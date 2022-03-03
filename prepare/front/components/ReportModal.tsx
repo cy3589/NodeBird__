@@ -28,7 +28,9 @@ const ReportModal: VFC<ReportModalProps> = ({
     <Modal
       onOk={() => {
         return ReportWhat === 'Post'
-          ? console.log({
+          ? // 임시 조치
+            // eslint-disable-next-line no-console
+            console.log({
               type: 'REPORT_POST_REQUEST',
               data: {
                 reportPostId,
@@ -37,6 +39,8 @@ const ReportModal: VFC<ReportModalProps> = ({
               },
             })
           : ReportWhat === 'Comment' &&
+              // 임시 조치
+              // eslint-disable-next-line no-console
               console.log({
                 type: 'REPORT_COMMENT_REQUEST',
                 data: {

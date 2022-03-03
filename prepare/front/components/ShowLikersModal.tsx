@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Modal, List, Avatar } from 'antd';
-import PropTypes from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from 'axios';
 
@@ -28,12 +27,13 @@ const ShowLikersModal = ({
       setHasMore(data.length === 10);
       setLikers((prev) => [...prev, ...data]);
     } catch (error) {
+      // eslint-disable-next-line no-console
       if (axios.isAxiosError(error)) console.error();
     }
   }, [likers, postId]);
   useEffect(() => {
     loadMoreLikers();
-  }, []);
+  }, [loadMoreLikers]);
 
   return (
     <Modal
@@ -72,12 +72,6 @@ const ShowLikersModal = ({
       </InfiniteScroll>
     </Modal>
   );
-};
-
-ShowLikersModal.propTypes = {
-  postId: PropTypes.number.isRequired,
-  showLikersModal: PropTypes.bool.isRequired,
-  setShowLikersModal: PropTypes.func.isRequired,
 };
 
 export default ShowLikersModal;

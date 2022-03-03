@@ -19,11 +19,12 @@ const UserProfileCardStyle = styled(Card)`
 //   overflow: hidden;
 //   margin-top: 10px;
 // `;
-// const UserProfile = ({ anotherUserProfile, anotherUserInfo }) => {
-const UserProfile = () => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserProfile = ({ anotherUserProfile, anotherUserInfo }: any) => {
+  // const UserProfile = () => {
   const router = useRouter();
   const [showFollowModal, setShowFollowModal] = useState(false);
-  const [showWhat, setShowWhat] = useState(' ');
+  const [showWhat, setShowWhat] = useState('');
   const dispatch = useDispatch();
   const { me, logOutLoading, loadMyInfoLoading } = useSelector(
     (state: storeInterface) => state.user,

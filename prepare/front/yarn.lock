@@ -686,6 +686,13 @@
     "hoist-non-react-statics" "^3.3.0"
     "redux" "^4.0.0"
 
+"@types/react-slick@^0.23.8":
+  "integrity" "sha512-SfzSg++/3uyftVZaCgHpW+2fnJFsyJEQ/YdsuqfOWQ5lqUYV/gY/UwAnkw4qksCj5jalto/T5rKXJ8zeFldQeA=="
+  "resolved" "https://registry.npmjs.org/@types/react-slick/-/react-slick-0.23.8.tgz"
+  "version" "0.23.8"
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.4.4":
   "integrity" "sha512-7gAPz7anVK5xzbeQW9wFBDg7G++aPLAFY0QaSMOou9rJZpbuI58WAuJrgu+qR92l61grlnCUe7AFX8KGahAgug=="
   "resolved" "https://registry.npmjs.org/@types/react-transition-group/-/react-transition-group-4.4.4.tgz"
@@ -754,7 +761,7 @@
   "resolved" "https://registry.npmjs.org/@typescript-eslint/types/-/types-5.13.0.tgz"
   "version" "5.13.0"
 
-"@typescript-eslint/typescript-estree@5.13.0":
+"@typescript-eslint/typescript-estree@^5.13.0", "@typescript-eslint/typescript-estree@5.13.0":
   "integrity" "sha512-Q9cQow0DeLjnp5DuEDjLZ6JIkwGx3oYZe+BfcNuw/POhtpcxMTy18Icl6BJqTSd+3ftsrfuVb7mNHRZf7xiaNA=="
   "resolved" "https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-5.13.0.tgz"
   "version" "5.13.0"

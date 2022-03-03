@@ -47,7 +47,17 @@ const PostCardContent: VFC<PostCardContentProps> = ({
       return v;
     });
   }
-  return null;
+  return postContent.split(/(#[^\s#]+)/g).map((v: string, i: number) => {
+    if (v.match(/(#[^\s#]+)/)) {
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <Link key={i} href={`/hashtag/${v.slice(1)}`}>
+          {v}
+        </Link>
+      );
+    }
+    return v;
+  });
 };
 
 export default PostCardContent;

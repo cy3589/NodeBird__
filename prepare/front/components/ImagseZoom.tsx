@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import Slick from "react-slick";
-import styled from "@emotion/styled";
+import { useState, VFC } from 'react';
+import Slick from 'react-slick';
+import styled from '@emotion/styled';
 import {
   Globaled,
   Indicator,
@@ -10,14 +9,21 @@ import {
   Header,
   SlickWrapper,
   ImgWrapper,
-} from "./styles";
+} from '@styles/ImageZoomstyled';
+import { ImagesInterface } from '@interfaces/storeInterface';
 
 const SlideImage = styled.img`
   width: 100%;
   object-fit: contain;
 `;
+const SlickStyled = styled(Slick)`
+  height: calc(100% - 44px);
+`;
 
-const ImagesZoom = ({ images, onClose }) => {
+const ImagesZoom: VFC<{ images: ImagesInterface[]; onClose: () => void }> = ({
+  images,
+  onClose,
+}) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   return (
     <Overlay>
@@ -27,32 +33,26 @@ const ImagesZoom = ({ images, onClose }) => {
         <CloseButton onClick={onClose}>X</CloseButton>
       </Header>
       <SlickWrapper>
-        <Slick
+        <SlickStyled
           initialSlide={0}
           beforeChange={(slide) => setCurrentSlide(slide)}
           infinite
           arrows={false}
           slidesToShow={1}
           slidesToScroll={1}
-          style={{ height: "calc(100% - 44px)" }}
         >
           {images.map((v) => (
             <ImgWrapper key={v.src}>
               <SlideImage src={v.src} alt={v.src} />
             </ImgWrapper>
           ))}
-        </Slick>
+        </SlickStyled>
         <Indicator>
           <div>{`${currentSlide + 1} / ${images.length}`}</div>
         </Indicator>
       </SlickWrapper>
     </Overlay>
   );
-};
-
-ImagesZoom.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ImagesZoom;

@@ -23,7 +23,8 @@
       "@interfaces/*": ["interfaces/*"],
       "@reducers/*": ["reducers/*"],
       "@sagas/*": ["sagas/*"],
-      "@store/*": ["store/*"]
+      "@store/*": ["store/*"],
+      "@styles/*": ["styles/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

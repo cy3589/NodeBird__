@@ -1,11 +1,12 @@
-import React, { useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Form, Input, Button } from "antd";
-import styled from "@emotion/styled";
-import Link from "next/link";
-import useInput from "../hooks/useInput";
-import { loginRequestAction } from "../reducers/user";
-// styled로 할 때에는 백틱으로 묶고 백틱 내에는 CSS적듯이 한다
+import { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Form, Input, Button } from 'antd';
+import styled from '@emotion/styled';
+import Link from 'next/link';
+import useInput from '@hooks/useInput';
+import { loginRequestAction } from '@reducers/user';
+import storeInterface from '@interfaces/storeInterface';
+// styled로 할 때에는 백틱으로 묶고 백틱 내에는 CSS적듯이 작성
 const ButtonWrapper = styled.div`
   margin-top: 10px;
   display: grid;
@@ -17,9 +18,11 @@ const FormWrapper = styled(Form)`
 `;
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const { logInLoading, logInError } = useSelector((state) => state.user);
-  const [email, onChangeEmail] = useInput("");
-  const [password, onChangePassword] = useInput("");
+  const { logInLoading, logInError } = useSelector(
+    (state: storeInterface) => state.user,
+  );
+  const [email, onChangeEmail] = useInput('');
+  const [password, onChangePassword] = useInput('');
   useEffect(() => {
     if (logInError) {
       alert(logInError);
@@ -27,7 +30,7 @@ const LoginForm = () => {
   }, [logInError]);
   const onSubmitForm = useCallback(() => {
     dispatch(loginRequestAction({ email, password }));
-  }, [email, password]);
+  }, [dispatch, email, password]);
 
   return (
     <FormWrapper onFinish={onSubmitForm}>
@@ -41,7 +44,7 @@ const LoginForm = () => {
           value={email}
           onChange={onChangeEmail}
           required
-          style={{ borderRadius: "10px" }}
+          style={{ borderRadius: '10px' }}
         />
       </div>
       <div>
@@ -54,7 +57,7 @@ const LoginForm = () => {
           value={password}
           onChange={onChangePassword}
           required
-          style={{ borderRadius: "10px" }}
+          style={{ borderRadius: '10px' }}
         />
       </div>
       <ButtonWrapper>
@@ -62,15 +65,15 @@ const LoginForm = () => {
           type="primary"
           htmlType="submit"
           loading={logInLoading}
-          style={{ borderRadius: "10px" }}
+          style={{ borderRadius: '10px' }}
         >
           로그인
         </Button>
         <span>
-          <Link href="/signup">
-            <a>
-              <Button style={{ borderRadius: "10px" }}>회원가입</Button>
-            </a>
+          <Link href="/signup" passHref>
+            <p>
+              <Button style={{ borderRadius: '10px' }}>회원가입</Button>
+            </p>
           </Link>
         </span>
       </ButtonWrapper>

@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useCallback, useEffect, VFC } from 'react';
+import { useState, useCallback, useEffect, VFC } from 'react';
 import {
   EllipsisOutlined,
   HeartOutlined,
@@ -54,7 +54,7 @@ import ShowLikersModal from '@components/ShowLikersModal';
 import storeInterface, { postInterface } from '@interfaces/storeInterface';
 //  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
 interface PostCardProps {
-  post: postInterface;
+  post: postInterface & { isSinglePost?: boolean };
 }
 const PostCard: VFC<PostCardProps> = ({ post }) => {
   const { me, editModeWhat } = useSelector(
@@ -524,10 +524,11 @@ const PostCard: VFC<PostCardProps> = ({ post }) => {
               post?.Comments.length || post?.commentsCount ? (
                 <>
                   <Card size="small" key={post?.id}>
-                    {`${Math.max(
-                      post?.Comments.length,
-                      post?.commentsCount,
-                    )}개의 댓글`}
+                    {`${
+                      Math.max(post?.Comments.length, post?.commentsCount) ||
+                      post?.Comments.length ||
+                      post?.commentsCount
+                    }개의 댓글`}
                   </Card>
                   {post.Comments && post.Comments.length < post.commentsCount && (
                     <Button

@@ -24,31 +24,41 @@ const ShowFollowModal: VFC<ShowFollowModalProps> = ({
   >([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const loadMoreFollows = useCallback(() => {
-    return axios
-      .get<{ id: number; nickname: string; createdAt: string }[]>(
-        `/user/${id}/${showWhat}?lastFollowId=${
-          follows[follows.length - 1]?.id || 0
-        }&lastAt=${Date.parse(follows[follows.length - 1]?.createdAt) || 0}`,
-      )
-      .then((res) => {
-        setHasMore(res.data.length === 10);
-        setFollows([...follows, ...res.data]);
-      })
-      .catch((err) => console.error(err));
+  const loadMoreFollows = useCallback(async () => {
+    try {
+      if (id && showWhat) {
+        const { data } = await axios.get<
+          { id: number; nickname: string; createdAt: string }[]
+        >(
+          `/user/${id}/${showWhat}?lastFollowId=${
+            follows[follows.length - 1]?.id || 0
+          }&lastAt=${Date.parse(follows[follows.length - 1]?.createdAt) || 0}`,
+        );
+        setHasMore(data.length === 10);
+        setFollows([...follows, ...data]);
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production' && axios.isAxiosError(error))
+        // eslint-disable-next-line no-console
+        console.error(error);
+    }
   }, [follows, id, showWhat]);
 
   useEffect(() => {
     loadMoreFollows();
-  }, [loadMoreFollows]);
+    return () => {
+      setShowWhat('');
+      setFollows([]);
+      setHasMore(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Modal
       title={showWhat}
       visible={showFollowModal}
       onCancel={() => {
-        setFollows([]);
-        setShowWhat(' ');
         setShowFollowModal(false);
         return null;
       }}

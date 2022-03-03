@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { css, Global } from "@emotion/react";
-import styled from "@emotion/styled";
-import { CloseOutlined } from "@ant-design/icons";
-import React from "react";
+import { css, Global } from '@emotion/react';
+import styled from '@emotion/styled';
+import { CloseOutlined } from '@ant-design/icons';
 
 export const Globaled = () => (
   <Global
