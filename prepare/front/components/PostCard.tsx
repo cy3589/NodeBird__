@@ -580,5 +580,4 @@ const PostCard: VFC<PostCardProps> = ({ post }) => {
     </div>
   );
 };
-
 export default PostCard;
