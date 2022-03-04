@@ -51,7 +51,7 @@ export const initialState: userStoreInterface = {
   editModeWhat: null,
 
   getUserInfo: null,
-  me: undefined,
+  me: null,
   signUpData: {},
   loginData: {},
   userInfo: {},
@@ -199,7 +199,7 @@ const reducer = (state = initialState, action: AnyAction = { type: '' }) =>
       case LOG_OUT_SUCCESS:
         draft.logOutLoading = false;
         draft.logOutDone = true;
-        draft.me = undefined;
+        draft.me = null;
         break;
       case LOG_OUT_FAILURE:
         draft.logOutLoading = false;

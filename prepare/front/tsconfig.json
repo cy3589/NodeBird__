@@ -24,7 +24,8 @@
       "@reducers/*": ["reducers/*"],
       "@sagas/*": ["sagas/*"],
       "@store/*": ["store/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@api/*": ["pages/api/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

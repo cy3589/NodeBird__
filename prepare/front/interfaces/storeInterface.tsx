@@ -69,7 +69,7 @@ export interface userStoreInterface {
   editModeWhat: any | null;
 
   getUserInfo: any | null;
-  me?: meInterface;
+  me?: meInterface | null;
   signUpData: any;
   loginData: any;
   userInfo: any;
