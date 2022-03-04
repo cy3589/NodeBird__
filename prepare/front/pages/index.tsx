@@ -19,12 +19,9 @@ const Home = () => {
   );
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch({ type: LOAD_MY_INFO_REQUEST });
-  //   dispatch({ type: LOAD_POSTS_REQUEST });
-  // }, []);
-  const { test } = useSelector((state: any) => state.user);
-  console.log(test);
+  useEffect(() => {
+    dispatch({ type: LOAD_MY_INFO_REQUEST });
+  }, []);
   useEffect(() => {
     if (retweetError) {
       alert(retweetError);
@@ -62,7 +59,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         axios.defaults.headers.Cookie = cookie;
       }
     }
-    store.dispatch({ type: 'TEST', data: ctx });
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
