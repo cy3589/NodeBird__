@@ -52,15 +52,13 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
-    // //////////////아래 작업을 안하면 프론트에서 쿠키가 공유됨////////////////////
+    const cookie = ctx.req ? ctx.req.headers.cookie : '';
     if (axios.defaults.headers) {
-      const cookie = ctx.req ? ctx.req.rawHeaders : '';
       axios.defaults.headers.Cookie = '';
       if (ctx.req && cookie) {
-        axios.defaults.headers.Cookie = cookie.toString();
+        axios.defaults.headers.Cookie = cookie;
       }
     }
-    // /////////////////////////////////////////////////////////////////////////
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
