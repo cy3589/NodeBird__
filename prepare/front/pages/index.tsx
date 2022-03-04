@@ -11,6 +11,7 @@ import { LOAD_POSTS_REQUEST } from '@reducers/post';
 import { LOAD_MY_INFO_REQUEST } from '@reducers/user';
 import wrapper from '@store/configureStore';
 import storeInterface, { SagaStore } from '@interfaces/storeInterface';
+import loadMyInfoForVercel from '@api/loadMyInfoForVercel';
 
 const Home = () => {
   const { me } = useSelector((state: storeInterface) => state.user);
@@ -21,7 +22,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch({ type: LOAD_MY_INFO_REQUEST });
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     if (retweetError) {
       alert(retweetError);
@@ -51,14 +52,15 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
-    const cookie = ctx.req ? ctx.req.headers.cookie : '';
-    axios.defaults.withCredentials = true;
-    if (axios.defaults.headers) {
-      axios.defaults.headers.Cookie = '';
-      if (ctx.req && cookie) {
-        axios.defaults.headers.Cookie = cookie;
-      }
-    }
+    // const cookie = ctx.req ? ctx.req.headers.cookie : '';
+    // axios.defaults.withCredentials = true;
+    // if (axios.defaults.headers) {
+    //   axios.defaults.headers.Cookie = '';
+    //   if (ctx.req && cookie) {
+    //     axios.defaults.headers.Cookie = cookie;
+    //   }
+    // }
+    await loadMyInfoForVercel(store);
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
