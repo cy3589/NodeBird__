@@ -11,6 +11,7 @@ import { LOAD_POSTS_REQUEST } from '@reducers/post';
 import { LOAD_MY_INFO_REQUEST } from '@reducers/user';
 import wrapper from '@store/configureStore';
 import storeInterface, { SagaStore } from '@interfaces/storeInterface';
+import testApi from '@api/testApi';
 
 const Home = () => {
   const { me } = useSelector((state: storeInterface) => state.user);
@@ -52,9 +53,6 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
-    await axios.post('https://api-nodebird.cy3589.com/test123123123', {
-      content: ctx.req,
-    });
     const cookie = ctx.req ? ctx.req.headers.cookie : '';
     axios.defaults.withCredentials = true;
     if (axios.defaults.headers) {
@@ -63,6 +61,15 @@ export const getServerSideProps = wrapper.getServerSideProps(
         axios.defaults.headers.Cookie = cookie;
       }
     }
+    await testApi(ctx.req);
+    // await axios.get('http://api-nodebird.cy3589.com/test123123123', {
+    //   withCredentials: true,
+    // });
+    // await axios.post(
+    //   'http://124.50.73.52:3001/',
+    //   { a: '1' },
+    //   { withCredentials: true },
+    // );
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
