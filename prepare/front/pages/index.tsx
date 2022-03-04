@@ -11,7 +11,6 @@ import { LOAD_POSTS_REQUEST } from '@reducers/post';
 import { LOAD_MY_INFO_REQUEST } from '@reducers/user';
 import wrapper from '@store/configureStore';
 import storeInterface, { SagaStore } from '@interfaces/storeInterface';
-import getCookie from '@api/getCookie';
 
 const Home = () => {
   const { me } = useSelector((state: storeInterface) => state.user);
@@ -53,7 +52,7 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
-    const cookie = await getCookie(ctx.req);
+    const cookie = ctx.req ? ctx.req.headers.cookie : '';
     axios.defaults.withCredentials = true;
     if (axios.defaults.headers) {
       axios.defaults.headers.Cookie = '';
@@ -61,7 +60,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
         axios.defaults.headers.Cookie = cookie;
       }
     }
-
     store.dispatch({ type: LOAD_MY_INFO_REQUEST });
     store.dispatch({ type: LOAD_POSTS_REQUEST });
     store.dispatch(END);
