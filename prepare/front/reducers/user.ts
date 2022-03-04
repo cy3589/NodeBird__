@@ -3,7 +3,7 @@ import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '@reducers/post';
 import { AnyAction } from 'redux';
 import { userStoreInterface } from '@interfaces/storeInterface';
 
-export const initialState: userStoreInterface = {
+export const initialState: userStoreInterface & { test: any } = {
   loadMyInfoLoading: false,
   loadMyInfoDone: false,
   loadMyInfoError: null,
@@ -55,6 +55,7 @@ export const initialState: userStoreInterface = {
   signUpData: {},
   loginData: {},
   userInfo: {},
+  test: null,
 };
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
@@ -123,6 +124,10 @@ export const logoutRequestAction = () => {
 const reducer = (state = initialState, action: AnyAction = { type: '' }) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case 'TEST':
+        draft.test = action.data;
+        break;
+
       case EDIT_MODE_WHAT:
         draft.editModeWhat = action.data;
         break;
