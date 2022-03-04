@@ -53,6 +53,7 @@ const Home = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
     const cookie = ctx.req ? ctx.req.headers.cookie : '';
+    axios.defaults.withCredentials = true;
     if (axios.defaults.headers) {
       axios.defaults.headers.Cookie = '';
       if (ctx.req && cookie) {
