@@ -23,7 +23,7 @@ interface IndividualCommentProps {
     isSinglePost?: boolean;
     updatedAt: string;
   };
-  me?: meInterface;
+  me?: meInterface | null;
   post: postInterface;
 }
 const IndividualComment: VFC<IndividualCommentProps> = ({ item, me, post }) => {
