@@ -217,6 +217,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+  console.log(req.headers);
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     if (!post) {

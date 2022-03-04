@@ -12,6 +12,7 @@ const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
 };
 
 router.get("/", async (req, res, next) => {
+  console.log(req.headers);
   try {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
