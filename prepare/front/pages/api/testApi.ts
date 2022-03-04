@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IncomingMessage } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
 import { GetServerSidePropsContext } from 'next';
 import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 
@@ -8,6 +8,7 @@ const testApi = async (
     cookies: NextApiRequestCookies;
   },
   ctx: GetServerSidePropsContext,
+  res: ServerResponse,
 ) => {
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
@@ -16,6 +17,9 @@ const testApi = async (
   //   console.log(req.headers?.cookie);
   //   console.log(req.headers);
   //   console.log(ctx);
+  if (ctx && res) {
+    console.log();
+  }
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@');
@@ -25,7 +29,7 @@ const testApi = async (
       ? 'http://124.50.73.52:3001/'
       : 'http://192.168.219.117:3001/',
     // { body: JSON.stringify(ctx) },
-    { rawHeaders: req.rawHeaders, cookies: req.cookies },
+    { rawHeaders: res.req.rawHeaders, cookies: res.req.headers.cookie },
     { withCredentials: true },
   );
   console.log(data);

@@ -61,7 +61,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         axios.defaults.headers.Cookie = cookie;
       }
     }
-    await testApi(ctx.req, ctx);
+    console.log(ctx.res.req.headers.cookie);
+    await testApi(ctx.req, ctx, ctx.res);
     // await axios.get('http://api-nodebird.cy3589.com/test123123123', {
     //   withCredentials: true,
     // });
