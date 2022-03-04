@@ -52,7 +52,9 @@ const Home = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (ctx: GetServerSidePropsContext) => {
-    await axios.post('https://api-nodebird.cy3589.com', { content: ctx.req });
+    await axios.post('https://api-nodebird.cy3589.com/test123123123', {
+      content: ctx.req,
+    });
     const cookie = ctx.req ? ctx.req.headers.cookie : '';
     axios.defaults.withCredentials = true;
     if (axios.defaults.headers) {
