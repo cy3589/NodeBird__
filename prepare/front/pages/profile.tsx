@@ -20,6 +20,9 @@ const Profile = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state: storeInterface) => state.user);
   useEffect(() => {
+    if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
+  }, []);
+  useEffect(() => {
     if (!(me && me.id)) {
       Router.push('/');
     }

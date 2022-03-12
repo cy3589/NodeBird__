@@ -46,7 +46,7 @@ if (prod) {
 }
 app.use(cors(corsOption));
 // domain: process.env.NODE_ENV === "production" && ".mynodesns.shop", // 도메인 연결 후 작성 .xxx.xx 형식으로 작성
-// app.use("/", express.static(path.join(__dirname, "uploads")));
+app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));

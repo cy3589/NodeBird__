@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import Error from 'next/error';
 import { END } from 'redux-saga';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Head from 'next/head';
 import wrapper from '@store/configureStore';
@@ -10,11 +10,17 @@ import { LOAD_POST_REQUEST } from '@reducers/post';
 import AppLayout from '@components/AppLayout';
 import PostCard from '@components/PostCard';
 import storeInterface, { SagaStore } from '@interfaces/storeInterface';
+import { useEffect } from 'react';
 
 const Post = () => {
+  const dispatch = useDispatch();
   const { singlePost, loadPostError } = useSelector(
     (state: storeInterface) => state.post,
   );
+  const { me } = useSelector((state: storeInterface) => state.user);
+  useEffect(() => {
+    if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
+  }, [dispatch, me]);
   const router = useRouter();
   const { id } = router.query;
   if (loadPostError && !singlePost) {

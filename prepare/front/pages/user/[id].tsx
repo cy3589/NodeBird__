@@ -28,6 +28,9 @@ const User = () => {
     (state: storeInterface) => state.user,
   );
   useEffect(() => {
+    if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
+  }, []);
+  useEffect(() => {
     if (me?.id !== id) {
       dispatch({ type: IS_ANOTHERS_PROFILE, data: true });
     }

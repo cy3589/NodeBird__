@@ -8,7 +8,7 @@ const { User, Post, Comment, Image, Hashtag, sequelize } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 const backUrl =
   process.env.NODE_ENV === "production"
-    ? "http://api.mynodesns.shop"
+    ? "https://api-nodebird.cy3589.com"
     : "http://192.168.219.117:3065";
 const PostAddCommentsCountAndSlice10Comments = (fullPostJSON) => {
   fullPostJSON.commentsCount = fullPostJSON.Comments.length;
