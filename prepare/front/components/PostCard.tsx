@@ -141,30 +141,26 @@ const PostCard: VFC<PostCardProps> = ({ post }) => {
   }, [dispatch, id, post?.id]);
 
   // setState에 콜백함수를 넣으면 전달되는 인자(prev부분)에는 이전의 데이터가 들어있다.
-  const onLike = useCallback(
-    (e) => {
-      if (e.target.nodeName === 'SPAN' || e.target.nodeName === 'SUP') {
-        return setShowLikersModal(true);
-      }
-      if (!id) {
-        return alert('로그인이 필요합니다.');
-      }
-      return dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
-    },
-    [dispatch, id, post?.id],
-  );
-  const onUnLike = useCallback(
-    (e) => {
-      if (e.target.nodeName === 'SPAN' || e.target.nodeName === 'SUP') {
-        return setShowLikersModal(true);
-      }
-      if (!id) {
-        return alert('로그인이 필요합니다.');
-      }
-      return dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
-    },
-    [dispatch, id, post?.id],
-  );
+  const onLike = useCallback(() => {
+    // (e) => {
+    // if (e.target.nodeName === 'SPAN' || e.target.nodeName === 'SUP') {
+    //   return setShowLikersModal(true);
+    // }
+    if (!id) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({ type: LIKE_POST_REQUEST, data: post?.id });
+  }, [dispatch, id, post?.id]);
+  const onUnLike = useCallback(() => {
+    // (e) => {
+    // if (e.target.nodeName === 'SPAN' || e.target.nodeName === 'SUP') {
+    //   return setShowLikersModal(true);
+    // }
+    if (!id) {
+      return alert('로그인이 필요합니다.');
+    }
+    return dispatch({ type: UNLIKE_POST_REQUEST, data: post?.id });
+  }, [dispatch, id, post?.id]);
 
   const onToggleComment = useCallback(() => {
     return setCommentFormOpend((prev) => !prev);
