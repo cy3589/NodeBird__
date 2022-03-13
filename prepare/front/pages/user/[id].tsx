@@ -29,6 +29,7 @@ const User = () => {
   );
   useEffect(() => {
     if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (me?.id !== id) {

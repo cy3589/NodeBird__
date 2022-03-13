@@ -29,7 +29,11 @@ const User = () => {
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state: storeInterface) => state.post,
   );
-  // const { getUserInfo, me } = useSelector((state) => state.user);
+  const { me } = useSelector((state: storeInterface) => state.user);
+  useEffect(() => {
+    if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (inView && hasMorePosts && !loadPostsLoading) {
       const lastId = mainPosts[mainPosts.length - 1]?.id;
