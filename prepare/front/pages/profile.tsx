@@ -18,15 +18,16 @@ import storeInterface, { SagaStore } from '@interfaces/storeInterface';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { me } = useSelector((state: storeInterface) => state.user);
+  const { me, loadMyInfoDone } = useSelector(
+    (state: storeInterface) => state.user,
+  );
   useEffect(() => {
     if (!me) dispatch({ type: LOAD_MY_INFO_REQUEST });
-  }, []);
+  }, [dispatch, me]);
   useEffect(() => {
-    if (!(me && me.id)) {
+    if (!(me && me.id) && loadMyInfoDone) {
       Router.push('/');
     }
-
     dispatch({ type: LOAD_FOLLOWERS_REQUEST });
     dispatch({ type: LOAD_FOLLOWINGS_REQUEST });
     // eslint-disable-next-line react-hooks/exhaustive-deps
