@@ -9,8 +9,7 @@
 배포여부: O
 
 배포링크: https://nodebird.cy3589.com  
-Git: https://github.com/cy3589/NodeBird__  
-
+Git: [https://github.com/cy3589/NodeBird__](https://github.com/cy3589/NodeBird__)
 - summary:  NextJS를 기반으로 만든 트위터와 비슷한 기능을 하는 SNS 웹 서비스 입니다.
 
 - description: NextJS를 기반으로 만든 트위터와 비슷한 기능을 하는 SNS 웹 서비스 입니다.
